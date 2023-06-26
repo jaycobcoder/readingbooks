@@ -3,9 +3,12 @@ package com.readingbooks.web.domain.entity.member;
 import com.readingbooks.web.domain.entity.BaseEntity;
 import com.readingbooks.web.domain.enums.Gender;
 import com.readingbooks.web.domain.enums.MemberRole;
+import com.readingbooks.web.service.member.RegisterRequest;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +28,19 @@ public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private MemberRole role;
+
+    public static Member createMember(RegisterRequest request){
+        Member member = new Member();
+        member.email = request.getEmail();
+        member.password = request.getPassword();
+        member.name = request.getName();
+        member.birthYear = request.getBirthYear();
+        member.phoneNo = request.getPhoneNo();
+        member.gender = request.getGender();
+        return member;
+    }
+
+    public void encodePassword(String encodedPassword){
+        password = encodedPassword;
+    }
 }
