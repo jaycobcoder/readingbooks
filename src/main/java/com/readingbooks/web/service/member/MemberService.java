@@ -29,8 +29,8 @@ public class MemberService {
         String encodedPassword = passwordEncoder.encode(member.getPassword());
         member.encodePassword(encodedPassword);
 
-        return memberRepository.save(member)
-                .getId();
+        Member savedMember = memberRepository.save(member);
+        return savedMember.getId();
     }
 
     private void validatePresentEmail(RegisterRequest request) {
