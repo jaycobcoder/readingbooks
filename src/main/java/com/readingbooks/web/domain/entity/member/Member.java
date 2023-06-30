@@ -36,7 +36,9 @@ public class Member extends BaseEntity {
         member.name = request.getName();
         member.birthYear = request.getBirthYear();
         member.phoneNo = request.getPhoneNo();
+        member.point = 0;
         member.gender = request.getGender();
+        member.role = MemberRole.ROLE_MEMBER;
         return member;
     }
 
