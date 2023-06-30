@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class MemberController {
+public class LoginController {
     private final MemberService memberService;
 
     @PostMapping("/register")
