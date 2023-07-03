@@ -1,14 +1,15 @@
 package com.readingbooks.config;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 @Configuration
 public class SecurityConfig {
@@ -18,21 +19,46 @@ public class SecurityConfig {
         requestHandler.setCsrfRequestAttributeName("_csrf");
 
         return http
-                .csrf(customizer -> customizer
-                        .csrfTokenRequestHandler(requestHandler)
-                        .ignoringRequestMatchers("/register")
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrf(csrf -> csrf
+                    .csrfTokenRequestHandler(requestHandler)
+                    .ignoringRequestMatchers("/register/**", "/account/login/**")
+//                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .csrfTokenRepository(csrfTokenRepository())
                 )
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/").hasRole("")
+                        .requestMatchers("/cart").hasRole("MEMBER")
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .anyRequest().permitAll()
                 )
-                .formLogin(form -> form.disable())
+                .formLogin(form -> form
+                        .loginPage("/account/login")
+                        .loginProcessingUrl("/account/login")
+                        .usernameParameter("email")
+                        .successHandler(new LoginSuccessHandler("/"))
+                        .failureHandler(new LoginFailHandler())
+                        .permitAll()
+                )
+//                .formLogin(Customizer.withDefaults())
+                .logout(form -> form
+                        .logoutSuccessUrl("/")
+                        .permitAll()
+                )
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }
 
+
     @Bean
     public PasswordEncoder passwordEncoder (){
-        return new BCryptPasswordEncoder();
+        return NoOpPasswordEncoder.getInstance();
+    }
+
+    @Bean
+    public HttpSessionCsrfTokenRepository csrfTokenRepository(){
+        HttpSessionCsrfTokenRepository csrfTokenRepository = new HttpSessionCsrfTokenRepository();
+        csrfTokenRepository.setHeaderName("X-CSRF-TOKEN");
+        csrfTokenRepository.setParameterName("_csrf");
+        csrfTokenRepository.setSessionAttributeName("XSRF-TOKEN");
+        return csrfTokenRepository;
     }
 }

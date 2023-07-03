@@ -2,6 +2,7 @@ package com.readingbooks.web.service.member;
 
 import com.readingbooks.web.domain.entity.member.Member;
 import com.readingbooks.web.domain.enums.Gender;
+import com.readingbooks.web.exception.member.MemberNotFoundException;
 import com.readingbooks.web.exception.member.MemberPresentException;
 import com.readingbooks.web.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -87,5 +88,10 @@ public class MemberService {
         if(gender == null){
             throw new IllegalArgumentException("성별을 올바르게 입력해주세요.");
         }
+    }
+
+    private Member findEmail(String email, String exceptionMessage) {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberNotFoundException(exceptionMessage));
     }
 }
