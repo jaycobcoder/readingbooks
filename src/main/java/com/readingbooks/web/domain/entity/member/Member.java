@@ -20,7 +20,7 @@ public class Member extends BaseEntity {
 
     private String name;
     private String birthYear;
-    private String phoneNo;
+
     private int point;
 
     @Enumerated(EnumType.STRING)
@@ -35,7 +35,6 @@ public class Member extends BaseEntity {
         member.password = request.getPassword();
         member.name = request.getName();
         member.birthYear = request.getBirthYear();
-        member.phoneNo = request.getPhoneNo();
         member.point = 0;
         member.gender = request.getGender();
         member.role = MemberRole.ROLE_MEMBER;

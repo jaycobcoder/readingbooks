@@ -9,8 +9,8 @@ import lombok.Getter;
 public class RegisterRequest {
     private String email;
     private String password;
+    private String passwordConfirm;
     private String name;
     private String birthYear;
-    private String phoneNo;
     private Gender gender;
 }
