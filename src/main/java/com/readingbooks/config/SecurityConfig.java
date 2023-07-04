@@ -7,9 +7,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
@@ -24,13 +28,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
         requestHandler.setCsrfRequestAttributeName("_csrf");
-
         return http
                 .csrf(csrf -> csrf
                     .csrfTokenRequestHandler(requestHandler)
-                    .ignoringRequestMatchers("/register/**", "/account/login/**", "/logout/**")
-//                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .csrfTokenRepository(csrfTokenRepository())
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .ignoringRequestMatchers("/", "/account/login/**", "/logout/**", "/register/validate/email")
                 )
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/cart").hasRole("MEMBER")
@@ -57,6 +59,7 @@ public class SecurityConfig {
                         .deleteCookies("remember-me")
                         .permitAll()
                 )
+                .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }
@@ -64,15 +67,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder (){
-        return NoOpPasswordEncoder.getInstance();
-    }
-
-    @Bean
-    public HttpSessionCsrfTokenRepository csrfTokenRepository(){
-        HttpSessionCsrfTokenRepository csrfTokenRepository = new HttpSessionCsrfTokenRepository();
-        csrfTokenRepository.setHeaderName("X-CSRF-TOKEN");
-        csrfTokenRepository.setParameterName("_csrf");
-        csrfTokenRepository.setSessionAttributeName("XSRF-TOKEN");
-        return csrfTokenRepository;
+        return new BCryptPasswordEncoder();
     }
 }
