@@ -1,5 +1,7 @@
 package com.readingbooks.config;
 
+import com.readingbooks.web.service.rememberme.RememberMeUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +14,12 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final RememberMeUserDetailsService rememberMeService;
+    private static final int ONE_MONTH = 2678400;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
@@ -21,7 +28,7 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf
                     .csrfTokenRequestHandler(requestHandler)
-                    .ignoringRequestMatchers("/register/**", "/account/login/**")
+                    .ignoringRequestMatchers("/register/**", "/account/login/**", "/logout/**")
 //                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                     .csrfTokenRepository(csrfTokenRepository())
                 )
@@ -30,7 +37,7 @@ public class SecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .anyRequest().permitAll()
                 )
-                .formLogin(form -> form
+                .formLogin(customizer -> customizer
                         .loginPage("/account/login")
                         .loginProcessingUrl("/account/login")
                         .usernameParameter("email")
@@ -38,9 +45,16 @@ public class SecurityConfig {
                         .failureHandler(new LoginFailHandler())
                         .permitAll()
                 )
-//                .formLogin(Customizer.withDefaults())
-                .logout(form -> form
+                .rememberMe(customizer -> customizer
+                        .rememberMeParameter("remember-me")
+                        .tokenValiditySeconds(ONE_MONTH)
+                        .userDetailsService(rememberMeService)
+                        .authenticationSuccessHandler(new LoginSuccessHandler("/"))
+                )
+                .logout(customizer -> customizer
+                        .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
+                        .deleteCookies("remember-me")
                         .permitAll()
                 )
                 .httpBasic(Customizer.withDefaults())
