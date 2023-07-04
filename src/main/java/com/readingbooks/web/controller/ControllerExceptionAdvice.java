@@ -20,6 +20,7 @@ public class ControllerExceptionAdvice {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(response);
+
     }
 
     @ExceptionHandler(NotFoundException.class)
