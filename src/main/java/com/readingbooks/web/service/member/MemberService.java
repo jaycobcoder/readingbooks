@@ -16,13 +16,15 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public Long register(RegisterRequest request){
-        validatePresentEmail(request);
+        String email = request.getEmail();
+        validatePresentEmail(email);
         validateForm(request);
 
         Member member = Member.createMember(request);
@@ -34,8 +36,7 @@ public class MemberService {
         return savedMember.getId();
     }
 
-    private void validatePresentEmail(RegisterRequest request) {
-        String email = request.getEmail();
+    public void validatePresentEmail(String email) {
         Optional<Member> findMember = memberRepository.findByEmail(email);
 
         if(findMember.isPresent()){
@@ -55,12 +56,17 @@ public class MemberService {
         }
 
         String password = request.getPassword();
-        if(password == null){
+        String passwordConfirm = request.getPasswordConfirm();
+        if(password == null || passwordConfirm == null){
             throw new IllegalArgumentException("비밀번호를 올바르게 입력해주세요. 비밀번호는 8-16자에 특수문자 '@, $, !, %, *, #, ?, &'가 포함되야 합니다.");
         }
 
-        if(password.length() < 8 || password.length() > 16){
+        if((password.length() < 8 || password.length() > 16) || (passwordConfirm.length() < 8 || password.length() > 16)){
             throw new IllegalArgumentException("비밀번호를 올바르게 입력해주세요. 비밀번호는 8-16자에 특수문자 '@, $, !, %, *, #, ?, &'가 포함되야 합니다.");
+        }
+
+        if(!password.equals(passwordConfirm)){
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
         String name = request.getName();
@@ -76,22 +82,19 @@ public class MemberService {
             throw new IllegalArgumentException("생년을 올바르게 입력해주세요.");
         }
 
-        String phoneNo = request.getPhoneNo();
-        if(phoneNo.trim() == null){
-            throw new IllegalArgumentException("핸드폰 번호를 올바르게 입력해주세요.");
-        }
-        if(phoneNo.length() != 11){
-            throw new IllegalArgumentException("핸드폰 번호를 올바르게 입력해주세요.");
-        }
-
         Gender gender = request.getGender();
         if(gender == null){
             throw new IllegalArgumentException("성별을 올바르게 입력해주세요.");
         }
     }
 
-    private Member findEmail(String email, String exceptionMessage) {
+    public Member findEmail(String email, String exceptionMessage) {
         return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberNotFoundException(exceptionMessage));
+    }
+
+    public Member findId(Long memberId, String exceptionMessage){
+        return memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException(exceptionMessage));
     }
 }
