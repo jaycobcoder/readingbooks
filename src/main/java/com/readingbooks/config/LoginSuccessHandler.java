@@ -14,9 +14,6 @@ import java.io.IOException;
 
 @Slf4j
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-    public LoginSuccessHandler(String defaultUrl) {
-        setDefaultTargetUrl(defaultUrl);
-    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -42,5 +39,4 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         }
         super.onAuthenticationSuccess(request, response, authentication);
     }
-
 }
