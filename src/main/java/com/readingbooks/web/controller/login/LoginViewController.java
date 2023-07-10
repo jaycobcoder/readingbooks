@@ -7,13 +7,16 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/account")
 public class LoginViewController {
-    @GetMapping("/account/login")
+
+    @GetMapping("/login")
     public String login(@RequestParam(required = false) boolean hasMessage,
                         @RequestParam(required = false) String message,
                         Model model){
@@ -23,12 +26,12 @@ public class LoginViewController {
         return "login/login";
     }
 
-    @GetMapping("/account/register")
+    @GetMapping("/register")
     public String register(){
         return "/login/register";
     }
 
-    @GetMapping("/account/register/email")
+    @GetMapping("/register/email")
     public String registerForm(Model model, HttpServletRequest request){
         CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
         String token = csrfToken.getToken();
