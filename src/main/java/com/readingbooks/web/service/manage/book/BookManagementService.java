@@ -85,10 +85,6 @@ public class BookManagementService {
         if(categoryId == null){
             throw new IllegalArgumentException("카테고리 아이디를 입력해주세요");
         }
-
-        if(bookGroupId == null){
-            throw new IllegalArgumentException("카테고리 아이디를 입력해주세요");
-        }
     }
 
     public void updateBookImage(MultipartFile file, Long bookId) {
