@@ -1,16 +1,15 @@
 package com.readingbooks.web.service.manage.bookauthorlist;
 
-import com.readingbooks.web.domain.entity.book.BookAuthorList;
 import com.readingbooks.web.domain.enums.AuthorOption;
 import com.readingbooks.web.domain.enums.Gender;
 import com.readingbooks.web.service.manage.author.AuthorManagementService;
 import com.readingbooks.web.service.manage.author.AuthorRegisterRequest;
 import com.readingbooks.web.service.manage.book.BookManagementService;
 import com.readingbooks.web.service.manage.book.BookRegisterRequest;
-import com.readingbooks.web.service.manage.category.CategoryGroupRegisterRequest;
+import com.readingbooks.web.service.manage.categorygroup.CategoryGroupRegisterRequest;
 import com.readingbooks.web.service.manage.category.CategoryRegisterRequest;
 import com.readingbooks.web.service.manage.category.CategoryService;
-import org.assertj.core.api.Assertions;
+import com.readingbooks.web.service.manage.categorygroup.CategoryGroupService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +28,9 @@ class BookAuthorListServiceTest {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private CategoryGroupService categoryGroupService;
 
     @Autowired
     private BookManagementService bookManagementService;
@@ -94,10 +96,10 @@ class BookAuthorListServiceTest {
 
     private Long createBook() {
         CategoryGroupRegisterRequest categoryGroupRequest = new CategoryGroupRegisterRequest("소설");
-        Long categoryGroupId = categoryService.registerCategoryGroup(categoryGroupRequest);
+        Long categoryGroupId = categoryGroupService.register(categoryGroupRequest);
 
         CategoryRegisterRequest categoryRequest = new CategoryRegisterRequest("판타지 소설", categoryGroupId);
-        Long categoryId = categoryService.registerCategory(categoryRequest);
+        Long categoryId = categoryService.register(categoryRequest);
 
         BookRegisterRequest bookRegisterRequest = createBookRegisterRequest("해리포터와 마법사의 돌", "123123", "포터모어",
                 "2023.01.01", 0, 9900, 5, categoryId, null);

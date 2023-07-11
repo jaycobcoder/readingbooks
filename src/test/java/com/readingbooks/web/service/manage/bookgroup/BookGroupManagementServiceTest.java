@@ -74,5 +74,4 @@ class BookGroupManagementServiceTest {
                 "thumbnail".getBytes()
         );
     }
-
 }

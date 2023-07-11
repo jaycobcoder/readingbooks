@@ -18,7 +18,7 @@ class AuthorManagementServiceTest {
     private AuthorManagementService authorManagementService;
 
     @Test
-    void register_fail_name_null(){
+    void whenRegisteringNameNull_thenThrowException(){
         AuthorRegisterRequest request = createRegisterRequest(null, AuthorOption.AUTHOR, "대한민국", "test", "1999", Gender.MEN);
 
         assertThatThrownBy(() -> authorManagementService.registerAuthor(request))
@@ -27,7 +27,7 @@ class AuthorManagementServiceTest {
     }
 
     @Test
-    void register_fail_name_length(){
+    void whenRegisteringInvalidNameLength_thenThrowException(){
         AuthorRegisterRequest request = createRegisterRequest("김", AuthorOption.AUTHOR, "대한민국", "test", "1999", Gender.MEN);
 
         assertThatThrownBy(() -> authorManagementService.registerAuthor(request))
@@ -36,7 +36,7 @@ class AuthorManagementServiceTest {
     }
 
     @Test
-    void register_fail_name_blank(){
+    void whenRegisteringNameBlank_thenThrowException(){
         AuthorRegisterRequest request = createRegisterRequest("", AuthorOption.AUTHOR, "대한민국", "test", "1999", Gender.MEN);
 
         assertThatThrownBy(() -> authorManagementService.registerAuthor(request))
@@ -45,7 +45,7 @@ class AuthorManagementServiceTest {
     }
 
     @Test
-    void register_fail_option_null(){
+    void whenRegisteringOptionNull_thenThrowException(){
         AuthorRegisterRequest request = createRegisterRequest("test", null, "대한민국", "test", "1999", Gender.MEN);
         assertThatThrownBy(() -> authorManagementService.registerAuthor(request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -53,7 +53,7 @@ class AuthorManagementServiceTest {
     }
 
     @Test
-    void register_fail_birthYear_null(){
+    void whenRegisteringBirthyearNull_thenThrowException(){
         AuthorRegisterRequest request = createRegisterRequest("test", AuthorOption.AUTHOR, "대한민국", "test", null, Gender.MEN);
         assertThatThrownBy(() -> authorManagementService.registerAuthor(request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -61,7 +61,7 @@ class AuthorManagementServiceTest {
     }
 
     @Test
-    void register_fail_birthYear_length(){
+    void whenRegisteringInvalidBirthyearLength_thenThrowException(){
         AuthorRegisterRequest request = createRegisterRequest("test", AuthorOption.AUTHOR, "대한민국", "test", "19999", Gender.MEN);
         assertThatThrownBy(() -> authorManagementService.registerAuthor(request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -69,7 +69,7 @@ class AuthorManagementServiceTest {
     }
 
     @Test
-    void register_fail_birthYear_not_start_19or20(){
+    void whenRegisteringBirthyearNotStartedWith19or20_thenThrowException(){
         AuthorRegisterRequest request = createRegisterRequest("test", AuthorOption.AUTHOR, "대한민국", "test", "1899", Gender.MEN);
         assertThatThrownBy(() -> authorManagementService.registerAuthor(request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -77,7 +77,7 @@ class AuthorManagementServiceTest {
     }
 
     @Test
-    void register_success(){
+    void whenAuthorRegistered_thenVerifyFields(){
         AuthorRegisterRequest request = createRegisterRequest("test", AuthorOption.AUTHOR, "대한민국", "test", "1999", Gender.MEN);
 
         Long authorId = authorManagementService.registerAuthor(request);
@@ -91,7 +91,7 @@ class AuthorManagementServiceTest {
     }
 
     @Test
-    void update_fail_form_null(){
+    void whenUpdatingFormNull_thenThrowException(){
         Long authorId = registerAuthor();
 
         AuthorUpdateRequest request = createUpdateRequest(null, null, null, null, null, null);
@@ -101,7 +101,7 @@ class AuthorManagementServiceTest {
     }
 
     @Test
-    void update_fail_id_not_found(){
+    void whenUpdatingAuthorIdNotFound_thenThrowException(){
         Long authorId = registerAuthor();
 
         AuthorUpdateRequest request = createUpdateRequest("test", AuthorOption.AUTHOR, "대한민국", "test" , "1999", Gender.MEN);
@@ -112,7 +112,7 @@ class AuthorManagementServiceTest {
     }
 
     @Test
-    void update_success(){
+    void whenAuthorUpdated_thenVerifyFields(){
         //given
         Long authorId = registerAuthor();
         AuthorUpdateRequest request = createUpdateRequest("updateTest", AuthorOption.TRANSLATOR, "미국", "hello", "1999", Gender.MEN);

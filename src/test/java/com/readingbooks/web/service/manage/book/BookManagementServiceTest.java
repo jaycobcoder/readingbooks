@@ -1,12 +1,11 @@
 package com.readingbooks.web.service.manage.book;
 
 import com.readingbooks.web.domain.entity.book.Book;
-import com.readingbooks.web.domain.entity.category.CategoryGroup;
 import com.readingbooks.web.service.manage.bookgroup.BookGroupManagementService;
-import com.readingbooks.web.service.manage.category.CategoryGroupRegisterRequest;
+import com.readingbooks.web.service.manage.categorygroup.CategoryGroupRegisterRequest;
 import com.readingbooks.web.service.manage.category.CategoryRegisterRequest;
 import com.readingbooks.web.service.manage.category.CategoryService;
-import org.assertj.core.api.Assertions;
+import com.readingbooks.web.service.manage.categorygroup.CategoryGroupService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +14,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
@@ -26,6 +24,9 @@ class BookManagementServiceTest {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private CategoryGroupService categoryGroupService;
 
     @Autowired
     private BookGroupManagementService bookGroupManagementService;
@@ -40,10 +41,10 @@ class BookManagementServiceTest {
         );
 
         CategoryGroupRegisterRequest categoryGroupRequest = new CategoryGroupRegisterRequest("소설");
-        Long categoryGroupId = categoryService.registerCategoryGroup(categoryGroupRequest);
+        Long categoryGroupId = categoryGroupService.register(categoryGroupRequest);
 
         CategoryRegisterRequest categoryRequest = new CategoryRegisterRequest("판타지 소설", categoryGroupId);
-        Long categoryId = categoryService.registerCategory(categoryRequest);
+        Long categoryId = categoryService.register(categoryRequest);
 
 
         BookRegisterRequest request = createRegisterRequest("해리포터와 마법사의 돌", "123123", "포터모어",

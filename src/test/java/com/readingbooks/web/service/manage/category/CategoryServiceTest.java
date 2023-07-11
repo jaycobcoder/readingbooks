@@ -24,7 +24,7 @@ class CategoryServiceTest {
     private CategoryGroupService categoryGroupService;
 
     @Test
-    void whenNameNullOrBlank_thenThrowException(){
+    void whenRegisteringNameNullOrBlank_thenThrowException(){
         CategoryGroupRegisterRequest categoryGroupRequest = createCategoryGroupRequest("소설");
         Long categoryGroupId = categoryGroupService.register(categoryGroupRequest);
 
@@ -40,7 +40,7 @@ class CategoryServiceTest {
 
 
     @Test
-    void whenCategoryGroupIdNull_thenThrowException(){
+    void whenRegisteringCategoryGroupIdNull_thenThrowException(){
         CategoryRegisterRequest request = new CategoryRegisterRequest("판타지 소설", null);
 
         assertThatThrownBy(()-> categoryService.register(request))
@@ -49,7 +49,7 @@ class CategoryServiceTest {
     }
 
     @Test
-    void whenCategoryGroupIdNotFound_thenThrowException(){
+    void whenRegisteringCategoryGroupIdNotFound_thenThrowException(){
         CategoryGroupRegisterRequest categoryGroupRequest = createCategoryGroupRequest("소설");
         Long categoryGroupId = categoryGroupService.register(categoryGroupRequest);
 
@@ -195,5 +195,4 @@ class CategoryServiceTest {
     private static CategoryRegisterRequest createCategoryRequest(String name, Long categoryGroupId) {
         return new CategoryRegisterRequest(name, categoryGroupId);
     }
-
 }
