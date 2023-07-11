@@ -3,6 +3,7 @@ package com.readingbooks.web.service.manage.category;
 import com.readingbooks.web.domain.entity.category.Category;
 import com.readingbooks.web.domain.entity.category.CategoryGroup;
 import com.readingbooks.web.exception.category.CategoryNotFoundException;
+import com.readingbooks.web.exception.category.CategoryPresentException;
 import com.readingbooks.web.repository.category.CategoryGroupRepository;
 import com.readingbooks.web.repository.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -61,6 +62,10 @@ public class CategoryService {
 
     private void validateCategoryGroupRegisterForm(CategoryGroupRegisterRequest request) {
         String name = request.getName();
+        boolean isExist = categoryGroupRepository.existsByName(name);
+        if(isExist == true){
+            throw new CategoryPresentException(String.format("이미 입력하신 '%s'이란 카테고리 그룹명이 존재합니다", name));
+        }
         validateName(name, "카테고리 그룹을 입력하세요.");
     }
 
