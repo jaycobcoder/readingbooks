@@ -22,7 +22,7 @@ class MemberServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @Test
-    void register_fail_null(){
+    void whenRegisteringFormNull_thenThrowException(){
         RegisterRequest request = createRequest(null, null, null, null, null, null);
         assertThatThrownBy(
                 ()-> memberService.register(request))
@@ -30,7 +30,7 @@ class MemberServiceTest {
     }
 
     @Test
-    void register_fail_invalid_email(){
+    void whenRegisteringInvalidEmail_thenThrowException(){
         RegisterRequest request = createRequest("tes@example.com", "test1234", "test1234", "test", "1999", Gender.SECRET);
         assertThatThrownBy(()->memberService.register(request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -38,9 +38,8 @@ class MemberServiceTest {
 
     }
 
-
     @Test
-    void register_fail_invalid_short_password(){
+    void whenRegisteringInvalidPasswordLength_thenThrowException(){
         RegisterRequest request = createRequest("test@example.com", "test","test", "test", "1999", Gender.SECRET);
         assertThatThrownBy(()->memberService.register(request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -48,15 +47,15 @@ class MemberServiceTest {
     }
 
     @Test
-    void register_fail_invalid_not_contained_password(){
-        RegisterRequest request = createRequest("test@example.com", "test", "test", "test1234", "1999", Gender.SECRET);
+    void whenRegisteringNotMatchedPasswords_thenThrowException(){
+        RegisterRequest request = createRequest("test@example.com", "test1234", "helloworld1234", "test1234", "1999", Gender.SECRET);
         assertThatThrownBy(()->memberService.register(request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("비밀번호를 올바르게 입력해주세요. 비밀번호는 8-16자에 특수문자 '@, $, !, %, *, #, ?, &'가 포함되야 합니다.");
+                .hasMessageContaining("비밀번호가 일치하지 않습니다.");
     }
 
     @Test
-    void register_fail_invalid_name(){
+    void whenRegisteringInvalidNameLength_thenThrowException(){
         RegisterRequest request = createRequest("test@example.com", "test1234", "test1234","t", "1999",  Gender.SECRET);
         assertThatThrownBy(()->memberService.register(request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -64,7 +63,7 @@ class MemberServiceTest {
     }
 
     @Test
-    void register_fail_invalid_birthYear(){
+    void whenRegisteringInvalidBirthyearLength_thenThrowException(){
         RegisterRequest request = createRequest("test@example.com", "test1234!", "test1234!", "test", "19990115",  Gender.SECRET);
         assertThatThrownBy(()->memberService.register(request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -72,15 +71,7 @@ class MemberServiceTest {
     }
 
     @Test
-    void register_fail_invalid_phoneNo(){
-        RegisterRequest request = createRequest("test@example.com", "test1234!", "test1234!", "test", "1999",  Gender.SECRET);
-        assertThatThrownBy(()->memberService.register(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("핸드폰 번호를 올바르게 입력해주세요.");
-    }
-
-    @Test
-    void register_fail_invalid_gender(){
+    void whenRegisteringGenderNull_thenThrowException(){
         RegisterRequest request = createRequest("test@example.com", "test1234!", "test1234!","test", "1999",  null);
         assertThatThrownBy(()->memberService.register(request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -88,7 +79,7 @@ class MemberServiceTest {
     }
 
     @Test
-    void register_fail_present_email(){
+    void whenRegisteringExistedEmail_thenThrowException(){
         //given
         RegisterRequest registerMember = createRequest("test@example.com", "test1234!","test1234!", "test", "1999",  Gender.SECRET);
         memberService.register(registerMember);
@@ -101,7 +92,7 @@ class MemberServiceTest {
     }
 
     @Test
-        void register_success(){
+    void whenMemberRegistered_thenVerifyFields(){
         //given
         RegisterRequest request = createRequest("success@example.com", "test1234!", "test1234!","test", "1999",  Gender.SECRET);
 
@@ -116,8 +107,8 @@ class MemberServiceTest {
         assertThat(findMember.getBirthYear()).isEqualTo("1999");
         assertThat(findMember.getGender()).isEqualTo(Gender.SECRET);
     }
+
     private RegisterRequest createRequest(String email, String password, String passwordConfirm, String name, String birthYear, Gender gender){
         return new RegisterRequest(email, password, passwordConfirm, name, birthYear, gender);
     }
-
 }
