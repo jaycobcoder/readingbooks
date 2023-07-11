@@ -29,8 +29,4 @@ public class Category extends BaseEntity {
         this.name = request.getName();
         this.categoryGroup = categoryGroup;
     }
-
-    public void updateCategory(CategoryUpdateRequest request) {
-        this.name = request.getName();
-    }
 }

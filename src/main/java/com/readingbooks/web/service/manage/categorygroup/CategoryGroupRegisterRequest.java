@@ -1,4 +1,4 @@
-package com.readingbooks.web.service.manage.category;
+package com.readingbooks.web.service.manage.categorygroup;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

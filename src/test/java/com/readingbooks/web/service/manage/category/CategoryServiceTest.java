@@ -3,6 +3,9 @@ package com.readingbooks.web.service.manage.category;
 import com.readingbooks.web.domain.entity.category.Category;
 import com.readingbooks.web.domain.entity.category.CategoryGroup;
 import com.readingbooks.web.exception.category.CategoryNotFoundException;
+import com.readingbooks.web.service.manage.categorygroup.CategoryGroupRegisterRequest;
+import com.readingbooks.web.service.manage.categorygroup.CategoryGroupService;
+import com.readingbooks.web.service.manage.categorygroup.CategoryGroupUpdateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,85 +16,62 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @Transactional
 class CategoryServiceTest {
-    @Autowired CategoryService categoryService;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private CategoryGroupService categoryGroupService;
 
     @Test
-    void category_group_register_fail_name_null(){
-        CategoryGroupRegisterRequest nullRequest = createCategoryGroupRequest(null);
-        CategoryGroupRegisterRequest blankRequest = new CategoryGroupRegisterRequest("");
-        assertThatThrownBy(()->categoryService.registerCategoryGroup(blankRequest))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("카테고리 그룹을 입력하세요.");
-        assertThatThrownBy(()->categoryService.registerCategoryGroup(nullRequest))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("카테고리 그룹을 입력하세요.");
-    }
-
-
-    @Test
-    void category_group_register_success(){
-        //given
-        CategoryGroupRegisterRequest request = createCategoryGroupRequest("소설");
-
-        //when
-        Long categoryGroupId = categoryService.registerCategoryGroup(request);
-        CategoryGroup categoryGroup = categoryService.findCategoryGroupById(categoryGroupId);
-
-        //then
-        assertThat(categoryGroup.getId()).isEqualTo(categoryGroupId);
-        assertThat(categoryGroup.getName()).isEqualTo("소설");
-    }
-
-    @Test
-    void category_register_fail_name_null(){
+    void whenNameNullOrBlank_thenThrowException(){
         CategoryGroupRegisterRequest categoryGroupRequest = createCategoryGroupRequest("소설");
-        Long categoryGroupId = categoryService.registerCategoryGroup(categoryGroupRequest);
-
+        Long categoryGroupId = categoryGroupService.register(categoryGroupRequest);
 
         CategoryRegisterRequest nullRequest = createCategoryRequest(null, categoryGroupId);
         CategoryRegisterRequest blankRequest = new CategoryRegisterRequest("", categoryGroupId);
 
-        assertThatThrownBy(()-> categoryService.registerCategory(nullRequest))
+        assertThatThrownBy(()-> categoryService.register(nullRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                         .hasMessageContaining("카테고리를 입력하세요.");
-        assertThatThrownBy(()-> categoryService.registerCategory(blankRequest))
+        assertThatThrownBy(()-> categoryService.register(blankRequest))
                         .hasMessageContaining("카테고리를 입력하세요.");
     }
 
 
     @Test
-    void category_register_fail_category_group_id_null(){
+    void whenCategoryGroupIdNull_thenThrowException(){
         CategoryRegisterRequest request = new CategoryRegisterRequest("판타지 소설", null);
 
-        assertThatThrownBy(()-> categoryService.registerCategory(request))
+        assertThatThrownBy(()-> categoryService.register(request))
                 .isInstanceOf(IllegalArgumentException.class)
                         .hasMessageContaining("카테고리 그룹 아이디를 입력하세요.");
     }
 
     @Test
-    void category_register_fail_category_group_id_not_found(){
+    void whenCategoryGroupIdNotFound_thenThrowException(){
         CategoryGroupRegisterRequest categoryGroupRequest = createCategoryGroupRequest("소설");
-        Long categoryGroupId = categoryService.registerCategoryGroup(categoryGroupRequest);
+        Long categoryGroupId = categoryGroupService.register(categoryGroupRequest);
 
         Long notFoundId = categoryGroupId + 1;
 
         CategoryRegisterRequest request = createCategoryRequest("판타지 소설", notFoundId);
 
-        assertThatThrownBy(()-> categoryService.registerCategory(request))
+        assertThatThrownBy(()-> categoryService.register(request))
                 .isInstanceOf(CategoryNotFoundException.class)
                         .hasMessageContaining("검색되는 카테고리 그룹이 없습니다. 카테고리 그룹 아이디를 다시 확인해주세요.");
     }
 
     @Test
-    void category_register_success(){
+    void whenCategoryRegistered_thenVerifyFields(){
         //given
         CategoryGroupRegisterRequest categoryGroupRequest = createCategoryGroupRequest("소설");
-        Long categoryGroupId = categoryService.registerCategoryGroup(categoryGroupRequest);
+        Long categoryGroupId = categoryGroupService.register(categoryGroupRequest);
 
         CategoryRegisterRequest categoryRequest = createCategoryRequest("판타지 소설", categoryGroupId);
 
         //when
-        Long categoryId = categoryService.registerCategory(categoryRequest);
+        Long categoryId = categoryService.register(categoryRequest);
         Category category = categoryService.findCategoryById(categoryId);
 
         //then
@@ -102,124 +82,79 @@ class CategoryServiceTest {
     }
 
     @Test
-    void category_group_update_fail_name_null(){
-        CategoryGroupRegisterRequest categoryGroupRequest = createCategoryGroupRequest("소설");
-        Long categoryGroupId = categoryService.registerCategoryGroup(categoryGroupRequest);
-
-        CategoryGroupUpdateRequest nullRequest = new CategoryGroupUpdateRequest(null);
-        CategoryGroupUpdateRequest blankRequest = new CategoryGroupUpdateRequest("");
-
-        assertThatThrownBy(() -> categoryService.updateCategoryGroup(nullRequest, categoryGroupId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("카테고리 그룹을 입력하세요.");
-        assertThatThrownBy(() -> categoryService.updateCategoryGroup(blankRequest, categoryGroupId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("카테고리 그룹을 입력하세요.");
-    }
-
-    @Test
-    void category_group_update_fail_id_not_found(){
-        CategoryGroupRegisterRequest categoryGroupRequest = createCategoryGroupRequest("소설");
-        Long categoryGroupId = categoryService.registerCategoryGroup(categoryGroupRequest);
-
-        Long notFoundId = categoryGroupId + 1L;
-
-        CategoryGroupUpdateRequest request = new CategoryGroupUpdateRequest("경제");
-
-        assertThatThrownBy(() -> categoryService.updateCategoryGroup(request, notFoundId))
-                .isInstanceOf(CategoryNotFoundException.class)
-                .hasMessageContaining("검색되는 카테고리 그룹이 없습니다. 카테고리 그룹 아이디를 다시 확인해주세요.");
-    }
-
-    @Test
-    void category_group_update_success(){
-        CategoryGroupRegisterRequest categoryGroupRequest = createCategoryGroupRequest("소설");
-        Long categoryGroupId = categoryService.registerCategoryGroup(categoryGroupRequest);
-
-        CategoryGroupUpdateRequest request = new CategoryGroupUpdateRequest("경제");
-        categoryService.updateCategoryGroup(request, categoryGroupId);
-
-        CategoryGroup categoryGroup = categoryService.findCategoryGroupById(categoryGroupId);
-        assertThat(categoryGroup.getName()).isEqualTo("경제");
-    }
-
-
-    @Test
-    void category_update_fail_name_null(){
+    void whenUpdatingCategoryNameNullOrBlank_thenThrowException(){
         //카테고리 그룹 생성
         CategoryGroupRegisterRequest categoryGroupRequest = createCategoryGroupRequest("소설");
-        Long categoryGroupId = categoryService.registerCategoryGroup(categoryGroupRequest);
+        Long categoryGroupId = categoryGroupService.register(categoryGroupRequest);
 
         //카테고리 생성
         CategoryRegisterRequest categoryRequest = createCategoryRequest("판타지 소설", categoryGroupId);
-        Long categoryId = categoryService.registerCategory(categoryRequest);
+        Long categoryId = categoryService.register(categoryRequest);
 
         CategoryUpdateRequest nullRequest = createCategoryUpdateRequest(null, categoryGroupId);
         CategoryUpdateRequest blankRequest = createCategoryUpdateRequest("", categoryGroupId);
 
-        assertThatThrownBy(() -> categoryService.updateCategory(nullRequest, categoryId))
+        assertThatThrownBy(() -> categoryService.update(nullRequest, categoryId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("카테고리를 입력하세요.");
 
-        assertThatThrownBy(() -> categoryService.updateCategory(blankRequest, categoryId))
+        assertThatThrownBy(() -> categoryService.update(blankRequest, categoryId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("카테고리를 입력하세요.");
     }
 
-
-
     @Test
-    void category_update_fail_categoryGroupId_not_found(){
+    void whenUpdatingCategoryGroupIdNotFound_thenThrowException(){
         //카테고리 그룹 생성
         CategoryGroupRegisterRequest categoryGroupRequest = createCategoryGroupRequest("소설");
-        Long categoryGroupId = categoryService.registerCategoryGroup(categoryGroupRequest);
+        Long categoryGroupId = categoryGroupService.register(categoryGroupRequest);
 
         Long notFoundCategoryGroupId = categoryGroupId + 1L;
 
         //카테고리 생성
         CategoryRegisterRequest categoryRequest = createCategoryRequest("판타지 소설", categoryGroupId);
-        Long categoryId = categoryService.registerCategory(categoryRequest);
+        Long categoryId = categoryService.register(categoryRequest);
 
 
         CategoryUpdateRequest request = createCategoryUpdateRequest("추리 소설", notFoundCategoryGroupId);
 
-        assertThatThrownBy(() -> categoryService.updateCategory(request, categoryId))
+        assertThatThrownBy(() -> categoryService.update(request, categoryId))
                 .isInstanceOf(CategoryNotFoundException.class)
                 .hasMessageContaining("검색되는 카테고리 그룹이 없습니다. 카테고리 그룹 아이디를 다시 확인해주세요.");
     }
 
     @Test
-    void category_update_fail_categoryId_not_found(){
+    void whenUpdatingCategoryIdNotFound_thenThrowException(){
         //카테고리 그룹 생성
         CategoryGroupRegisterRequest categoryGroupRequest = createCategoryGroupRequest("소설");
-        Long categoryGroupId = categoryService.registerCategoryGroup(categoryGroupRequest);
+        Long categoryGroupId = categoryGroupService.register(categoryGroupRequest);
 
         //카테고리 생성
         CategoryRegisterRequest categoryRequest = createCategoryRequest("판타지 소설", categoryGroupId);
-        Long categoryId = categoryService.registerCategory(categoryRequest);
+        Long categoryId = categoryService.register(categoryRequest);
 
         Long notFoundCategoryId = categoryId + 1L;
 
-        CategoryUpdateRequest request = createCategoryUpdateRequest("추리 소설", null);
+        CategoryUpdateRequest request = createCategoryUpdateRequest("추리 소설", categoryGroupId);
 
-        assertThatThrownBy(() -> categoryService.updateCategory(request, notFoundCategoryId))
+        assertThatThrownBy(() -> categoryService.update(request, notFoundCategoryId))
                 .isInstanceOf(CategoryNotFoundException.class)
                 .hasMessageContaining("검색되는 카테고리가 없습니다. 카테고리 아이디를 다시 확인해주세요.");
     }
 
     @Test
-    void category_update_success_case1_only_name_change(){
+    void whenCategoryNameUpdated_thenVerifyFields(){
         //given
         CategoryGroupRegisterRequest categoryGroupRequest = createCategoryGroupRequest("소설");
-        Long categoryGroupId = categoryService.registerCategoryGroup(categoryGroupRequest);
+        Long categoryGroupId = categoryGroupService.register(categoryGroupRequest);
 
         CategoryRegisterRequest categoryRequest = createCategoryRequest("판타지 소설", categoryGroupId);
-        Long categoryId = categoryService.registerCategory(categoryRequest);
+        Long categoryId = categoryService.register(categoryRequest);
 
-        CategoryUpdateRequest request = createCategoryUpdateRequest("추리 소설", null);
+        CategoryUpdateRequest request = createCategoryUpdateRequest("추리 소설", categoryGroupId);
 
         //when
-        categoryService.updateCategory(request, categoryId);
+        categoryService.update(request, categoryId);
         Category category = categoryService.findCategoryById(categoryId);
 
         //then
@@ -227,21 +162,21 @@ class CategoryServiceTest {
     }
 
     @Test
-    void category_update_success_case2_name_and_group(){
+    void whenCategoryNameAndCategoryGroupUpdated_thenVerifyFields(){
         //given
         CategoryGroupRegisterRequest novelRequest = createCategoryGroupRequest("소설");
-        Long novelId = categoryService.registerCategoryGroup(novelRequest);
+        Long novelId = categoryGroupService.register(novelRequest);
 
         CategoryGroupRegisterRequest economicRequest = createCategoryGroupRequest("경제");
-        Long economicId = categoryService.registerCategoryGroup(economicRequest);
+        Long economicId = categoryGroupService.register(economicRequest);
 
         CategoryRegisterRequest categoryRequest = createCategoryRequest("판타지 소설", novelId);
-        Long categoryId = categoryService.registerCategory(categoryRequest);
+        Long categoryId = categoryService.register(categoryRequest);
 
         CategoryUpdateRequest request = createCategoryUpdateRequest("경제 일반", economicId);
 
         //when
-        categoryService.updateCategory(request, categoryId);
+        categoryService.update(request, categoryId);
         Category category = categoryService.findCategoryById(categoryId);
 
         //then

@@ -1,8 +1,8 @@
 package com.readingbooks.web.domain.entity.category;
 
 import com.readingbooks.web.domain.entity.BaseEntity;
-import com.readingbooks.web.service.manage.category.CategoryGroupRegisterRequest;
-import com.readingbooks.web.service.manage.category.CategoryGroupUpdateRequest;
+import com.readingbooks.web.service.manage.categorygroup.CategoryGroupRegisterRequest;
+import com.readingbooks.web.service.manage.categorygroup.CategoryGroupUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 
