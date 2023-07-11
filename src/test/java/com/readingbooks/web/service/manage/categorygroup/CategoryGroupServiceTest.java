@@ -2,19 +2,28 @@ package com.readingbooks.web.service.manage.categorygroup;
 
 import com.readingbooks.web.domain.entity.category.CategoryGroup;
 import com.readingbooks.web.exception.category.CategoryNotFoundException;
+import com.readingbooks.web.exception.category.CategoryPresentException;
+import com.readingbooks.web.service.manage.book.BookManagementService;
+import com.readingbooks.web.service.manage.category.CategoryRegisterRequest;
+import com.readingbooks.web.service.manage.category.CategoryService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
 class CategoryGroupServiceTest {
     @Autowired
     private CategoryGroupService categoryGroupService;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private BookManagementService bookManagementService;
 
     @Test
     void whenRegisteringNameNullOrBlank_thenThrowException(){
@@ -88,7 +97,38 @@ class CategoryGroupServiceTest {
         assertThat(categoryGroup.getName()).isEqualTo("경제");
     }
 
-    private static CategoryGroupRegisterRequest createCategoryGroupRequest(String name) {
+    @Test
+    void whenDeletingCategoryGroupHasCategory_thenThrowException(){
+        //given
+        CategoryGroupRegisterRequest categoryGroupRequest = createCategoryGroupRequest("소설");
+        Long categoryGroupId = categoryGroupService.register(categoryGroupRequest);
+
+        CategoryRegisterRequest categoryRequest = createCategoryRequest("판타지 소설", categoryGroupId);
+        categoryService.register(categoryRequest);
+
+        assertThatThrownBy(() -> categoryGroupService.delete(categoryGroupId))
+                .isInstanceOf(CategoryPresentException.class)
+                .hasMessageContaining("해당 카테고리 그룹 아래 하위 카테고리들이 존재합니다. 하위 카테고리를 모두 삭제한 다음에 카테고리 그룹을 삭제해주세요.");
+    }
+
+    @Test
+    void whenCategoryGroupDeleted_thenVerifyBoolean(){
+        //given
+        CategoryGroupRegisterRequest categoryGroupRequest = createCategoryGroupRequest("소설");
+        Long categoryGroupId = categoryGroupService.register(categoryGroupRequest);
+
+        //when
+        boolean isDeleted = categoryGroupService.delete(categoryGroupId);
+
+        //then
+        assertThat(isDeleted).isTrue();
+    }
+
+    private CategoryGroupRegisterRequest createCategoryGroupRequest(String name) {
         return new CategoryGroupRegisterRequest(name);
+    }
+
+    private CategoryRegisterRequest createCategoryRequest(String name, Long categoryGroupId) {
+        return new CategoryRegisterRequest(name, categoryGroupId);
     }
 }

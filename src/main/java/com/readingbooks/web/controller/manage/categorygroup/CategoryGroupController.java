@@ -41,7 +41,7 @@ public class CategoryGroupController {
 
     @DeleteMapping("/{categoryGroupId}")
     public ResponseEntity<Object> deleteCategoryGroup(@PathVariable Long categoryGroupId){
-        categoryGroupService.deleteCategoryGroup(categoryGroupId);
+        categoryGroupService.delete(categoryGroupId);
 
         BaseResponse response = new BaseResponse(HttpStatus.OK, "삭제가 완료되었습니다.", true);
         return ResponseEntity
