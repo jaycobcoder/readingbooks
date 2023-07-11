@@ -43,7 +43,7 @@ public class BookManagementService {
 
     public Book findBookById(Long bookId){
         return bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookNotFoundException("검색되는 도서 그룹이 없습니다. 도서 그룹 아이디를 다시 확인해주세요."));
+                .orElseThrow(() -> new BookNotFoundException("검색되는 도서가 없습니다. 도서 아이디를 다시 확인해주세요."));
     }
 
     private Category getCategory(Long categoryId) {
