@@ -81,7 +81,7 @@ class AuthorManagementServiceTest {
         AuthorRegisterRequest request = createRegisterRequest("test", AuthorOption.AUTHOR, "대한민국", "test", "1999", Gender.MEN);
 
         Long authorId = authorManagementService.registerAuthor(request);
-        Author findAuthor = authorManagementService.findAuthorById(authorId, "test");
+        Author findAuthor = authorManagementService.findAuthorById(authorId);
 
         assertThat(findAuthor.getName()).isEqualTo("test");
         assertThat(findAuthor.getAuthorOption()).isEqualTo(AuthorOption.AUTHOR);
@@ -121,7 +121,7 @@ class AuthorManagementServiceTest {
         authorManagementService.updateAuthor(request, authorId);
 
         //then
-        Author findAuthor = authorManagementService.findAuthorById(authorId, "test");
+        Author findAuthor = authorManagementService.findAuthorById(authorId);
         assertThat(findAuthor.getName()).isEqualTo("updateTest");
         assertThat(findAuthor.getAuthorOption()).isEqualTo(AuthorOption.TRANSLATOR);
         assertThat(findAuthor.getNationality()).isEqualTo("미국");

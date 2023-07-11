@@ -63,15 +63,15 @@ public class AuthorManagementService {
     }
 
     public void updateAuthor(AuthorUpdateRequest request, Long authorId) {
-        Author author = findAuthorById(authorId, "아이디로 작가를 찾을 수 없습니다.");
+        Author author = findAuthorById(authorId);
 
         validateForm(request.getName(), request.getAuthorOption(), request.getNationality(), request.getDescription(), request.getBirthYear(), request.getGender());
 
         author.updateAuthor(request);
     }
 
-    public Author findAuthorById(Long authorId, String exceptionMessage) {
+    public Author findAuthorById(Long authorId) {
         return authorRepository.findById(authorId)
-                .orElseThrow(() -> new AuthorNotfoundException(exceptionMessage));
+                .orElseThrow(() -> new AuthorNotfoundException("아이디로 작가를 찾을 수 없습니다."));
     }
 }
