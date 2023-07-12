@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +17,7 @@ public class BookAuthorListController {
     private final BookAuthorListService bookAuthorListService;
 
     @PostMapping
-    public ResponseEntity<Object> registerBookAuthorList(BookAuthorListRegisterRequest request){
+    public ResponseEntity<Object> register(BookAuthorListRegisterRequest request){
         bookAuthorListService.register(request);
 
         BaseResponse response = new BaseResponse(HttpStatus.CREATED, "등록이 완료되었습니다.", true);
@@ -30,7 +27,8 @@ public class BookAuthorListController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Object> deleteBookAuthorList(Long bookId, Long authorId){
+    public ResponseEntity<Object> delete(@RequestParam Long bookId,
+                                         @RequestParam Long authorId){
         bookAuthorListService.delete(bookId, authorId);
 
         BaseResponse response = new BaseResponse(HttpStatus.OK, "제거가 완료되었습니다.", true);
