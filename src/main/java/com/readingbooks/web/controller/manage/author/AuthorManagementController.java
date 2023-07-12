@@ -18,8 +18,8 @@ public class AuthorManagementController {
     private final AuthorManagementService authorManagementService;
 
     @PostMapping
-    public ResponseEntity<Object> registerAuthor(AuthorRegisterRequest request){
-        authorManagementService.registerAuthor(request);
+    public ResponseEntity<Object> register(AuthorRegisterRequest request){
+        authorManagementService.register(request);
 
         BaseResponse response = new BaseResponse(HttpStatus.CREATED, "등록이 완료되었습니다.", true);
         return ResponseEntity
@@ -28,11 +28,21 @@ public class AuthorManagementController {
     }
 
     @PatchMapping("/{authorId}")
-    public ResponseEntity<Object> updateAuthor(AuthorUpdateRequest request,
+    public ResponseEntity<Object> update(AuthorUpdateRequest request,
                                                @PathVariable Long authorId){
         authorManagementService.updateAuthor(request, authorId);
 
         BaseResponse response = new BaseResponse(HttpStatus.OK, "수정이 완료되었습니다.", true);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @DeleteMapping("/{authorId}")
+    public ResponseEntity<Object> delete(@PathVariable Long authorId){
+        authorManagementService.delete(authorId);
+
+        BaseResponse response = new BaseResponse(HttpStatus.OK, "삭제가 완료되었습니다.", true);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);

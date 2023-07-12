@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface BookAuthorListRepository extends JpaRepository<BookAuthorList, Long> {
 
     Optional<BookAuthorList> findByBookIdAndAuthorId(Long bookId, Long authorId);
+
+    boolean existsByAuthorId(Long authorId);
 }
