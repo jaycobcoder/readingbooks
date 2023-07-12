@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
     boolean existsByCategoryId(Long categoryId);
+
+    boolean existsByBookGroupId(Long bookGroupId);
 }
