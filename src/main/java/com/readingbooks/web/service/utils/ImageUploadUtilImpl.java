@@ -10,11 +10,16 @@ import java.util.UUID;
 @Service
 public class ImageUploadUtilImpl implements ImageUploadUtil{
 
+    /**
+     * 이미지 업로드 메소드
+     * @param file
+     * @return 저장된 이미지 이름 + .확장자명
+     */
     @Override
     public String uploadImage(MultipartFile file) {
-        String fileName = createFileName();
+        String filename = createFileName();
         String fileExtension = extractExtension(file.getOriginalFilename());
-        String filePath = getFilePath(UPLOAD_PATH, fileName, fileExtension);
+        String filePath = getFilePath(UPLOAD_PATH, filename, fileExtension);
 
         File saveFile = new File(filePath);
         try {
@@ -22,14 +27,29 @@ public class ImageUploadUtilImpl implements ImageUploadUtil{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return fileName+"."+fileExtension;
+        return filename+"."+fileExtension;
     }
 
+    /**
+     * 이미지 수정 메소드
+     * @param file
+     * @param existingImageName
+     * @return 저장된 이미지 이름 + .확장자명
+     */
     @Override
     public String updateImage(MultipartFile file, String existingImageName) {
-        deleteImage(existingImageName);
+        String fileExtension = extractExtension(existingImageName);
+        String filename = extractFilename(existingImageName);
+        String filePath = getFilePath(UPLOAD_PATH, filename, fileExtension);
+
+        deleteImage(filePath);
 
         return uploadImage(file);
+    }
+
+    private String extractFilename(String filename) {
+        int index = filename.lastIndexOf(".");
+        return filename.substring(0, index);
     }
 
     @Override
@@ -43,12 +63,12 @@ public class ImageUploadUtilImpl implements ImageUploadUtil{
     }
 
 
-    private String extractExtension(String fileName) {
-        int index = fileName.lastIndexOf(".");
-        return fileName.substring(index + 1);
+    private String extractExtension(String filename) {
+        int index = filename.lastIndexOf(".");
+        return filename.substring(index + 1);
     }
 
-    private String getFilePath(String uploadPath, String fileName, String fileExtension) {
-        return uploadPath + fileName + "." + fileExtension;
+    private String getFilePath(String uploadPath, String filename, String fileExtension) {
+        return uploadPath + filename + "." + fileExtension;
     }
 }
