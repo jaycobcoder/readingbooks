@@ -22,7 +22,7 @@ public class ImageUploadUtilImpl implements ImageUploadUtil{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return fileName;
+        return fileName+"."+fileExtension;
     }
 
     @Override
