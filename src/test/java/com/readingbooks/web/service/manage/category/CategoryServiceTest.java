@@ -91,8 +91,8 @@ class CategoryServiceTest {
         CategoryRegisterRequest categoryRequest = createCategoryRequest("판타지 소설", categoryGroupId);
         Long categoryId = categoryService.register(categoryRequest);
 
-        CategoryUpdateRequest nullRequest = createCategoryUpdateRequest(null, categoryGroupId);
-        CategoryUpdateRequest blankRequest = createCategoryUpdateRequest("", categoryGroupId);
+        CategoryUpdateRequest nullRequest = createCategoryUpdateRequest(null);
+        CategoryUpdateRequest blankRequest = createCategoryUpdateRequest("");
 
         assertThatThrownBy(() -> categoryService.update(nullRequest, categoryId))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -101,26 +101,6 @@ class CategoryServiceTest {
         assertThatThrownBy(() -> categoryService.update(blankRequest, categoryId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("카테고리를 입력하세요.");
-    }
-
-    @Test
-    void whenUpdatingCategoryGroupIdNotFound_thenThrowException(){
-        //카테고리 그룹 생성
-        CategoryGroupRegisterRequest categoryGroupRequest = createCategoryGroupRequest("소설");
-        Long categoryGroupId = categoryGroupService.register(categoryGroupRequest);
-
-        Long notFoundCategoryGroupId = categoryGroupId + 1L;
-
-        //카테고리 생성
-        CategoryRegisterRequest categoryRequest = createCategoryRequest("판타지 소설", categoryGroupId);
-        Long categoryId = categoryService.register(categoryRequest);
-
-
-        CategoryUpdateRequest request = createCategoryUpdateRequest("추리 소설", notFoundCategoryGroupId);
-
-        assertThatThrownBy(() -> categoryService.update(request, categoryId))
-                .isInstanceOf(CategoryNotFoundException.class)
-                .hasMessageContaining("검색되는 카테고리 그룹이 없습니다. 카테고리 그룹 아이디를 다시 확인해주세요.");
     }
 
     @Test
@@ -135,7 +115,7 @@ class CategoryServiceTest {
 
         Long notFoundCategoryId = categoryId + 1L;
 
-        CategoryUpdateRequest request = createCategoryUpdateRequest("추리 소설", categoryGroupId);
+        CategoryUpdateRequest request = createCategoryUpdateRequest("추리 소설");
 
         assertThatThrownBy(() -> categoryService.update(request, notFoundCategoryId))
                 .isInstanceOf(CategoryNotFoundException.class)
@@ -151,7 +131,7 @@ class CategoryServiceTest {
         CategoryRegisterRequest categoryRequest = createCategoryRequest("판타지 소설", categoryGroupId);
         Long categoryId = categoryService.register(categoryRequest);
 
-        CategoryUpdateRequest request = createCategoryUpdateRequest("추리 소설", categoryGroupId);
+        CategoryUpdateRequest request = createCategoryUpdateRequest("추리 소설");
 
         //when
         categoryService.update(request, categoryId);
@@ -161,31 +141,8 @@ class CategoryServiceTest {
         assertThat(category.getName()).isEqualTo("추리 소설");
     }
 
-    @Test
-    void whenCategoryNameAndCategoryGroupUpdated_thenVerifyFields(){
-        //given
-        CategoryGroupRegisterRequest novelRequest = createCategoryGroupRequest("소설");
-        Long novelId = categoryGroupService.register(novelRequest);
-
-        CategoryGroupRegisterRequest economicRequest = createCategoryGroupRequest("경제");
-        Long economicId = categoryGroupService.register(economicRequest);
-
-        CategoryRegisterRequest categoryRequest = createCategoryRequest("판타지 소설", novelId);
-        Long categoryId = categoryService.register(categoryRequest);
-
-        CategoryUpdateRequest request = createCategoryUpdateRequest("경제 일반", economicId);
-
-        //when
-        categoryService.update(request, categoryId);
-        Category category = categoryService.findCategoryById(categoryId);
-
-        //then
-        assertThat(category.getCategoryGroup().getName()).isEqualTo("경제");
-        assertThat(category.getName()).isEqualTo("경제 일반");
-    }
-
-    private static CategoryUpdateRequest createCategoryUpdateRequest(String name, Long categoryGroupId) {
-        return new CategoryUpdateRequest(name, categoryGroupId);
+    private static CategoryUpdateRequest createCategoryUpdateRequest(String name) {
+        return new CategoryUpdateRequest(name);
     }
 
     private static CategoryGroupRegisterRequest createCategoryGroupRequest(String name) {

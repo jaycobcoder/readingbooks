@@ -26,11 +26,21 @@ public class CategoryController {
                 .body(response);
     }
 
-    @PatchMapping("/{categoryGroupId}")
+    @PatchMapping("/{categoryId}")
     public ResponseEntity<Object> update(@PathVariable Long categoryId, CategoryUpdateRequest request){
         categoryService.update(request, categoryId);
 
         BaseResponse response = new BaseResponse(HttpStatus.OK, "수정이 완료되었습니다.", true);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @DeleteMapping("/{categoryId}")
+    public ResponseEntity<Object> delete(@PathVariable Long categoryId){
+        categoryService.delete(categoryId);
+
+        BaseResponse response = new BaseResponse(HttpStatus.OK, "삭제가 완료되었습니다.", true);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);

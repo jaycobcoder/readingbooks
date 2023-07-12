@@ -4,12 +4,15 @@ import com.readingbooks.web.domain.entity.category.Category;
 import com.readingbooks.web.domain.entity.category.CategoryGroup;
 import com.readingbooks.web.exception.category.CategoryNotFoundException;
 import com.readingbooks.web.exception.category.CategoryPresentException;
+import com.readingbooks.web.repository.book.BookRepository;
 import com.readingbooks.web.repository.category.CategoryRepository;
 import com.readingbooks.web.service.manage.categorygroup.CategoryGroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryService {
     private final CategoryGroupService categoryGroupService;
     private final CategoryRepository categoryRepository;
+    private final BookRepository bookRepository;
 
     /**
      * 카테고리 등록 메소드
@@ -77,22 +81,60 @@ public class CategoryService {
      */
     public void update(CategoryUpdateRequest request, Long categoryId){
         validateUpdateForm(request);
+        validateCategoryId(categoryId);
 
         Category category = findCategoryById(categoryId);
 
-        Long categoryGroupId = request.getCategoryGroupId();
-        validateCategoryGroupId(categoryGroupId);
-
-        CategoryGroup categoryGroup = categoryGroupService.findCategoryGroupById(categoryGroupId);
-        category.updateCategory(request, categoryGroup);
+        category.updateCategory(request);
     }
-    
+
+    private void validateCategoryId(Long categoryId) {
+        if(categoryId == null){
+            throw new IllegalArgumentException("카테고리 아이디를 입력하세요.");
+        }
+    }
+
     private void validateUpdateForm(CategoryUpdateRequest request) {
         String name = request.getName();
         validateNameExist(name);
         validateName(name);
+    }
 
-        Long categoryGroupId = request.getCategoryGroupId();
-        validateCategoryGroupId(categoryGroupId);
+    /**
+     * 카테고리 삭제 메소드
+     * @param categoryId
+     * @return isDeleted
+     */
+    public boolean delete(Long categoryId){
+        validateCategoryId(categoryId);
+
+        boolean isCategoryExists = bookRepository.existsByCategoryId(categoryId);
+
+        if(isCategoryExists == true){
+            throw new CategoryPresentException("해당 카테고리를 설정한 도서가 존재합니다. 하위 도서를 모두 삭제한 다음에 카테고리를 삭제해주세요.");
+        }
+
+        Category category = findCategoryById(categoryId);
+        categoryRepository.delete(category);
+        return true;
+    }
+
+    /**
+     * 카테고리 이름으로 검색하여 DTO로 반환하는 메소드
+     * @param name
+     * @return CategorySearchResponse
+     */
+    @Transactional(readOnly = true)
+    public CategorySearchResponse searchByCategoryName(String name) {
+        Optional<Category> categoryGroup = categoryRepository.findByName(name);
+        boolean isEmpty = categoryGroup.isEmpty();
+
+        if(isEmpty){
+            return new CategorySearchResponse(null, null, name, null, false);
+        }
+
+        return categoryGroup
+                .map(c -> new CategorySearchResponse(c.getCategoryGroup().getId(), c.getId(), c.getName(), c.getCategoryGroup().getName(), true))
+                .get();
     }
 }
