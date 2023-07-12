@@ -108,7 +108,8 @@ public class CategoryGroupService {
      * @param name
      * @return CategoryGroupSearchResponse
      */
-    public CategoryGroupSearchResponse searchCategoryName(String name) {
+    @Transactional(readOnly = true)
+    public CategoryGroupSearchResponse searchByCategoryName(String name) {
         Optional<CategoryGroup> categoryGroup = categoryGroupRepository.findByName(name);
 
         boolean isEmpty = categoryGroup.isEmpty();

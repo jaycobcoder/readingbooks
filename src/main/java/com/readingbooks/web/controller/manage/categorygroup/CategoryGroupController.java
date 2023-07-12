@@ -19,7 +19,7 @@ public class CategoryGroupController {
     private final CategoryGroupService categoryGroupService;
 
     @PostMapping
-    public ResponseEntity<Object> registerCategoryGroup(CategoryGroupRegisterRequest request){
+    public ResponseEntity<Object> register(CategoryGroupRegisterRequest request){
         categoryGroupService.register(request);
 
         BaseResponse response = new BaseResponse(HttpStatus.CREATED, "등록이 완료되었습니다.", true);
@@ -30,7 +30,7 @@ public class CategoryGroupController {
 
 
     @PatchMapping("/{categoryGroupId}")
-    public ResponseEntity<Object> updateCategoryGroup(@PathVariable Long categoryGroupId, CategoryGroupUpdateRequest request){
+    public ResponseEntity<Object> update(@PathVariable Long categoryGroupId, CategoryGroupUpdateRequest request){
         categoryGroupService.update(request, categoryGroupId);
 
         BaseResponse response = new BaseResponse(HttpStatus.OK, "수정이 완료되었습니다.", true);
@@ -40,7 +40,7 @@ public class CategoryGroupController {
     }
 
     @DeleteMapping("/{categoryGroupId}")
-    public ResponseEntity<Object> deleteCategoryGroup(@PathVariable Long categoryGroupId){
+    public ResponseEntity<Object> delete(@PathVariable Long categoryGroupId){
         categoryGroupService.delete(categoryGroupId);
 
         BaseResponse response = new BaseResponse(HttpStatus.OK, "삭제가 완료되었습니다.", true);

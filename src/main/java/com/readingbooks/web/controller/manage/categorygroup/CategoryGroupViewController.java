@@ -36,7 +36,7 @@ public class CategoryGroupViewController {
 
     @GetMapping("/result/category-group")
     public String returnSearchResult(@RequestParam String name, Model model){
-        CategoryGroupSearchResponse response = categoryGroupService.searchCategoryName(name);
+        CategoryGroupSearchResponse response = categoryGroupService.searchByCategoryName(name);
 
         if(response.isSearched() == false){
             model.addAttribute("isSearched", false);
