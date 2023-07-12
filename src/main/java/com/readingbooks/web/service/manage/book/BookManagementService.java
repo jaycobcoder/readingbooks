@@ -24,7 +24,13 @@ public class BookManagementService {
     private final ImageUploadUtil imageUploadUtil;
     private final BookGroupManagementService bookGroupManagementService;
 
-    public Long registerBook(BookRegisterRequest request, MultipartFile file) {
+    /**
+     * 도서 등록 메소드
+     * @param request
+     * @param file
+     * @return bookId
+     */
+    public Long register(BookRegisterRequest request, MultipartFile file) {
 
         validateForm(
                 request.getTitle(), request.getIsbn(), request.getPublisher(),
@@ -87,6 +93,11 @@ public class BookManagementService {
         }
     }
 
+    /**
+     * 도서의 이미지 수정 메소드
+     * @param file
+     * @param bookId
+     */
     public void updateBookImage(MultipartFile file, Long bookId) {
         Book book = findBookById(bookId);
         String existingImageName = book.getSavedImageName();
@@ -95,6 +106,11 @@ public class BookManagementService {
         book.updateImage(updatedImageName);
     }
 
+    /**
+     * 도서의 내용 수정 메소드
+     * @param request
+     * @param bookId
+     */
     public void updateBookContent(BookUpdateRequest request, Long bookId) {
         validateForm(
                 request.getTitle(), request.getIsbn(), request.getPublisher(),
