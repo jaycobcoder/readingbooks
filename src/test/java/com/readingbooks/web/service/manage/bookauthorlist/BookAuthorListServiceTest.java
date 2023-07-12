@@ -90,7 +90,7 @@ class BookAuthorListServiceTest {
 
     private Long createAuthor(String name, AuthorOption option) {
         AuthorRegisterRequest authorRequest = createAuthorRegisterRequest(name, option, "테스트", "테스트입니다", "1919", Gender.SECRET);
-        Long authorId = authorManagementService.registerAuthor(authorRequest);
+        Long authorId = authorManagementService.register(authorRequest);
         return authorId;
     }
 

@@ -34,6 +34,8 @@ public class Author extends BaseEntity {
         author.authorOption = request.getAuthorOption();
         author.nationality = request.getNationality();
         author.description = request.getDescription();
+        author.birthYear = request.getBirthYear();
+        author.gender = request.getGender();
         return author;
     }
 
