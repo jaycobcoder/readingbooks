@@ -12,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -23,6 +21,11 @@ public class BookAuthorListService {
     private final AuthorManagementService authorManagementService;
     private final BookManagementService bookManagementService;
 
+    /**
+     * 도서 작가 등록 메소드
+     * @param request
+     * @return bookAuthorListId
+     */
     public Long register(BookAuthorListRegisterRequest request) {
         Long bookId = request.getBookId();
         Long authorId = request.getAuthorId();
@@ -38,8 +41,8 @@ public class BookAuthorListService {
         return bookAuthorListRepository.save(bookAuthorList).getId();
     }
 
-    private static void validateForm(Long bookId, Long authorId, int ordinal) {
-        validateId(bookId, authorId);
+    private void validateForm(Long bookId, Long authorId, int ordinal) {
+        validateIds(bookId, authorId);
 
         if(ordinal == 0){
             throw new IllegalArgumentException("서수를 입력해주세요.");
@@ -47,7 +50,7 @@ public class BookAuthorListService {
 
     }
 
-    private static void validateId(Long bookId, Long authorId) {
+    private void validateIds(Long bookId, Long authorId) {
         if(bookId == null){
             throw new IllegalArgumentException("도서 아이디를 입력해주세요.");
         }
@@ -57,12 +60,18 @@ public class BookAuthorListService {
         }
     }
 
-    public void delete(Long bookId, Long authorId) {
-        validateId(bookId, authorId);
+    /**
+     * 도서 작가 제거 메소드
+     * @param bookId
+     * @param authorId
+     */
+    public boolean delete(Long bookId, Long authorId) {
+        validateIds(bookId, authorId);
 
         BookAuthorList bookAuthorList = findBookAuthorListByBookIdAndAuthorId(bookId, authorId);
 
         bookAuthorListRepository.delete(bookAuthorList);
+        return true;
     }
 
     public BookAuthorList findBookAuthorListByBookIdAndAuthorId(Long bookId, Long authorId) {

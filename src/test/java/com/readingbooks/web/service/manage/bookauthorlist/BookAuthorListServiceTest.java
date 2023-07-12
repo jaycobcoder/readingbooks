@@ -77,6 +77,18 @@ class BookAuthorListServiceTest {
         bookAuthorListService.register(illustratorRequest);
     }
 
+    @Test
+    void whenAuthorDeleted_thenVerifyIsDeleted(){
+        Long bookId = createBook();
+        Long authorId = createAuthor("J.K 롤링", AuthorOption.AUTHOR);
+
+        BookAuthorListRegisterRequest request = new BookAuthorListRegisterRequest(bookId, authorId, 1);
+        bookAuthorListService.register(request);
+        boolean isDeleted = bookAuthorListService.delete(bookId, authorId);
+
+        assertThat(isDeleted).isTrue();
+    }
+
     private static MockMultipartFile getMockMultipartFile() {
         MockMultipartFile file = new MockMultipartFile(
                 "해리포터와 마법사의 돌",
