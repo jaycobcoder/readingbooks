@@ -38,11 +38,7 @@ public class ImageUploadUtilImpl implements ImageUploadUtil{
      */
     @Override
     public String update(MultipartFile file, String existingImageName) {
-        String fileExtension = extractExtension(existingImageName);
-        String filename = extractFilename(existingImageName);
-        String filePath = getFilePath(UPLOAD_PATH, filename, fileExtension);
-
-        delete(filePath);
+        delete(existingImageName);
 
         return upload(file);
     }
@@ -54,7 +50,11 @@ public class ImageUploadUtilImpl implements ImageUploadUtil{
 
     @Override
     public void delete(String savedImageName) {
-        File existFile = new File(savedImageName);
+        String fileExtension = extractExtension(savedImageName);
+        String filename = extractFilename(savedImageName);
+        String filePath = getFilePath(UPLOAD_PATH, filename, fileExtension);
+
+        File existFile = new File(filePath);
         existFile.delete();
     }
 
