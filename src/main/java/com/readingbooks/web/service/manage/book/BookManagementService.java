@@ -141,4 +141,13 @@ public class BookManagementService {
 
         return book.map(b -> new BookUpdateResponse(b)).get();
     }
+
+    @Transactional(readOnly = true)
+    public List<BookManageSearchResponse> searchBook(String title) {
+        List<Book> books = bookRepository.findByTitle(title);
+
+        return books.stream()
+                .map(b -> new BookManageSearchResponse(b.getId(), b.getTitle(), b.getPublisher(), b.getSavedImageName()))
+                .collect(Collectors.toList());
+    }
 }

@@ -45,4 +45,20 @@ public class BookManagementViewController {
         model.addAttribute("selectFlag", "updateBook");
         return "manage/book/book-update";
     }
+
+    @GetMapping("/search/book")
+    public String searchForm(Model model){
+        model.addAttribute("selectFlag", "searchBook");
+        return "manage/book/book-search";
+    }
+
+    @GetMapping("/result/book")
+    public String returnSearchResult(@RequestParam String title, Model model){
+        List<BookManageSearchResponse> responses = bookManagementService.searchBook(title);
+
+        model.addAttribute("responses", responses);
+        model.addAttribute("search", title);
+        model.addAttribute("selectFlag", "searchBook");
+        return "manage/book/book-result";
+    }
 }
