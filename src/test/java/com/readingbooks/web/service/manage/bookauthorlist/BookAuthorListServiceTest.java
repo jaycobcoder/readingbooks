@@ -118,7 +118,7 @@ class BookAuthorListServiceTest {
 
         MockMultipartFile file = getMockMultipartFile();
 
-        return bookManagementService.registerBook(bookRegisterRequest, file);
+        return bookManagementService.register(bookRegisterRequest, file);
     }
 
     private static BookRegisterRequest createBookRegisterRequest(String title, String isbn, String publisher, String publishingDate, int paperPrice, int ebookPrice, int discountRate, Long categoryId, Long bookGroupId) {

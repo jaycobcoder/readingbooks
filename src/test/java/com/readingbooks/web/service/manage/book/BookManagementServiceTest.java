@@ -50,7 +50,7 @@ class BookManagementServiceTest {
         BookRegisterRequest request = createRegisterRequest("해리포터와 마법사의 돌", "123123", "포터모어",
                 "2023.01.01", 0, 9900, 5, categoryId, null);
 
-        Long bookId = bookManagementService.registerBook(request, file);
+        Long bookId = bookManagementService.register(request, file);
 
         Book book = bookManagementService.findBookById(bookId);
         assertThat(book.getTitle()).isEqualTo("해리포터와 마법사의 돌");

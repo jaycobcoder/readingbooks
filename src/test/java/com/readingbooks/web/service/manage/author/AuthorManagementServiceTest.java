@@ -206,7 +206,7 @@ class AuthorManagementServiceTest {
         BookRegisterRequest request = createBookRegisterRequest("해리포터와 마법사의 돌", "123123", "포터모어",
                 "2023.01.01", 0, 9900, 5, categoryId, null);
 
-        return bookManagementService.registerBook(request, file);
+        return bookManagementService.register(request, file);
     }
 
     public Long registerAuthor(){

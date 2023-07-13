@@ -18,11 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class BookManagementController {
     private final BookManagementService bookManagementService;
 
-
     @PostMapping
-    public ResponseEntity<Object> registerBook(BookRegisterRequest request,
+    public ResponseEntity<Object> register(BookRegisterRequest request,
                                                MultipartFile file){
-        bookManagementService.registerBook(request, file);
+        bookManagementService.register(request, file);
 
         BaseResponse response = new BaseResponse(HttpStatus.CREATED, "등록이 완료되었습니다.", true);
         return ResponseEntity
@@ -31,7 +30,7 @@ public class BookManagementController {
     }
 
     @PatchMapping("/image/{bookId}")
-    public ResponseEntity<Object> updateImage(MultipartFile file, @PathVariable Long bookId){
+    public ResponseEntity<Object> update(MultipartFile file, @PathVariable Long bookId){
         bookManagementService.updateBookImage(file, bookId);
 
         BaseResponse response = new BaseResponse(HttpStatus.OK, "수정이 완료되었습니다.", true);
@@ -41,7 +40,7 @@ public class BookManagementController {
     }
 
     @PatchMapping("/title/{bookId}")
-    public ResponseEntity<Object> updateImage(BookUpdateRequest request, @PathVariable Long bookId){
+    public ResponseEntity<Object> update(BookUpdateRequest request, @PathVariable Long bookId){
         bookManagementService.updateBookContent(request, bookId);
 
         BaseResponse response = new BaseResponse(HttpStatus.OK, "수정이 완료되었습니다.", true);
@@ -49,6 +48,4 @@ public class BookManagementController {
                 .status(HttpStatus.OK)
                 .body(response);
     }
-
-
 }
