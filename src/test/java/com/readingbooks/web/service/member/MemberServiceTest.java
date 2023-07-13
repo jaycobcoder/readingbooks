@@ -98,7 +98,7 @@ class MemberServiceTest {
 
         //when
         Long memberId = memberService.register(request);
-        Member findMember = memberService.findId(memberId, "test");
+        Member findMember = memberService.findMember(memberId);
 
         //then
         assertThat(findMember.getEmail()).isEqualTo("success@example.com");

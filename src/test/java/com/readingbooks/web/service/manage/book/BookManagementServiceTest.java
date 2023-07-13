@@ -52,7 +52,7 @@ class BookManagementServiceTest {
 
         Long bookId = bookManagementService.register(request, file);
 
-        Book book = bookManagementService.findBookById(bookId);
+        Book book = bookManagementService.findBook(bookId);
         assertThat(book.getTitle()).isEqualTo("해리포터와 마법사의 돌");
         assertThat(book.getIsbn()).isEqualTo("123123");
         assertThat(book.getPublisher()).isEqualTo("포터모어");

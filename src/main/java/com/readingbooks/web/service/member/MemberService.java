@@ -24,7 +24,7 @@ public class MemberService {
     @Transactional
     public Long register(RegisterRequest request){
         String email = request.getEmail();
-        validatePresentEmail(email);
+        validateIsExistsEmail(email);
         validateForm(request);
 
         Member member = Member.createMember(request);
@@ -36,7 +36,7 @@ public class MemberService {
         return savedMember.getId();
     }
 
-    public void validatePresentEmail(String email) {
+    public void validateIsExistsEmail(String email) {
         Optional<Member> findMember = memberRepository.findByEmail(email);
 
         if(findMember.isPresent()){
@@ -44,7 +44,7 @@ public class MemberService {
         }
     }
 
-    private static void validateForm(RegisterRequest request) {
+    private void validateForm(RegisterRequest request) {
         String email = request.getEmail();
         if(email == null){
             throw new IllegalArgumentException("이메일을 올바르게 입력해주세요.");
@@ -88,13 +88,13 @@ public class MemberService {
         }
     }
 
-    public Member findEmail(String email, String exceptionMessage) {
+    public Member findMember(String email) {
         return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberNotFoundException(exceptionMessage));
+                .orElseThrow(() -> new MemberNotFoundException("해당 이메일로 회원을 찾을 수 없습니다. 이메일을 다시 확인해주세요."));
     }
 
-    public Member findId(Long memberId, String exceptionMessage){
+    public Member findMember(Long memberId){
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotFoundException(exceptionMessage));
+                .orElseThrow(() -> new MemberNotFoundException("해당 아이디로 회원을 찾을 수 없습니다. 회원 아이디를 다시 확인해주세요."));
     }
 }

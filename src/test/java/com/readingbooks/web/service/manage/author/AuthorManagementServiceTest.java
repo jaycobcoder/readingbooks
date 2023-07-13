@@ -106,7 +106,7 @@ class AuthorManagementServiceTest {
         AuthorRegisterRequest request = createAuthorRegisterRequest("test", AuthorOption.AUTHOR, "대한민국", "test", "1999", Gender.MEN);
         Long authorId = authorManagementService.register(request);
 
-        Author findAuthor = authorManagementService.findAuthorById(authorId);
+        Author findAuthor = authorManagementService.findAuthor(authorId);
 
         assertThat(findAuthor.getName()).isEqualTo("test");
         assertThat(findAuthor.getAuthorOption()).isEqualTo(AuthorOption.AUTHOR);
@@ -122,7 +122,7 @@ class AuthorManagementServiceTest {
 
         AuthorUpdateRequest request = createUpdateRequest(null, null, null, null, null, null);
 
-        assertThatThrownBy(() -> authorManagementService.updateAuthor(request, authorId))
+        assertThatThrownBy(() -> authorManagementService.update(request, authorId))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -132,7 +132,7 @@ class AuthorManagementServiceTest {
 
         AuthorUpdateRequest request = createUpdateRequest("test", AuthorOption.AUTHOR, "대한민국", "test" , "1999", Gender.MEN);
 
-        assertThatThrownBy(() -> authorManagementService.updateAuthor(request, authorId + 1L))
+        assertThatThrownBy(() -> authorManagementService.update(request, authorId + 1L))
                 .isInstanceOf(AuthorNotfoundException.class)
                 .hasMessageContaining("아이디로 작가를 찾을 수 없습니다.");
     }
@@ -144,10 +144,10 @@ class AuthorManagementServiceTest {
         AuthorUpdateRequest request = createUpdateRequest("updateTest", AuthorOption.TRANSLATOR, "미국", "hello", "1999", Gender.MEN);
 
         //when
-        authorManagementService.updateAuthor(request, authorId);
+        authorManagementService.update(request, authorId);
 
         //then
-        Author findAuthor = authorManagementService.findAuthorById(authorId);
+        Author findAuthor = authorManagementService.findAuthor(authorId);
         assertThat(findAuthor.getName()).isEqualTo("updateTest");
         assertThat(findAuthor.getAuthorOption()).isEqualTo(AuthorOption.TRANSLATOR);
         assertThat(findAuthor.getNationality()).isEqualTo("미국");
@@ -163,7 +163,7 @@ class AuthorManagementServiceTest {
         authorManagementService.register(secondRequest);
 
         //when
-        List<AuthorSearchResponse> authors = authorManagementService.searchByAuthorName("test");
+        List<AuthorSearchResponse> authors = authorManagementService.searchAuthor("test");
 
         //given
         assertThat(authors.size()).isEqualTo(2);

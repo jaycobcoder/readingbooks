@@ -25,21 +25,21 @@ public class BookContentService {
 
         validateForm(bookId, content);
 
-        Book book = bookManagementService.findBookById(bookId);
+        Book book = bookManagementService.findBook(bookId);
         BookContent bookContent = BookContent.createBookContent(book, content);
 
         return bookContentRepository.save(bookContent).getId();
     }
 
-    private static void validateForm(Long bookId, String content) {
-        validateId(bookId);
+    private void validateForm(Long bookId, String content) {
+        validateBookContentId(bookId);
 
         if(content == null || content.trim().equals("")){
             throw new IllegalArgumentException("도서의 내용을 입력해주세요.");
         }
     }
 
-    private static void validateId(Long bookId) {
+    private void validateBookContentId(Long bookId) {
         if(bookId == null){
             throw new IllegalArgumentException("도서 아이디를 입력해주세요.");
         }
@@ -48,18 +48,18 @@ public class BookContentService {
     public void update(Long bookId, String content) {
         validateForm(bookId, content);
 
-        BookContent bookContent = findBookContentByBookId(bookId);
+        BookContent bookContent = findBookContent(bookId);
         bookContent.updateContent(content);
     }
 
-    public BookContent findBookContentByBookId(Long bookId) {
+    public BookContent findBookContent(Long bookId) {
         return bookContentRepository.findByBookId(bookId)
                 .orElseThrow(() -> new BookNotFoundException("검색되는 도서가 없습니다. 도서 아이디를 다시 확인해주세요."));
     }
 
     public void delete(Long bookId) {
-        validateId(bookId);
-        BookContent bookContent = findBookContentByBookId(bookId);
+        validateBookContentId(bookId);
+        BookContent bookContent = findBookContent(bookId);
         bookContentRepository.delete(bookContent);
     }
 }

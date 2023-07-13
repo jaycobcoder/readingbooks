@@ -21,7 +21,7 @@ public class BookGroupManagementController {
     @PostMapping
     public ResponseEntity<Object> registerCategoryGroup(BookGroupRegisterRequest request,
                                                         MultipartFile file){
-        bookGroupManagementService.registerBookGroup(request, file);
+        bookGroupManagementService.register(request, file);
 
         BaseResponse response = new BaseResponse(HttpStatus.CREATED, "등록이 완료되었습니다.", true);
         return ResponseEntity
@@ -31,7 +31,7 @@ public class BookGroupManagementController {
 
     @PatchMapping("/image/{bookGroupId}")
     public ResponseEntity<Object> updateImage(MultipartFile file, @PathVariable Long bookGroupId){
-        bookGroupManagementService.updateBookGroupImage(file, bookGroupId);
+        bookGroupManagementService.update(file, bookGroupId);
 
         BaseResponse response = new BaseResponse(HttpStatus.OK, "수정이 완료되었습니다.", true);
         return ResponseEntity
@@ -41,7 +41,7 @@ public class BookGroupManagementController {
 
     @PatchMapping("/title/{bookGroupId}")
     public ResponseEntity<Object> updateTitle(@RequestParam String title, @PathVariable Long bookGroupId){
-        bookGroupManagementService.updateBookGroupTitle(title, bookGroupId);
+        bookGroupManagementService.update(title, bookGroupId);
 
         BaseResponse response = new BaseResponse(HttpStatus.OK, "수정이 완료되었습니다.", true);
         return ResponseEntity

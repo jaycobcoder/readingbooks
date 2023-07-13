@@ -38,7 +38,7 @@ public class BookGroupManagementViewController {
 
     @GetMapping("/result/book-group")
     public String returnSearchResult(@RequestParam String title, Model model){
-        List<BookGroupSearchResponse> responses = bookGroupManagementService.searchByBookGroupTitle(title);
+        List<BookGroupSearchResponse> responses = bookGroupManagementService.searchBookGroup(title);
 
         model.addAttribute("responses", responses);
         model.addAttribute("search", title);

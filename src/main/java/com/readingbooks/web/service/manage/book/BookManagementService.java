@@ -38,7 +38,7 @@ public class BookManagementService {
                 request.getBookGroupId()
         );
 
-        String savedImageName = imageUploadUtil.uploadImage(file);
+        String savedImageName = imageUploadUtil.upload(file);
 
         Category category = getCategory(request.getCategoryId());
         BookGroup bookGroup = getBookGroup(request.getBookGroupId());
@@ -47,20 +47,20 @@ public class BookManagementService {
         return bookRepository.save(book).getId();
     }
 
-    public Book findBookById(Long bookId){
+    public Book findBook(Long bookId){
         return bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException("검색되는 도서가 없습니다. 도서 아이디를 다시 확인해주세요."));
     }
 
     private Category getCategory(Long categoryId) {
-        Category category = categoryService.findCategoryById(categoryId);
+        Category category = categoryService.findCategory(categoryId);
         return category;
     }
 
     private BookGroup getBookGroup(Long bookGroupId) {
         BookGroup bookGroup = null;
         if(bookGroupId != null){
-            bookGroup = bookGroupManagementService.findBookGroupById(bookGroupId);
+            bookGroup = bookGroupManagementService.findBookGroup(bookGroupId);
         }
         return bookGroup;
     }
@@ -98,10 +98,10 @@ public class BookManagementService {
      * @param file
      * @param bookId
      */
-    public void updateBookImage(MultipartFile file, Long bookId) {
-        Book book = findBookById(bookId);
+    public void update(MultipartFile file, Long bookId) {
+        Book book = findBook(bookId);
         String existingImageName = book.getSavedImageName();
-        String updatedImageName = imageUploadUtil.updateImage(file, existingImageName);
+        String updatedImageName = imageUploadUtil.update(file, existingImageName);
 
         book.updateImage(updatedImageName);
     }
@@ -111,14 +111,14 @@ public class BookManagementService {
      * @param request
      * @param bookId
      */
-    public void updateBookContent(BookUpdateRequest request, Long bookId) {
+    public void update(BookUpdateRequest request, Long bookId) {
         validateForm(
                 request.getTitle(), request.getIsbn(), request.getPublisher(),
                 request.getPublishingDate(), request.getEbookPrice(), request.getCategoryId(),
                 request.getBookGroupId()
         );
 
-        Book book = findBookById(bookId);
+        Book book = findBook(bookId);
 
         Category category = getCategory(request.getCategoryId());
         BookGroup bookGroup = getBookGroup(request.getBookGroupId());

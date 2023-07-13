@@ -36,13 +36,13 @@ public class CategoryService {
 
         validateRegisterForm(request);
 
-        CategoryGroup categoryGroup = categoryGroupService.findCategoryGroupById(categoryGroupId);
+        CategoryGroup categoryGroup = categoryGroupService.findCategoryGroup(categoryGroupId);
 
         Category category = Category.createCategory(name, categoryGroup);
         return categoryRepository.save(category).getId();
     }
 
-    public Category findCategoryById(Long categoryId) {
+    public Category findCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryNotFoundException("검색되는 카테고리가 없습니다. 카테고리 아이디를 다시 확인해주세요."));
         return category;
@@ -50,14 +50,14 @@ public class CategoryService {
 
     private void validateRegisterForm(CategoryRegisterRequest request) {
         String name = request.getName();
-        validateNameExist(name);
+        validateIsExistsName(name);
         validateName(name);
 
         Long categoryGroupId = request.getCategoryGroupId();
         validateCategoryGroupId(categoryGroupId);
     }
 
-    private void validateNameExist(String name) {
+    private void validateIsExistsName(String name) {
         boolean isExist = categoryRepository.existsByName(name);
         if(isExist == true){
             throw new CategoryPresentException(String.format("이미 입력하신 '%s'이란 카테고리가 존재합니다", name));
@@ -85,7 +85,7 @@ public class CategoryService {
         validateUpdateForm(request);
         validateCategoryId(categoryId);
 
-        Category category = findCategoryById(categoryId);
+        Category category = findCategory(categoryId);
 
         category.updateCategory(request);
     }
@@ -98,7 +98,7 @@ public class CategoryService {
 
     private void validateUpdateForm(CategoryUpdateRequest request) {
         String name = request.getName();
-        validateNameExist(name);
+        validateIsExistsName(name);
         validateName(name);
     }
 
@@ -116,7 +116,7 @@ public class CategoryService {
             throw new CategoryPresentException("해당 카테고리를 설정한 도서가 존재합니다. 하위 도서를 모두 삭제한 다음에 카테고리를 삭제해주세요.");
         }
 
-        Category category = findCategoryById(categoryId);
+        Category category = findCategory(categoryId);
         categoryRepository.delete(category);
         return true;
     }
@@ -127,7 +127,7 @@ public class CategoryService {
      * @return CategorySearchResponse
      */
     @Transactional(readOnly = true)
-    public CategorySearchResponse searchByCategoryName(String name) {
+    public CategorySearchResponse searchCategory(String name) {
         Optional<Category> categoryGroup = categoryRepository.findByName(name);
         boolean isEmpty = categoryGroup.isEmpty();
 

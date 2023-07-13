@@ -1,15 +1,12 @@
 package com.readingbooks.web.service.manage.author;
 
 import com.readingbooks.web.domain.entity.author.Author;
-import com.readingbooks.web.domain.entity.category.Category;
 import com.readingbooks.web.domain.enums.AuthorOption;
 import com.readingbooks.web.domain.enums.Gender;
 import com.readingbooks.web.exception.author.AuthorNotfoundException;
 import com.readingbooks.web.exception.book.BookPresentException;
-import com.readingbooks.web.exception.category.CategoryPresentException;
 import com.readingbooks.web.repository.admin.author.AuthorRepository;
 import com.readingbooks.web.repository.bookauthorlist.BookAuthorListRepository;
-import com.readingbooks.web.service.manage.bookauthorlist.BookAuthorListService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -81,19 +78,19 @@ public class AuthorManagementService {
      * @param request
      * @param authorId
      */
-    public void updateAuthor(AuthorUpdateRequest request, Long authorId) {
+    public void update(AuthorUpdateRequest request, Long authorId) {
         validateAuthorId(authorId);
 
-        Author author = findAuthorById(authorId);
+        Author author = findAuthor(authorId);
 
         validateForm(request.getName(), request.getAuthorOption(), request.getNationality(), request.getDescription(), request.getBirthYear(), request.getGender());
 
         author.updateAuthor(request);
     }
 
-    public Author findAuthorById(Long authorId) {
+    public Author findAuthor(Long authorId) {
         return authorRepository.findById(authorId)
-                .orElseThrow(() -> new AuthorNotfoundException("아이디로 작가를 찾을 수 없습니다."));
+                .orElseThrow(() -> new AuthorNotfoundException("해당 아이디로 작가를 찾을 수 없습니다."));
     }
 
     /**
@@ -102,7 +99,7 @@ public class AuthorManagementService {
      * @return List<AuthorSearchResponse> (DTO List)
      */
     @Transactional(readOnly = true)
-    public List<AuthorSearchResponse> searchByAuthorName(String name) {
+    public List<AuthorSearchResponse> searchAuthor(String name) {
         List<Author> authors = authorRepository.findAllByName(name);
 
         return authors.stream()
@@ -124,7 +121,7 @@ public class AuthorManagementService {
             throw new BookPresentException("해당 인물에 도서가 등록되었습니다. 하위 도서를 모두 삭제한 다음에 인물을 삭제해주세요.");
         }
 
-        Author author = findAuthorById(authorId);
+        Author author = findAuthor(authorId);
         authorRepository.delete(author);
         return true;
     }

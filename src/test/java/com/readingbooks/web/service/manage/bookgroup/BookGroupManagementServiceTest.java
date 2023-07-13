@@ -40,13 +40,13 @@ class BookGroupManagementServiceTest {
 
         BookGroupRegisterRequest nullRequest = new BookGroupRegisterRequest(null);
 
-        assertThatThrownBy(() -> bookGroupManagementService.registerBookGroup(nullRequest, file))
+        assertThatThrownBy(() -> bookGroupManagementService.register(nullRequest, file))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("도서 그룹명을 입력해주세요.");
 
         BookGroupRegisterRequest blankRequest = new BookGroupRegisterRequest("");
 
-        assertThatThrownBy(() -> bookGroupManagementService.registerBookGroup(blankRequest, file))
+        assertThatThrownBy(() -> bookGroupManagementService.register(blankRequest, file))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("도서 그룹명을 입력해주세요.");
     }
@@ -56,13 +56,13 @@ class BookGroupManagementServiceTest {
         MockMultipartFile file = getMockMultipartFile();
         BookGroupRegisterRequest request = new BookGroupRegisterRequest("홍길동전");
 
-        Long bookGroupId = bookGroupManagementService.registerBookGroup(request, file);
+        Long bookGroupId = bookGroupManagementService.register(request, file);
 
-        BookGroup bookGroup = bookGroupManagementService.findBookGroupById(bookGroupId);
+        BookGroup bookGroup = bookGroupManagementService.findBookGroup(bookGroupId);
 
         assertThat(bookGroup.getId()).isEqualTo(bookGroupId);
         assertThat(bookGroup.getTitle()).isEqualTo("홍길동전");
-        verify(imageUploadUtil).uploadImage(file);
+        verify(imageUploadUtil).upload(file);
     }
 
     @Test
@@ -70,11 +70,11 @@ class BookGroupManagementServiceTest {
         MockMultipartFile file = getMockMultipartFile();
         BookGroupRegisterRequest request = new BookGroupRegisterRequest("홍길동전");
 
-        Long bookGroupId = bookGroupManagementService.registerBookGroup(request, file);
+        Long bookGroupId = bookGroupManagementService.register(request, file);
 
-        bookGroupManagementService.updateBookGroupTitle("어린왕자", bookGroupId);
+        bookGroupManagementService.update("어린왕자", bookGroupId);
 
-        BookGroup bookGroup = bookGroupManagementService.findBookGroupById(bookGroupId);
+        BookGroup bookGroup = bookGroupManagementService.findBookGroup(bookGroupId);
         assertThat(bookGroup.getTitle()).isEqualTo("어린왕자");
     }
 
@@ -82,9 +82,9 @@ class BookGroupManagementServiceTest {
     void whenBookGroupSearched_thenVerifyFields(){
         MockMultipartFile file = getMockMultipartFile();
         BookGroupRegisterRequest request = new BookGroupRegisterRequest("홍길동전");
-        bookGroupManagementService.registerBookGroup(request, file);
+        bookGroupManagementService.register(request, file);
 
-        List<BookGroupSearchResponse> responses = bookGroupManagementService.searchByBookGroupTitle("홍길동전");
+        List<BookGroupSearchResponse> responses = bookGroupManagementService.searchBookGroup("홍길동전");
 
         assertThat(responses.size()).isEqualTo(1);
     }
@@ -93,7 +93,7 @@ class BookGroupManagementServiceTest {
     void whenBookGroupDeleted_thenVerifyIsDeleted(){
         MockMultipartFile file = getMockMultipartFile();
         BookGroupRegisterRequest request = new BookGroupRegisterRequest("홍길동전");
-        Long bookGroupId = bookGroupManagementService.registerBookGroup(request, file);
+        Long bookGroupId = bookGroupManagementService.register(request, file);
 
         boolean isDeleted = bookGroupManagementService.delete(bookGroupId);
 

@@ -1,11 +1,9 @@
 package com.readingbooks.web.service.manage.category;
 
 import com.readingbooks.web.domain.entity.category.Category;
-import com.readingbooks.web.domain.entity.category.CategoryGroup;
 import com.readingbooks.web.exception.category.CategoryNotFoundException;
 import com.readingbooks.web.service.manage.categorygroup.CategoryGroupRegisterRequest;
 import com.readingbooks.web.service.manage.categorygroup.CategoryGroupService;
-import com.readingbooks.web.service.manage.categorygroup.CategoryGroupUpdateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -72,7 +70,7 @@ class CategoryServiceTest {
 
         //when
         Long categoryId = categoryService.register(categoryRequest);
-        Category category = categoryService.findCategoryById(categoryId);
+        Category category = categoryService.findCategory(categoryId);
 
         //then
         assertThat(category.getId()).isEqualTo(categoryId);
@@ -135,7 +133,7 @@ class CategoryServiceTest {
 
         //when
         categoryService.update(request, categoryId);
-        Category category = categoryService.findCategoryById(categoryId);
+        Category category = categoryService.findCategory(categoryId);
 
         //then
         assertThat(category.getName()).isEqualTo("추리 소설");

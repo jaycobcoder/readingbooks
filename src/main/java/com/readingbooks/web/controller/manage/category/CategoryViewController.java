@@ -40,7 +40,7 @@ public class CategoryViewController {
 
     @GetMapping("/result/category")
     public String resultForm(@RequestParam String name, Model model){
-        CategorySearchResponse response = categoryService.searchByCategoryName(name);
+        CategorySearchResponse response = categoryService.searchCategory(name);
 
         if(response.isSearched() == false){
             model.addAttribute("isSearched", false);

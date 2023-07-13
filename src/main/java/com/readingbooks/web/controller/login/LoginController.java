@@ -28,7 +28,7 @@ public class LoginController {
 
     @PostMapping("/register/validate/email")
     public ResponseEntity<Object> validateEmail(@RequestParam String email){
-        memberService.validatePresentEmail(email);
+        memberService.validateIsExistsEmail(email);
 
         BaseResponse response = new BaseResponse(HttpStatus.OK, "사용 가능한 이메일입니다.", true);
         return ResponseEntity

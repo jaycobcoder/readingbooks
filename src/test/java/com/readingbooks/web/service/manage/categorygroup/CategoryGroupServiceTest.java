@@ -45,7 +45,7 @@ class CategoryGroupServiceTest {
 
         //when
         Long categoryGroupId = categoryGroupService.register(request);
-        CategoryGroup categoryGroup = categoryGroupService.findCategoryGroupById(categoryGroupId);
+        CategoryGroup categoryGroup = categoryGroupService.findCategoryGroup(categoryGroupId);
 
         //then
         assertThat(categoryGroup.getId()).isEqualTo(categoryGroupId);
@@ -93,7 +93,7 @@ class CategoryGroupServiceTest {
         categoryGroupService.update(request, categoryGroupId);
 
         //then
-        CategoryGroup categoryGroup = categoryGroupService.findCategoryGroupById(categoryGroupId);
+        CategoryGroup categoryGroup = categoryGroupService.findCategoryGroup(categoryGroupId);
         assertThat(categoryGroup.getName()).isEqualTo("경제");
     }
 

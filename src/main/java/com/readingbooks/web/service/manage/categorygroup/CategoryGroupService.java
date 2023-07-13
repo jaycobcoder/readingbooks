@@ -31,7 +31,7 @@ public class CategoryGroupService {
         return categoryGroupRepository.save(categoryGroup).getId();
     }
 
-    public CategoryGroup findCategoryGroupById(Long categoryGroupId) {
+    public CategoryGroup findCategoryGroup(Long categoryGroupId) {
         CategoryGroup categoryGroup = categoryGroupRepository.findById(categoryGroupId)
                 .orElseThrow(() -> new CategoryNotFoundException("검색되는 카테고리 그룹이 없습니다. 카테고리 그룹 아이디를 다시 확인해주세요."));
         return categoryGroup;
@@ -40,11 +40,11 @@ public class CategoryGroupService {
     private void validateRegisterForm(CategoryGroupRegisterRequest request) {
         String name = request.getName();
 
-        validateNameExist(name);
+        validateIsExistsName(name);
         validateName(name);
     }
 
-    private void validateNameExist(String name) {
+    private void validateIsExistsName(String name) {
         boolean isExist = categoryGroupRepository.existsByName(name);
         if(isExist == true){
             throw new CategoryPresentException(String.format("이미 입력하신 '%s'이란 카테고리 그룹명이 존재합니다", name));
@@ -65,13 +65,13 @@ public class CategoryGroupService {
     public void update(CategoryGroupUpdateRequest request, Long categoryGroupId) {
         validateUpdateForm(request, categoryGroupId);
 
-        CategoryGroup categoryGroup = findCategoryGroupById(categoryGroupId);
+        CategoryGroup categoryGroup = findCategoryGroup(categoryGroupId);
         categoryGroup.updateCategoryGroup(request);
     }
 
     private void validateUpdateForm(CategoryGroupUpdateRequest request, Long categoryGroupId) {
         String name = request.getName();
-        validateNameExist(name);
+        validateIsExistsName(name);
         validateName(name);
 
         validateCategoryGroupId(categoryGroupId);
@@ -97,7 +97,7 @@ public class CategoryGroupService {
             throw new CategoryPresentException("해당 카테고리 그룹 아래 하위 카테고리들이 존재합니다. 하위 카테고리를 모두 삭제한 다음에 카테고리 그룹을 삭제해주세요.");
         }
 
-        CategoryGroup categoryGroup = findCategoryGroupById(categoryGroupId);
+        CategoryGroup categoryGroup = findCategoryGroup(categoryGroupId);
         categoryGroupRepository.delete(categoryGroup);
 
         return true;

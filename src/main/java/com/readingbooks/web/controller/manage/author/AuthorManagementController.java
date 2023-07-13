@@ -30,7 +30,7 @@ public class AuthorManagementController {
     @PatchMapping("/{authorId}")
     public ResponseEntity<Object> update(AuthorUpdateRequest request,
                                                @PathVariable Long authorId){
-        authorManagementService.updateAuthor(request, authorId);
+        authorManagementService.update(request, authorId);
 
         BaseResponse response = new BaseResponse(HttpStatus.OK, "수정이 완료되었습니다.", true);
         return ResponseEntity

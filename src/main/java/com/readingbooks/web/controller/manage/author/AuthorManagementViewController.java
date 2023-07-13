@@ -2,7 +2,6 @@ package com.readingbooks.web.controller.manage.author;
 
 import com.readingbooks.web.service.manage.author.AuthorManagementService;
 import com.readingbooks.web.service.manage.author.AuthorSearchResponse;
-import com.readingbooks.web.service.manage.categorygroup.CategoryGroupSearchResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -39,7 +38,7 @@ public class AuthorManagementViewController {
 
     @GetMapping("/result/author")
     public String returnSearchResult(@RequestParam String name, Model model){
-        List<AuthorSearchResponse> response = authorManagementService.searchByAuthorName(name);
+        List<AuthorSearchResponse> response = authorManagementService.searchAuthor(name);
 
         model.addAttribute("responses", response);
         model.addAttribute("search", name);

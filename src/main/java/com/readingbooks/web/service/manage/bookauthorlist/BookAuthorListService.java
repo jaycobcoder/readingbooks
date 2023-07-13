@@ -33,8 +33,8 @@ public class BookAuthorListService {
 
         validateForm(bookId, authorId, ordinal);
 
-        Book book = bookManagementService.findBookById(bookId);
-        Author author = authorManagementService.findAuthorById(authorId);
+        Book book = bookManagementService.findBook(bookId);
+        Author author = authorManagementService.findAuthor(authorId);
 
         BookAuthorList bookAuthorList = BookAuthorList.createBookAuthorList(book, author, ordinal);
 
@@ -42,7 +42,7 @@ public class BookAuthorListService {
     }
 
     private void validateForm(Long bookId, Long authorId, int ordinal) {
-        validateIds(bookId, authorId);
+        validateBookAuthorListId(bookId, authorId);
 
         if(ordinal == 0){
             throw new IllegalArgumentException("서수를 입력해주세요.");
@@ -50,7 +50,7 @@ public class BookAuthorListService {
 
     }
 
-    private void validateIds(Long bookId, Long authorId) {
+    private void validateBookAuthorListId(Long bookId, Long authorId) {
         if(bookId == null){
             throw new IllegalArgumentException("도서 아이디를 입력해주세요.");
         }
@@ -66,7 +66,7 @@ public class BookAuthorListService {
      * @param authorId
      */
     public boolean delete(Long bookId, Long authorId) {
-        validateIds(bookId, authorId);
+        validateBookAuthorListId(bookId, authorId);
 
         BookAuthorList bookAuthorList = findBookAuthorListByBookIdAndAuthorId(bookId, authorId);
 

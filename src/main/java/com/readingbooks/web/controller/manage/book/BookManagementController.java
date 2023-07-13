@@ -31,7 +31,7 @@ public class BookManagementController {
 
     @PatchMapping("/image/{bookId}")
     public ResponseEntity<Object> update(MultipartFile file, @PathVariable Long bookId){
-        bookManagementService.updateBookImage(file, bookId);
+        bookManagementService.update(file, bookId);
 
         BaseResponse response = new BaseResponse(HttpStatus.OK, "수정이 완료되었습니다.", true);
         return ResponseEntity
@@ -41,7 +41,7 @@ public class BookManagementController {
 
     @PatchMapping("/title/{bookId}")
     public ResponseEntity<Object> update(BookUpdateRequest request, @PathVariable Long bookId){
-        bookManagementService.updateBookContent(request, bookId);
+        bookManagementService.update(request, bookId);
 
         BaseResponse response = new BaseResponse(HttpStatus.OK, "수정이 완료되었습니다.", true);
         return ResponseEntity

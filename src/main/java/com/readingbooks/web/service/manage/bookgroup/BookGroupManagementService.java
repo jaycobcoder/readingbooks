@@ -1,7 +1,6 @@
 package com.readingbooks.web.service.manage.bookgroup;
 
 import com.readingbooks.web.domain.entity.book.BookGroup;
-import com.readingbooks.web.domain.entity.category.Category;
 import com.readingbooks.web.exception.bookgroup.BookGroupNotFoundException;
 import com.readingbooks.web.exception.category.CategoryPresentException;
 import com.readingbooks.web.repository.book.BookRepository;
@@ -32,11 +31,11 @@ public class BookGroupManagementService {
      * @param file
      * @return BookGroupId
      */
-    public Long registerBookGroup(BookGroupRegisterRequest request, MultipartFile file) {
+    public Long register(BookGroupRegisterRequest request, MultipartFile file) {
         String title = request.getTitle();
         validateTitle(title);
 
-        String savedImageName = imageUploadUtil.uploadImage(file);
+        String savedImageName = imageUploadUtil.upload(file);
 
         BookGroup bookGroup = BookGroup.createBookGroup(request, savedImageName);
         return bookGroupRepository.save(bookGroup).getId();
@@ -49,7 +48,7 @@ public class BookGroupManagementService {
     }
 
     @Transactional(readOnly = true)
-    public BookGroup findBookGroupById(Long bookGroupId){
+    public BookGroup findBookGroup(Long bookGroupId){
         return bookGroupRepository.findById(bookGroupId)
                 .orElseThrow(() -> new BookGroupNotFoundException("검색되는 도서 그룹이 없습니다. 도서 그룹 아이디를 다시 확인해주세요."));
     }
@@ -59,17 +58,17 @@ public class BookGroupManagementService {
      * @param file
      * @param bookGroupId
      */
-    public void updateBookGroupImage(MultipartFile file, Long bookGroupId) {
-        validateId(bookGroupId);
+    public void update(MultipartFile file, Long bookGroupId) {
+        validateBookGroupId(bookGroupId);
 
-        BookGroup bookGroup = findBookGroupById(bookGroupId);
+        BookGroup bookGroup = findBookGroup(bookGroupId);
         String existingImageName = bookGroup.getSavedImageName();
 
-        String updatedImageName = imageUploadUtil.updateImage(file, existingImageName);
+        String updatedImageName = imageUploadUtil.update(file, existingImageName);
         bookGroup.updateImage(updatedImageName);
     }
 
-    private void validateId(Long bookGroupId) {
+    private void validateBookGroupId(Long bookGroupId) {
         if(bookGroupId == null){
             throw new IllegalArgumentException("도서 그룹 아이디를 입력해주세요");
         }
@@ -80,11 +79,11 @@ public class BookGroupManagementService {
      * @param updatedTitle
      * @param bookGroupId
      */
-    public void updateBookGroupTitle(String updatedTitle, Long bookGroupId) {
+    public void update(String updatedTitle, Long bookGroupId) {
         validateTitle(updatedTitle);
-        validateId(bookGroupId);
+        validateBookGroupId(bookGroupId);
 
-        BookGroup bookGroup = findBookGroupById(bookGroupId);
+        BookGroup bookGroup = findBookGroup(bookGroupId);
 
         bookGroup.updateTitle(updatedTitle);
     }
@@ -95,7 +94,7 @@ public class BookGroupManagementService {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<BookGroupSearchResponse> searchByBookGroupTitle(String title) {
+    public List<BookGroupSearchResponse> searchBookGroup(String title) {
         List<BookGroup> bookGroups = bookGroupRepository.findByTitle(title);
         return bookGroups.stream()
                 .map(b -> new BookGroupSearchResponse(b.getId(), b.getTitle(), b.getSavedImageName()))
@@ -108,7 +107,7 @@ public class BookGroupManagementService {
      * @return isDeleted
      */
     public boolean delete(Long bookGroupId) {
-        validateId(bookGroupId);
+        validateBookGroupId(bookGroupId);
 
         boolean hasBooks = bookRepository.existsByBookGroupId(bookGroupId);
 
@@ -116,7 +115,7 @@ public class BookGroupManagementService {
             throw new CategoryPresentException("해당 도서 그룹을 지정한 하위 도서가 존재합니다. 하위 도서를 모두 삭제한 다음에 도서 그룹을 삭제해주세요.");
         }
 
-        BookGroup bookGroup = findBookGroupById(bookGroupId);
+        BookGroup bookGroup = findBookGroup(bookGroupId);
         bookGroupRepository.delete(bookGroup);
         return true;
     }
