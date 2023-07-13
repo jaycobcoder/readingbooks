@@ -52,6 +52,7 @@ public class BookContentService {
         bookContent.updateContent(content);
     }
 
+    @Transactional(readOnly = true)
     public BookContent findBookContent(Long bookId) {
         return bookContentRepository.findByBookId(bookId)
                 .orElseThrow(() -> new BookNotFoundException("검색되는 도서가 없습니다. 도서 아이디를 다시 확인해주세요."));

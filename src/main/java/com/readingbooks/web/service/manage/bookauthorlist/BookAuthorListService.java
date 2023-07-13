@@ -68,13 +68,14 @@ public class BookAuthorListService {
     public boolean delete(Long bookId, Long authorId) {
         validateBookAuthorListId(bookId, authorId);
 
-        BookAuthorList bookAuthorList = findBookAuthorListByBookIdAndAuthorId(bookId, authorId);
+        BookAuthorList bookAuthorList = findBookAuthorList(bookId, authorId);
 
         bookAuthorListRepository.delete(bookAuthorList);
         return true;
     }
 
-    public BookAuthorList findBookAuthorListByBookIdAndAuthorId(Long bookId, Long authorId) {
+    @Transactional(readOnly = true)
+    public BookAuthorList findBookAuthorList(Long bookId, Long authorId) {
         BookAuthorList bookAuthorList = bookAuthorListRepository.findByBookIdAndAuthorId(bookId, authorId)
                 .orElseThrow(() -> new BookAuthorListNotFoundException("검색되는 결과가 없습니다. 도서 아이디와 작가 아이디를 다시 확인해주세요."));
         return bookAuthorList;

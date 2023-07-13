@@ -47,16 +47,19 @@ public class BookManagementService {
         return bookRepository.save(book).getId();
     }
 
+    @Transactional(readOnly = true)
     public Book findBook(Long bookId){
         return bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException("검색되는 도서가 없습니다. 도서 아이디를 다시 확인해주세요."));
     }
 
+    @Transactional(readOnly = true)
     private Category getCategory(Long categoryId) {
         Category category = categoryService.findCategory(categoryId);
         return category;
     }
 
+    @Transactional(readOnly = true)
     private BookGroup getBookGroup(Long bookGroupId) {
         BookGroup bookGroup = null;
         if(bookGroupId != null){

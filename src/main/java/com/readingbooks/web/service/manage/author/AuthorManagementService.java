@@ -88,6 +88,7 @@ public class AuthorManagementService {
         author.updateAuthor(request);
     }
 
+    @Transactional(readOnly = true)
     public Author findAuthor(Long authorId) {
         return authorRepository.findById(authorId)
                 .orElseThrow(() -> new AuthorNotfoundException("해당 아이디로 작가를 찾을 수 없습니다."));

@@ -31,6 +31,7 @@ public class CategoryGroupService {
         return categoryGroupRepository.save(categoryGroup).getId();
     }
 
+    @Transactional(readOnly = true)
     public CategoryGroup findCategoryGroup(Long categoryGroupId) {
         CategoryGroup categoryGroup = categoryGroupRepository.findById(categoryGroupId)
                 .orElseThrow(() -> new CategoryNotFoundException("검색되는 카테고리 그룹이 없습니다. 카테고리 그룹 아이디를 다시 확인해주세요."));

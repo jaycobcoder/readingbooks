@@ -42,6 +42,7 @@ public class CategoryService {
         return categoryRepository.save(category).getId();
     }
 
+    @Transactional(readOnly = true)
     public Category findCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryNotFoundException("검색되는 카테고리가 없습니다. 카테고리 아이디를 다시 확인해주세요."));

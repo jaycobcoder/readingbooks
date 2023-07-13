@@ -88,11 +88,13 @@ public class MemberService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Member findMember(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException("해당 이메일로 회원을 찾을 수 없습니다. 이메일을 다시 확인해주세요."));
     }
 
+    @Transactional(readOnly = true)
     public Member findMember(Long memberId){
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("해당 아이디로 회원을 찾을 수 없습니다. 회원 아이디를 다시 확인해주세요."));
