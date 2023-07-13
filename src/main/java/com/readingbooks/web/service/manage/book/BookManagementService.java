@@ -137,8 +137,6 @@ public class BookManagementService {
             return null;
         }
 
-        return book.map(b -> new BookUpdateResponse(b.getId(), b.getTitle(), b.getIsbn(), b.getPublisher(),
-                    b.getPublishingDate(), b.getPaperPrice(), b.getEbookPrice(), b.getDiscountRate(), b.getSavedImageName(),
-                    b.getCategory().getId(), b.getBookGroup().getId())).get();
+        return book.map(b -> new BookUpdateResponse(b)).get();
     }
 }
