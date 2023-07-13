@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -83,5 +85,15 @@ public class BookContentService {
         validateBookContentId(bookId);
         BookContent bookContent = findBookContent(bookId);
         bookContentRepository.delete(bookContent);
+    }
+
+    @Transactional(readOnly = true)
+    public BookContentUpdateResponse searchBookContent(Long bookId) {
+        Optional<BookContent> bookContent = bookContentRepository.findByBookId(bookId);
+
+        if(bookContent.isEmpty()){
+            return null;
+        }
+        return bookContent.map(b -> new BookContentUpdateResponse(b.getBook().getTitle(), b.getBook().getId(), b.getContent())).get();
     }
 }
