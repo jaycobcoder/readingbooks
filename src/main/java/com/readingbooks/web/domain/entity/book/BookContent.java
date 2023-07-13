@@ -16,6 +16,7 @@ public class BookContent extends BaseEntity {
     @JoinColumn(name = "book_id")
     private Book book;
 
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
 
     public static BookContent createBookContent(Book book, String content) {
