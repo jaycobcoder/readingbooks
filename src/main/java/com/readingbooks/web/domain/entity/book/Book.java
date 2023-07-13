@@ -43,6 +43,7 @@ public class Book extends BaseEntity {
         book.category = category;
         book.bookGroup = bookGroup;
         book.savedImageName = savedImageName;
+        book.isOnSale = true;
         return book;
     }
 
