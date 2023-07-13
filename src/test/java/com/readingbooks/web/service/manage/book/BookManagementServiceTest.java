@@ -1,11 +1,20 @@
 package com.readingbooks.web.service.manage.book;
 
 import com.readingbooks.web.domain.entity.book.Book;
+import com.readingbooks.web.domain.entity.book.BookAuthorList;
+import com.readingbooks.web.domain.enums.AuthorOption;
+import com.readingbooks.web.domain.enums.Gender;
+import com.readingbooks.web.exception.author.AuthorPresentException;
 import com.readingbooks.web.exception.book.BookNotFoundException;
 import com.readingbooks.web.exception.book.BookPresentException;
 import com.readingbooks.web.exception.bookcontent.BookContentPresentException;
 import com.readingbooks.web.repository.book.BookRepository;
+import com.readingbooks.web.repository.bookauthorlist.BookAuthorListRepository;
 import com.readingbooks.web.repository.bookcontent.BookContentRepository;
+import com.readingbooks.web.service.manage.author.AuthorManagementService;
+import com.readingbooks.web.service.manage.author.AuthorRegisterRequest;
+import com.readingbooks.web.service.manage.bookauthorlist.BookAuthorListRegisterRequest;
+import com.readingbooks.web.service.manage.bookauthorlist.BookAuthorListService;
 import com.readingbooks.web.service.manage.bookcontent.BookContentRegisterRequest;
 import com.readingbooks.web.service.manage.bookcontent.BookContentService;
 import com.readingbooks.web.service.manage.bookgroup.BookGroupManagementService;
@@ -50,10 +59,19 @@ class BookManagementServiceTest {
     @Autowired
     private BookContentService bookContentService;
 
+    @Autowired
+    private BookAuthorListService bookAuthorListService;
+
+    @Autowired
+    private BookAuthorListRepository bookAuthorListRepository;
+
+    @Autowired
+    private AuthorManagementService authorManagementService;
+
     @BeforeEach
     void beforeEach(){
         imageUploadUtil = Mockito.mock(ImageUploadUtil.class);
-        bookManagementService = new BookManagementService(bookRepository, categoryService, imageUploadUtil, bookGroupManagementService, bookContentRepository);
+        bookManagementService = new BookManagementService(categoryService, bookGroupManagementService, imageUploadUtil, bookRepository, bookContentRepository, bookAuthorListRepository);
     }
 
     @Test
@@ -134,7 +152,6 @@ class BookManagementServiceTest {
         CategoryRegisterRequest categoryRequest = new CategoryRegisterRequest("판타지 소설", categoryGroupId);
         Long categoryId = categoryService.register(categoryRequest);
 
-
         BookRegisterRequest request = createRegisterRequest("해리포터와 마법사의 돌", "123123", "포터모어",
                 "2023.01.01", 0, 9900, 5, categoryId, 0L);
         Long bookId = bookManagementService.register(request, file);
@@ -142,9 +159,46 @@ class BookManagementServiceTest {
         BookContentRegisterRequest bookContentRegisterRequest = new BookContentRegisterRequest(bookId, "test");
         bookContentService.register(bookContentRegisterRequest);
 
+        //when
         assertThatThrownBy(() -> bookManagementService.delete(bookId))
                 .isInstanceOf(BookContentPresentException.class)
                 .hasMessageContaining("해당 도서에는 도서 내용이 있습니다. 도서 내용을 삭제한 다음에 도서를 삭제해주세요.");
+    }
+
+    @Test
+    void whenDeletingBookExistsAuthor_thenThrowException(){
+        //given
+        MockMultipartFile file = new MockMultipartFile(
+                "해리포터와 마법사의 돌",
+                "해리포터와 마법사의 돌.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "test".getBytes()
+        );
+
+        CategoryGroupRegisterRequest categoryGroupRequest = new CategoryGroupRegisterRequest("소설");
+        Long categoryGroupId = categoryGroupService.register(categoryGroupRequest);
+
+        CategoryRegisterRequest categoryRequest = new CategoryRegisterRequest("판타지 소설", categoryGroupId);
+        Long categoryId = categoryService.register(categoryRequest);
+
+        BookRegisterRequest request = createRegisterRequest("해리포터와 마법사의 돌", "123123", "포터모어",
+                "2023.01.01", 0, 9900, 5, categoryId, 0L);
+        Long bookId = bookManagementService.register(request, file);
+
+        AuthorRegisterRequest authorRegisterRequest = new AuthorRegisterRequest(
+                "test", AuthorOption.ILLUSTRATOR, "영국", "test", "1999", Gender.SECRET
+        );
+        Long authorId = authorManagementService.register(authorRegisterRequest);
+
+        BookAuthorListRegisterRequest bookAuthorListRegisterRequest = new BookAuthorListRegisterRequest(
+                bookId, authorId, 1
+        );
+        bookAuthorListService.register(bookAuthorListRegisterRequest);
+
+        //when
+        assertThatThrownBy(() -> bookManagementService.delete(bookId))
+                .isInstanceOf(AuthorPresentException.class)
+                .hasMessageContaining("해당 도서에 등록된 작가나 번역가 또는 삽화가가 있습니다. 이들을 삭제한 다음에 도서를 삭제해주세요.");
     }
 
     @Test

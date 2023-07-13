@@ -3,10 +3,12 @@ package com.readingbooks.web.service.manage.book;
 import com.readingbooks.web.domain.entity.book.Book;
 import com.readingbooks.web.domain.entity.book.BookGroup;
 import com.readingbooks.web.domain.entity.category.Category;
+import com.readingbooks.web.exception.author.AuthorPresentException;
 import com.readingbooks.web.exception.book.BookNotFoundException;
 import com.readingbooks.web.exception.book.BookPresentException;
 import com.readingbooks.web.exception.bookcontent.BookContentPresentException;
 import com.readingbooks.web.repository.book.BookRepository;
+import com.readingbooks.web.repository.bookauthorlist.BookAuthorListRepository;
 import com.readingbooks.web.repository.bookcontent.BookContentRepository;
 import com.readingbooks.web.service.manage.bookgroup.BookGroupManagementService;
 import com.readingbooks.web.service.manage.category.CategoryService;
@@ -26,11 +28,12 @@ import java.util.stream.Collectors;
 @Transactional
 @Slf4j
 public class BookManagementService {
-    private final BookRepository bookRepository;
     private final CategoryService categoryService;
-    private final ImageUploadUtil imageUploadUtil;
     private final BookGroupManagementService bookGroupManagementService;
+    private final ImageUploadUtil imageUploadUtil;
+    private final BookRepository bookRepository;
     private final BookContentRepository bookContentRepository;
+    private final BookAuthorListRepository bookAuthorListRepository;
 
     /**
      * 도서 등록 메소드
@@ -164,6 +167,11 @@ public class BookManagementService {
         boolean hasBookContent = bookContentRepository.existsByBookId(bookId);
         if(hasBookContent == true){
             throw new BookContentPresentException("해당 도서에는 도서 내용이 있습니다. 도서 내용을 삭제한 다음에 도서를 삭제해주세요.");
+        }
+
+        boolean isExistsAuthor = bookAuthorListRepository.existsByBookId(bookId);
+        if(isExistsAuthor == true){
+            throw new AuthorPresentException("해당 도서에 등록된 작가나 번역가 또는 삽화가가 있습니다. 이들을 삭제한 다음에 도서를 삭제해주세요.");
         }
 
         Book book = findBook(bookId);

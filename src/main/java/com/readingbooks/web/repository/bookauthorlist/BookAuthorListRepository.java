@@ -10,4 +10,6 @@ public interface BookAuthorListRepository extends JpaRepository<BookAuthorList, 
     Optional<BookAuthorList> findByBookIdAndAuthorId(Long bookId, Long authorId);
 
     boolean existsByAuthorId(Long authorId);
+
+    boolean existsByBookId(Long bookId);
 }
