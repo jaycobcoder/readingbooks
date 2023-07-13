@@ -37,7 +37,7 @@ public class BookContentController {
     }
 
     @DeleteMapping("/{bookId}")
-    public ResponseEntity<Object> delete(@PathVariable Long bookId, String content){
+    public ResponseEntity<Object> delete(@PathVariable Long bookId){
         bookContentService.delete(bookId);
 
         BaseResponse response = new BaseResponse(HttpStatus.OK, "삭제가 완료되었습니다.", true);
