@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class BookUpdateRequest {
     private String title;
     private String isbn;
@@ -15,4 +14,20 @@ public class BookUpdateRequest {
     private int discountRate;
     private Long categoryId;
     private Long bookGroupId;
+
+    public BookUpdateRequest(String title, String isbn, String publisher, String publishingDate, int paperPrice, int ebookPrice, int discountRate, Long categoryId, Long bookGroupId) {
+        this.title = title;
+        this.isbn = isbn;
+        this.publisher = publisher;
+        this.publishingDate = publishingDate;
+        this.paperPrice = paperPrice;
+        this.ebookPrice = ebookPrice;
+        this.discountRate = discountRate;
+        this.categoryId = categoryId;
+        if(bookGroupId == 0){
+            this.bookGroupId = null;
+        } else{
+            this.bookGroupId = bookGroupId;
+        }
+    }
 }
