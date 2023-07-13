@@ -48,4 +48,14 @@ public class BookManagementController {
                 .status(HttpStatus.OK)
                 .body(response);
     }
+
+    @DeleteMapping("/{bookId}")
+    public ResponseEntity<Object> delete(@PathVariable Long bookId){
+        bookManagementService.delete(bookId);
+        
+        BaseResponse response = new BaseResponse(HttpStatus.OK, "삭제가 완료되었습니다.", true);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
 }

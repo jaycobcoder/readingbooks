@@ -46,11 +46,11 @@ public class Book extends BaseEntity {
         return book;
     }
 
-    public void updateImage(String updatedImageName) {
-        savedImageName = updatedImageName;
+    public void update(String imageName) {
+        savedImageName = imageName;
     }
 
-    public void updateContent(BookUpdateRequest request, Category category, BookGroup bookGroup) {
+    public void update(BookUpdateRequest request, Category category, BookGroup bookGroup) {
         this.title = request.getTitle();
         this.isbn = request.getIsbn();
         this.publisher = request.getPublisher();

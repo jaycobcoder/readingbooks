@@ -4,7 +4,9 @@ import com.readingbooks.web.domain.entity.book.Book;
 import com.readingbooks.web.domain.entity.book.BookGroup;
 import com.readingbooks.web.domain.entity.category.Category;
 import com.readingbooks.web.exception.book.BookNotFoundException;
+import com.readingbooks.web.exception.book.BookPresentException;
 import com.readingbooks.web.repository.book.BookRepository;
+import com.readingbooks.web.repository.bookcontent.BookContentRepository;
 import com.readingbooks.web.service.manage.bookgroup.BookGroupManagementService;
 import com.readingbooks.web.service.manage.category.CategoryService;
 import com.readingbooks.web.service.utils.ImageUploadUtil;
@@ -27,6 +29,7 @@ public class BookManagementService {
     private final CategoryService categoryService;
     private final ImageUploadUtil imageUploadUtil;
     private final BookGroupManagementService bookGroupManagementService;
+    private final BookContentRepository bookContentRepository;
 
     /**
      * 도서 등록 메소드
@@ -108,7 +111,7 @@ public class BookManagementService {
         String existingImageName = book.getSavedImageName();
         String updatedImageName = imageUploadUtil.update(file, existingImageName);
 
-        book.updateImage(updatedImageName);
+        book.update(updatedImageName);
     }
 
     /**
@@ -128,7 +131,7 @@ public class BookManagementService {
         Category category = getCategory(request.getCategoryId());
         BookGroup bookGroup = getBookGroup(request.getBookGroupId());
 
-        book.updateContent(request, category, bookGroup);
+        book.update(request, category, bookGroup);
     }
 
     @Transactional(readOnly = true)
@@ -149,5 +152,21 @@ public class BookManagementService {
         return books.stream()
                 .map(b -> new BookManageSearchResponse(b.getId(), b.getTitle(), b.getPublisher(), b.getSavedImageName()))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 도서 삭제 메소드
+     * @param bookId
+     * @return isDeleted
+     */
+    public boolean delete(Long bookId) {
+        boolean hasBookContent = bookContentRepository.existsByBookId(bookId);
+        if(hasBookContent == true){
+            throw new BookPresentException("해당 도서에는 도서 내용이 있습니다. 도서 내용을 삭제한 다음에 도서를 삭제해주세요.");
+        }
+
+        Book book = findBook(bookId);
+        bookRepository.delete(book);
+        return true;
     }
 }

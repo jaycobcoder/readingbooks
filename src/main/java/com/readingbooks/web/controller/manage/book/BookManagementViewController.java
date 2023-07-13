@@ -61,4 +61,10 @@ public class BookManagementViewController {
         model.addAttribute("selectFlag", "searchBook");
         return "manage/book/book-result";
     }
+
+    @GetMapping("/delete/book")
+    public String deleteForm(Model model){
+        model.addAttribute("selectFlag", "deleteBook");
+        return "manage/bookgroup/book-delete";
+    }
 }
