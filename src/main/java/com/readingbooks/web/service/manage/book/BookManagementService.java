@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -125,5 +127,18 @@ public class BookManagementService {
         BookGroup bookGroup = getBookGroup(request.getBookGroupId());
 
         book.updateContent(request, category, bookGroup);
+    }
+
+    @Transactional(readOnly = true)
+    public BookUpdateResponse searchUpdateBook(Long bookId) {
+        Optional<Book> book = bookRepository.findById(bookId);
+
+        if(book.isEmpty()){
+            return null;
+        }
+
+        return book.map(b -> new BookUpdateResponse(b.getId(), b.getTitle(), b.getIsbn(), b.getPublisher(),
+                    b.getPublishingDate(), b.getPaperPrice(), b.getEbookPrice(), b.getDiscountRate(), b.getSavedImageName(),
+                    b.getCategory().getId(), b.getBookGroup().getId())).get();
     }
 }
