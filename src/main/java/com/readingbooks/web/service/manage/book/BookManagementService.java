@@ -5,6 +5,7 @@ import com.readingbooks.web.domain.entity.book.BookGroup;
 import com.readingbooks.web.domain.entity.category.Category;
 import com.readingbooks.web.exception.book.BookNotFoundException;
 import com.readingbooks.web.exception.book.BookPresentException;
+import com.readingbooks.web.exception.bookcontent.BookContentPresentException;
 import com.readingbooks.web.repository.book.BookRepository;
 import com.readingbooks.web.repository.bookcontent.BookContentRepository;
 import com.readingbooks.web.service.manage.bookgroup.BookGroupManagementService;
@@ -162,7 +163,7 @@ public class BookManagementService {
     public boolean delete(Long bookId) {
         boolean hasBookContent = bookContentRepository.existsByBookId(bookId);
         if(hasBookContent == true){
-            throw new BookPresentException("해당 도서에는 도서 내용이 있습니다. 도서 내용을 삭제한 다음에 도서를 삭제해주세요.");
+            throw new BookContentPresentException("해당 도서에는 도서 내용이 있습니다. 도서 내용을 삭제한 다음에 도서를 삭제해주세요.");
         }
 
         Book book = findBook(bookId);
