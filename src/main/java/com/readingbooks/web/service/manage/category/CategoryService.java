@@ -12,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -136,5 +138,18 @@ public class CategoryService {
         return categoryGroup
                 .map(c -> new CategorySearchResponse(c.getCategoryGroup().getId(), c.getId(), c.getName(), c.getCategoryGroup().getName(), true))
                 .get();
+    }
+
+    /**
+     * 모든 카테고리 조회 메소드
+     * @return Dto List
+     */
+    @Transactional(readOnly = true)
+    public List<CategorySearchResponse> searchCategories() {
+        List<Category> categories = categoryRepository.findAll();
+
+        return categories.stream()
+                .map(c -> new CategorySearchResponse(c.getCategoryGroup().getId(), c.getId(), c.getName(), c.getCategoryGroup().getName(), true))
+                .collect(Collectors.toList());
     }
 }
