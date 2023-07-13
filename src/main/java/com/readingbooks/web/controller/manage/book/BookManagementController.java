@@ -39,7 +39,7 @@ public class BookManagementController {
                 .body(response);
     }
 
-    @PatchMapping("/title/{bookId}")
+    @PatchMapping("/content/{bookId}")
     public ResponseEntity<Object> update(BookUpdateRequest request, @PathVariable Long bookId){
         bookManagementService.update(request, bookId);
 
