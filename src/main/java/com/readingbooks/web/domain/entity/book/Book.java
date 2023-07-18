@@ -24,6 +24,9 @@ public class Book extends BaseEntity {
     private String savedImageName;
     private boolean isOnSale;
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
@@ -44,6 +47,7 @@ public class Book extends BaseEntity {
         book.category = category;
         book.bookGroup = bookGroup;
         book.savedImageName = savedImageName;
+        book.description = request.getDescription();
         book.isOnSale = true;
         return book;
     }
@@ -62,5 +66,6 @@ public class Book extends BaseEntity {
         this.discountRate = request.getDiscountRate();
         this.category = category;
         this.bookGroup = bookGroup;
+        this.description = request.getDescription();
     }
 }

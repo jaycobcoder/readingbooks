@@ -13,8 +13,9 @@ public class BookRegisterRequest {
     private int discountRate;
     private Long categoryId;
     private Long bookGroupId;
+    private String description;
 
-    public BookRegisterRequest(String title, String isbn, String publisher, String publishingDate, int paperPrice, int ebookPrice, int discountRate, Long categoryId, Long bookGroupId) {
+    public BookRegisterRequest(String title, String isbn, String publisher, String publishingDate, int paperPrice, int ebookPrice, int discountRate, Long categoryId, Long bookGroupId, String description) {
         this.title = title;
         this.isbn = isbn;
         this.publisher = publisher;
@@ -28,5 +29,6 @@ public class BookRegisterRequest {
         } else{
             this.bookGroupId = bookGroupId;
         }
+        this.description = description;
     }
 }

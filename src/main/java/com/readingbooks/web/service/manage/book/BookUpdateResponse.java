@@ -16,6 +16,7 @@ public class BookUpdateResponse {
     private String savedImageName;
     private Long categoryId;
     private Long bookGroupId;
+    private String description;
 
     public BookUpdateResponse(Book book) {
         this.id = book.getId();
@@ -33,5 +34,6 @@ public class BookUpdateResponse {
         }else{
             this.bookGroupId = book.getBookGroup().getId();
         }
+        this.description = book.getDescription();
     }
 }

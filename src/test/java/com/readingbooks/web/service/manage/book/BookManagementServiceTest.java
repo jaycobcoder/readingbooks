@@ -37,36 +37,27 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 @SpringBootTest
 class BookManagementServiceTest {
+    private ImageUploadUtil imageUploadUtil;
     private BookManagementService bookManagementService;
 
     @Autowired
     private CategoryService categoryService;
-
-    @Autowired
-    private CategoryGroupService categoryGroupService;
-
-    @Autowired
-    private BookRepository bookRepository;
-
-    private ImageUploadUtil imageUploadUtil;
-
     @Autowired
     private BookGroupManagementService bookGroupManagementService;
-
+    @Autowired
+    private BookRepository bookRepository;
     @Autowired
     private BookContentRepository bookContentRepository;
-
-    @Autowired
-    private BookContentService bookContentService;
-
-    @Autowired
-    private BookAuthorListService bookAuthorListService;
-
     @Autowired
     private BookAuthorListRepository bookAuthorListRepository;
-
+    @Autowired
+    private CategoryGroupService categoryGroupService;
     @Autowired
     private AuthorManagementService authorManagementService;
+    @Autowired
+    private BookContentService bookContentService;
+    @Autowired
+    private BookAuthorListService bookAuthorListService;
 
     @BeforeEach
     void beforeEach(){
@@ -91,7 +82,7 @@ class BookManagementServiceTest {
 
 
         BookRegisterRequest request = createRegisterRequest("해리포터와 마법사의 돌", "123123", "포터모어",
-                "2023.01.01", 0, 9900, 5, categoryId, 0L);
+                "2023.01.01", 0, 9900, 5, categoryId, 0L, "21세기 최고의 책");
 
         Long bookId = bookManagementService.register(request, file);
 
@@ -105,6 +96,7 @@ class BookManagementServiceTest {
         assertThat(book.getDiscountRate()).isEqualTo(5);
         assertThat(book.getCategory().getId()).isEqualTo(categoryId);
         assertThat(book.getBookGroup()).isNull();
+        assertThat(book.getDescription()).isEqualTo("21세기 최고의 책");
     }
 
     @Test
@@ -124,11 +116,11 @@ class BookManagementServiceTest {
 
 
         BookRegisterRequest request = createRegisterRequest("해리포터와 마법사의 돌", "123123", "포터모어",
-                "2023.01.01", 0, 9900, 5, categoryId, 0L);
+                "2023.01.01", 0, 9900, 5, categoryId, 0L, "21세기 최고의 책");
 
         Long bookId = bookManagementService.register(request, file);
 
-        BookUpdateRequest updateRequest = new BookUpdateRequest("홍길동전", "test", "test", "test", 1, 1, 1, categoryId, 0L);
+        BookUpdateRequest updateRequest = new BookUpdateRequest("홍길동전", "test", "test", "test", 1, 1, 1, categoryId, 0L, "21세기 최고의 책");
         bookManagementService.update(updateRequest, bookId);
 
         Book book = bookManagementService.findBook(bookId);
@@ -153,7 +145,7 @@ class BookManagementServiceTest {
         Long categoryId = categoryService.register(categoryRequest);
 
         BookRegisterRequest request = createRegisterRequest("해리포터와 마법사의 돌", "123123", "포터모어",
-                "2023.01.01", 0, 9900, 5, categoryId, 0L);
+                "2023.01.01", 0, 9900, 5, categoryId, 0L, "21세기 최고의 책");
         Long bookId = bookManagementService.register(request, file);
 
         BookContentRegisterRequest bookContentRegisterRequest = new BookContentRegisterRequest(bookId, "test");
@@ -182,7 +174,7 @@ class BookManagementServiceTest {
         Long categoryId = categoryService.register(categoryRequest);
 
         BookRegisterRequest request = createRegisterRequest("해리포터와 마법사의 돌", "123123", "포터모어",
-                "2023.01.01", 0, 9900, 5, categoryId, 0L);
+                "2023.01.01", 0, 9900, 5, categoryId, 0L, "21세기 최고의 책");
         Long bookId = bookManagementService.register(request, file);
 
         AuthorRegisterRequest authorRegisterRequest = new AuthorRegisterRequest(
@@ -219,7 +211,7 @@ class BookManagementServiceTest {
 
 
         BookRegisterRequest request = createRegisterRequest("해리포터와 마법사의 돌", "123123", "포터모어",
-                "2023.01.01", 0, 9900, 5, categoryId, 0L);
+                "2023.01.01", 0, 9900, 5, categoryId, 0L, "21세기 최고의 책");
         Long bookId = bookManagementService.register(request, file);
 
         //when
@@ -232,7 +224,7 @@ class BookManagementServiceTest {
                 .hasMessageContaining("검색되는 도서가 없습니다. 도서 아이디를 다시 확인해주세요.");
     }
 
-    private static BookRegisterRequest createRegisterRequest(String title, String isbn, String publisher, String publishingDate, int paperPrice, int ebookPrice, int discountRate, Long categoryId, Long bookGroupId) {
-        return new BookRegisterRequest(title, isbn, publisher, publishingDate, paperPrice, ebookPrice, discountRate, categoryId, bookGroupId);
+    private static BookRegisterRequest createRegisterRequest(String title, String isbn, String publisher, String publishingDate, int paperPrice, int ebookPrice, int discountRate, Long categoryId, Long bookGroupId, String description) {
+        return new BookRegisterRequest(title, isbn, publisher, publishingDate, paperPrice, ebookPrice, discountRate, categoryId, bookGroupId, description);
     }
 }

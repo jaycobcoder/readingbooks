@@ -5,7 +5,6 @@ import com.readingbooks.web.domain.entity.book.BookGroup;
 import com.readingbooks.web.domain.entity.category.Category;
 import com.readingbooks.web.exception.author.AuthorPresentException;
 import com.readingbooks.web.exception.book.BookNotFoundException;
-import com.readingbooks.web.exception.book.BookPresentException;
 import com.readingbooks.web.exception.bookcontent.BookContentPresentException;
 import com.readingbooks.web.repository.book.BookRepository;
 import com.readingbooks.web.repository.bookauthorlist.BookAuthorListRepository;
@@ -46,7 +45,7 @@ public class BookManagementService {
         validateForm(
                 request.getTitle(), request.getIsbn(), request.getPublisher(),
                 request.getPublishingDate(), request.getEbookPrice(), request.getCategoryId(),
-                request.getBookGroupId()
+                request.getDescription()
         );
 
         String savedImageName = imageUploadUtil.upload(file);
@@ -78,7 +77,7 @@ public class BookManagementService {
     }
 
     private void validateForm(String title, String isbn, String publisher, String publishingDate,
-                              int ebookPrice, Long categoryId, Long bookGroupId) {
+                              int ebookPrice, Long categoryId, String description) {
 
         if(title.trim().equals("") || title == null){
             throw new IllegalArgumentException("제목을 입력해주세요");
@@ -102,6 +101,10 @@ public class BookManagementService {
 
         if(categoryId == null){
             throw new IllegalArgumentException("카테고리 아이디를 입력해주세요");
+        }
+
+        if(description.trim().equals("") || description == null){
+            throw new IllegalArgumentException("도서의 내용을 입력해주세요.");
         }
     }
 
@@ -127,8 +130,7 @@ public class BookManagementService {
         validateForm(
                 request.getTitle(), request.getIsbn(), request.getPublisher(),
                 request.getPublishingDate(), request.getEbookPrice(), request.getCategoryId(),
-                request.getBookGroupId()
-        );
+                request.getDescription());
 
         Book book = findBook(bookId);
 
