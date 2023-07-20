@@ -21,6 +21,7 @@ public class Book extends BaseEntity {
     private int paperPrice;
     private int ebookPrice;
     private int discountRate;
+    private int salePrice;
     private String savedImageName;
     private boolean isOnSale;
     private int reviewCount;
@@ -45,6 +46,10 @@ public class Book extends BaseEntity {
         book.paperPrice = request.getPaperPrice();
         book.ebookPrice = request.getEbookPrice();
         book.discountRate = request.getDiscountRate();
+
+        int discountPrice = (int) (request.getEbookPrice() * request.getDiscountRate() * 0.01);
+        book.salePrice = request.getEbookPrice() - discountPrice;
+
         book.category = category;
         book.bookGroup = bookGroup;
         book.savedImageName = savedImageName;
@@ -69,5 +74,8 @@ public class Book extends BaseEntity {
         this.category = category;
         this.bookGroup = bookGroup;
         this.description = request.getDescription();
+
+        int discountPrice = (int) (request.getEbookPrice() * request.getDiscountRate() * 0.01);
+        this.salePrice = request.getEbookPrice() - discountPrice;
     }
 }
