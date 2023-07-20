@@ -1,12 +1,16 @@
 package com.readingbooks.web.domain.entity.author;
 
 import com.readingbooks.web.domain.entity.BaseEntity;
+import com.readingbooks.web.domain.entity.book.BookAuthorList;
 import com.readingbooks.web.domain.enums.AuthorOption;
 import com.readingbooks.web.domain.enums.Gender;
 import com.readingbooks.web.service.manage.author.AuthorRegisterRequest;
 import com.readingbooks.web.service.manage.author.AuthorUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter

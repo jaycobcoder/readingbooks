@@ -21,13 +21,13 @@ public class BookAuthorList extends BaseEntity {
     @JoinColumn(name = "author_id")
     private Author author;
 
-    private int ordinal;
+    private Long ordinal;
 
     public static BookAuthorList createBookAuthorList(Book book, Author author, int ordinal) {
         BookAuthorList bookAuthorList = new BookAuthorList();
         bookAuthorList.book = book;
         bookAuthorList.author = author;
-        bookAuthorList.ordinal = ordinal;
+        bookAuthorList.ordinal = Long.valueOf(ordinal);
         return bookAuthorList;
     }
 }

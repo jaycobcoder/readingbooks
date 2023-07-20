@@ -23,6 +23,7 @@ public class Book extends BaseEntity {
     private int discountRate;
     private String savedImageName;
     private boolean isOnSale;
+    private int reviewCount;
 
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -49,6 +50,7 @@ public class Book extends BaseEntity {
         book.savedImageName = savedImageName;
         book.description = request.getDescription();
         book.isOnSale = true;
+        book.reviewCount = 0;
         return book;
     }
 
