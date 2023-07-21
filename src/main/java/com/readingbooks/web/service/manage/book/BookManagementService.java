@@ -9,6 +9,7 @@ import com.readingbooks.web.exception.bookcontent.BookContentPresentException;
 import com.readingbooks.web.repository.book.BookRepository;
 import com.readingbooks.web.repository.bookauthorlist.BookAuthorListRepository;
 import com.readingbooks.web.repository.bookcontent.BookContentRepository;
+import com.readingbooks.web.service.book.BookService;
 import com.readingbooks.web.service.manage.bookgroup.BookGroupManagementService;
 import com.readingbooks.web.service.manage.category.CategoryService;
 import com.readingbooks.web.service.utils.ImageUploadUtil;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @Transactional
 @Slf4j
 public class BookManagementService {
+    private final BookService bookService;
     private final CategoryService categoryService;
     private final BookGroupManagementService bookGroupManagementService;
     private final ImageUploadUtil imageUploadUtil;
@@ -55,12 +57,6 @@ public class BookManagementService {
         Book book = Book.createBook(request, category, bookGroup, savedImageName);
 
         return bookRepository.save(book).getId();
-    }
-
-    @Transactional(readOnly = true)
-    public Book findBook(Long bookId){
-        return bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookNotFoundException("검색되는 도서가 없습니다. 도서 아이디를 다시 확인해주세요."));
     }
 
     private Category getCategory(Long categoryId) {
@@ -114,7 +110,7 @@ public class BookManagementService {
      * @param bookId
      */
     public void update(MultipartFile file, Long bookId) {
-        Book book = findBook(bookId);
+        Book book = bookService.findBook(bookId);
         String existingImageName = book.getSavedImageName();
         String updatedImageName = imageUploadUtil.update(file, existingImageName);
 
@@ -132,7 +128,7 @@ public class BookManagementService {
                 request.getPublishingDate(), request.getEbookPrice(), request.getCategoryId(),
                 request.getDescription());
 
-        Book book = findBook(bookId);
+        Book book = bookService.findBook(bookId);
 
         Category category = getCategory(request.getCategoryId());
         BookGroup bookGroup = getBookGroup(request.getBookGroupId());
@@ -176,7 +172,7 @@ public class BookManagementService {
             throw new AuthorPresentException("해당 도서에 등록된 작가나 번역가 또는 삽화가가 있습니다. 이들을 삭제한 다음에 도서를 삭제해주세요.");
         }
 
-        Book book = findBook(bookId);
+        Book book = bookService.findBook(bookId);
         bookRepository.delete(book);
         return true;
     }

@@ -5,8 +5,8 @@ import com.readingbooks.web.domain.entity.book.Book;
 import com.readingbooks.web.domain.entity.book.BookAuthorList;
 import com.readingbooks.web.exception.bookauthorlist.BookAuthorListNotFoundException;
 import com.readingbooks.web.repository.bookauthorlist.BookAuthorListRepository;
+import com.readingbooks.web.service.book.BookService;
 import com.readingbooks.web.service.manage.author.AuthorManagementService;
-import com.readingbooks.web.service.manage.book.BookManagementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookAuthorListService {
     private final BookAuthorListRepository bookAuthorListRepository;
     private final AuthorManagementService authorManagementService;
-    private final BookManagementService bookManagementService;
+    private final BookService bookService;
 
     /**
      * 도서 작가 등록 메소드
@@ -33,7 +33,7 @@ public class BookAuthorListService {
 
         validateForm(bookId, authorId, ordinal);
 
-        Book book = bookManagementService.findBook(bookId);
+        Book book = bookService.findBook(bookId);
         Author author = authorManagementService.findAuthor(authorId);
 
         BookAuthorList bookAuthorList = BookAuthorList.createBookAuthorList(book, author, ordinal);

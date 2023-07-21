@@ -3,11 +3,9 @@ package com.readingbooks.web.service.manage.bookcontent;
 import com.readingbooks.web.domain.entity.book.Book;
 import com.readingbooks.web.domain.entity.book.BookContent;
 import com.readingbooks.web.exception.book.BookNotFoundException;
-import com.readingbooks.web.exception.book.BookPresentException;
 import com.readingbooks.web.exception.bookcontent.BookContentPresentException;
-import com.readingbooks.web.repository.book.BookRepository;
 import com.readingbooks.web.repository.bookcontent.BookContentRepository;
-import com.readingbooks.web.service.manage.book.BookManagementService;
+import com.readingbooks.web.service.book.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +19,7 @@ import java.util.Optional;
 @Slf4j
 public class BookContentService {
 
-    private final BookManagementService bookManagementService;
+    private final BookService bookService;
     private final BookContentRepository bookContentRepository;
 
     /**
@@ -39,7 +37,7 @@ public class BookContentService {
         }
 
         validateForm(bookId, content);
-        Book book = bookManagementService.findBook(bookId);
+        Book book = bookService.findBook(bookId);
         BookContent bookContent = BookContent.createBookContent(book, content);
 
         return bookContentRepository.save(bookContent).getId();
