@@ -27,7 +27,7 @@ public class SearchController {
                          @ModelAttribute BookSearchCondition condition,
                          Model model){
         Page<BookSearchResponse> responses =  searchService.search(query, pageable, condition);
-        PagingDto paging = new PagingDto(responses);
+        PagingSearchDto paging = new PagingSearchDto(responses);
 
         model.addAttribute("responses", responses);
         model.addAttribute("query", query);

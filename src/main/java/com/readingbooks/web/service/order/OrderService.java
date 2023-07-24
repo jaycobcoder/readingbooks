@@ -16,6 +16,8 @@ import com.readingbooks.web.service.book.BookService;
 import com.readingbooks.web.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -200,5 +202,23 @@ public class OrderService {
     public Orders findOrders(Long orderId) {
         return ordersRepository.findById(orderId)
                 .orElseThrow(() -> new OrdersNotFoundException("주문 아이디를 찾을 수 없습니다."));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OrderHistoryResponse> getHistory(Long memberId, Pageable pageable) {
+        Page<Orders> responses = ordersRepository.findByMemberId(pageable, memberId);
+        return responses.map(r -> new OrderHistoryResponse(r));
+    }
+
+    public OrderFindResponse getOrderDetail(Long orderId) {
+        Orders orders = findOrders(orderId);
+        OrderFindResponse response = new OrderFindResponse(orders);
+        return response;
+    }
+
+    public List<OrderBooksResponse> getOrderBooks(Long ordersId) {
+        return orderBooksRepository.findByOrdersId(ordersId).stream()
+                .map(ob -> new OrderBooksResponse(ob.getBook()))
+                .collect(Collectors.toList());
     }
 }
