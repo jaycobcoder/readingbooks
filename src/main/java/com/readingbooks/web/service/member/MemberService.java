@@ -2,6 +2,8 @@ package com.readingbooks.web.service.member;
 
 import com.readingbooks.web.domain.entity.member.Member;
 import com.readingbooks.web.domain.enums.Gender;
+import com.readingbooks.web.exception.login.LoginCheckFailException;
+import com.readingbooks.web.exception.login.NotLoginException;
 import com.readingbooks.web.exception.member.MemberNotFoundException;
 import com.readingbooks.web.exception.member.MemberPresentException;
 import com.readingbooks.web.repository.member.MemberRepository;
@@ -11,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.Optional;
 
 @Service
@@ -92,6 +95,16 @@ public class MemberService {
     public Member findMember(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException("해당 이메일로 회원을 찾을 수 없습니다. 이메일을 다시 확인해주세요."));
+    }
+
+    @Transactional(readOnly = true)
+    public Member findMember(Principal principal) {
+        if(principal == null){
+            throw new NotLoginException("로그인 하셔야 이용할 수 있습니다.");
+        }
+
+        String email = principal.getName();
+        return findMember(email);
     }
 
     @Transactional(readOnly = true)
