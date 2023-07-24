@@ -11,6 +11,7 @@ import com.readingbooks.web.exception.bookcontent.BookContentPresentException;
 import com.readingbooks.web.repository.book.BookRepository;
 import com.readingbooks.web.repository.bookauthorlist.BookAuthorListRepository;
 import com.readingbooks.web.repository.bookcontent.BookContentRepository;
+import com.readingbooks.web.service.book.BookService;
 import com.readingbooks.web.service.manage.author.AuthorManagementService;
 import com.readingbooks.web.service.manage.author.AuthorRegisterRequest;
 import com.readingbooks.web.service.manage.bookauthorlist.BookAuthorListRegisterRequest;
@@ -22,6 +23,7 @@ import com.readingbooks.web.service.manage.categorygroup.CategoryGroupRegisterRe
 import com.readingbooks.web.service.manage.category.CategoryRegisterRequest;
 import com.readingbooks.web.service.manage.category.CategoryService;
 import com.readingbooks.web.service.manage.categorygroup.CategoryGroupService;
+import com.readingbooks.web.service.member.MemberService;
 import com.readingbooks.web.service.utils.ImageUploadUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,11 +60,13 @@ class BookManagementServiceTest {
     private BookContentService bookContentService;
     @Autowired
     private BookAuthorListService bookAuthorListService;
+    @Autowired
+    private BookService bookService;
 
     @BeforeEach
     void beforeEach(){
         imageUploadUtil = Mockito.mock(ImageUploadUtil.class);
-        bookManagementService = new BookManagementService(categoryService, bookGroupManagementService, imageUploadUtil, bookRepository, bookContentRepository, bookAuthorListRepository);
+        bookManagementService = new BookManagementService(bookService, categoryService, bookGroupManagementService, imageUploadUtil, bookRepository, bookContentRepository, bookAuthorListRepository);
     }
 
     @Test
@@ -86,7 +90,7 @@ class BookManagementServiceTest {
 
         Long bookId = bookManagementService.register(request, file);
 
-        Book book = bookManagementService.findBook(bookId);
+        Book book = bookService.findBook(bookId);
         assertThat(book.getTitle()).isEqualTo("해리포터와 마법사의 돌");
         assertThat(book.getIsbn()).isEqualTo("123123");
         assertThat(book.getPublisher()).isEqualTo("포터모어");
@@ -123,7 +127,7 @@ class BookManagementServiceTest {
         BookUpdateRequest updateRequest = new BookUpdateRequest("홍길동전", "test", "test", "test", 1, 1, 1, categoryId, 0L, "21세기 최고의 책");
         bookManagementService.update(updateRequest, bookId);
 
-        Book book = bookManagementService.findBook(bookId);
+        Book book = bookService.findBook(bookId);
 
         assertThat(book.getTitle()).isEqualTo("홍길동전");
     }
@@ -219,7 +223,7 @@ class BookManagementServiceTest {
 
         //then
         assertThat(isDeleted).isTrue();
-        assertThatThrownBy(() -> bookManagementService.findBook(bookId))
+        assertThatThrownBy(() -> bookService.findBook(bookId))
                 .isInstanceOf(BookNotFoundException.class)
                 .hasMessageContaining("검색되는 도서가 없습니다. 도서 아이디를 다시 확인해주세요.");
     }
