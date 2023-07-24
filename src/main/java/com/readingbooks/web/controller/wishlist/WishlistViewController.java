@@ -34,6 +34,18 @@ public class WishlistViewController {
         Long memberId = member.getId();
 
         List<WishlistResponse> responses = wishlistService.findBookResponses(memberId);
+        int totalPrice = 0;
+        int totalDiscountPrice = 0;
+        int totalSalePrice = 0;
+
+        for (WishlistResponse response : responses) {
+            totalPrice += response.getEbookPrice();
+            totalDiscountPrice += response.getDiscountPrice();
+            totalSalePrice += response.getSalePrice();
+        }
+        model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("totalDiscountPrice", totalDiscountPrice);
+        model.addAttribute("totalSalePrice", totalSalePrice);
         model.addAttribute("responses", responses);
         return "wishlist/wishlist";
     }

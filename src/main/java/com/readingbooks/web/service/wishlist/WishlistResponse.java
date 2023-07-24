@@ -11,6 +11,7 @@ public class WishlistResponse {
     private String isbn;
     private String savedImageName;
     private int ebookPrice;
+    private int discountPrice;
     private int discountRate;
     private int salePrice;
 
@@ -23,5 +24,6 @@ public class WishlistResponse {
         ebookPrice = wishlist.getBook().getEbookPrice();
         discountRate = wishlist.getBook().getDiscountRate();
         salePrice = wishlist.getBook().getSalePrice();
+        discountPrice = (int) (ebookPrice * discountRate * 0.01);
     }
 }
