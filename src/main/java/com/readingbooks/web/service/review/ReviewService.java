@@ -16,6 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -77,7 +80,7 @@ public class ReviewService {
     }
 
     public Review findReview(Long reviewId) {
-        return reviewRepository.findById(reviewId)
+        return reviewRepository.findReview(reviewId)
                 .orElseThrow(() -> new ReviewNotFoundException("리뷰 아이디로 리뷰를 찾을 수 없습니다."));
     }
 
@@ -107,6 +110,13 @@ public class ReviewService {
         return response;
     }
 
+    /**
+     * 리뷰 수정 메소드
+     * @param member
+     * @param reviewId
+     * @param content
+     * @param starRating
+     */
 
     @Transactional
     public void update(Member member, Long reviewId, String content, int starRating) {
@@ -114,7 +124,7 @@ public class ReviewService {
         Review review = findReview(reviewId);
 
         /* --- 수정하고자 하는 리뷰가 본인이 작성한 리뷰인지 검증 --- */
-        validateUpdatingReviewWriter(review, memberId);
+        validateReviewIdentification(review, memberId);
 
         /* --- 폼 검증 --- */
         validateForm(content, starRating);
@@ -122,10 +132,41 @@ public class ReviewService {
         review.update(content, starRating);
     }
 
-    private void validateUpdatingReviewWriter(Review review, Long memberId) {
+    private void validateReviewIdentification(Review review, Long memberId) {
         Long findMemberId = review.getMember().getId();
         if(findMemberId != memberId){
-            throw new ReviewException("본인이 작성한 리뷰만 수정할 수 있습니다", HttpStatus.FORBIDDEN);
+            throw new ReviewException("본인이 작성한 리뷰만 관리할 수 있습니다.", HttpStatus.FORBIDDEN);
         }
+    }
+
+    /**
+     * 리뷰 삭제 메소드
+     * @param member
+     * @param reviewId
+     */
+    @Transactional
+    public boolean delete(Member member, Long reviewId) {
+        Review review = findReview(reviewId);
+        Long memberId = member.getId();
+
+        /* --- 삭제하고자 하는 리뷰가 본인이 작성한 리뷰인지 검증 --- */
+        validateReviewIdentification(review, memberId);
+
+        /* --- 도서의 리뷰 수량 차감 --- */
+        Book book = review.getBook();
+        book.subtractReviewCount();
+
+        reviewRepository.delete(review);
+        return true;
+    }
+
+    public List<ReviewResponse> findReviews(String isbn){
+        Book book = bookService.findBook(isbn);
+        Long bookId = book.getId();
+
+        List<Review> reviews = reviewRepository.findReviews(bookId);
+        return reviews.stream()
+                .map(r -> new ReviewResponse(r))
+                .collect(Collectors.toList());
     }
 }
