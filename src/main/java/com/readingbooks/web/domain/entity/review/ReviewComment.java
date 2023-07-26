@@ -13,6 +13,7 @@ public class ReviewComment extends BaseEntity {
     @Column(name = "review_comment_id")
     private Long id;
 
+    @Column(length = 2000)
     private String content;
     private boolean isHidden;
 
@@ -23,4 +24,13 @@ public class ReviewComment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
     private Review review;
+
+    public static ReviewComment createReviewComment(Member member, Review review, String content) {
+        ReviewComment reviewComment = new ReviewComment();
+        reviewComment.member = member;
+        reviewComment.review = review;
+        reviewComment.content = content;
+        reviewComment.isHidden = false;
+        return reviewComment;
+    }
 }
