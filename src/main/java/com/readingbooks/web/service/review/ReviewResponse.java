@@ -1,6 +1,7 @@
 package com.readingbooks.web.service.review;
 
 import com.readingbooks.web.domain.entity.review.Review;
+import com.readingbooks.web.domain.entity.review.ReviewComment;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class ReviewResponse {
     private String content;
     private String likesCount;
     private String commentsCount;
-    private List<ReviewCommentResponse> reviewComments = new ArrayList<>();
+    private List<ReviewCommentResponse> reviewComments;
 
     public ReviewResponse(Review review) {
         this.memberId = review.getMember().getId();
@@ -26,23 +27,28 @@ public class ReviewResponse {
         this.maskedId = createMaskedId(review.getMember().getEmail());
         this.isPurchased = review.isPurchased();
         this.content = review.getContent();
+        this.likesCount = createLikesCount(review.getLikesCount());
+        this.commentsCount = createCommentsCount(review.getCommentsCount());
 
-        if(review.getLikesCount() > 999){
-            this.likesCount = "999+";
+        List<ReviewComment> reviewComments = review.getReviewComments();
+        this.reviewComments = reviewComments.stream()
+                .map(rc -> new ReviewCommentResponse(rc))
+                .collect(Collectors.toList());
+    }
+
+    private String createCommentsCount(int commentsCount) {
+        if(commentsCount > 999){
+            return "999+";
         }else{
-            this.likesCount = String.valueOf(review.getLikesCount());
+            return String.valueOf(commentsCount);
         }
+    }
 
-        if(review.getCommentsCount() > 999){
-            this.commentsCount = "999+";
+    private String createLikesCount(int reviewLikesCount) {
+        if(reviewLikesCount > 999){
+            return "999+";
         }else{
-            this.commentsCount = String.valueOf(review.getCommentsCount());
-        }
-
-        if(review.getReviewComments().size() > 0){
-            this.reviewComments = review.getReviewComments().stream()
-                    .map(rc -> new ReviewCommentResponse(rc))
-                    .collect(Collectors.toList());
+            return String.valueOf(reviewLikesCount);
         }
     }
 

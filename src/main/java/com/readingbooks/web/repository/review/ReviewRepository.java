@@ -23,12 +23,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findReview(@Param("reviewId") Long reviewId);
 
     @Query(
-            "select r " +
+            "select distinct r " +
                     "from Review r " +
-                    "join r.member " +
-                    "join r.book " +
-                    "left join r.reviewComments " +
-                    "where r.book.id = :bookId " +
+                    "join fetch r.member " +
+                    "join fetch r.book " +
+                    "left join fetch r.reviewComments rc " +
+                    "where r.book.id = :bookId and r.isHidden = false and (rc.isHidden = false or rc is null) " +
                     "order by r.likesCount desc, r.createdTime asc "
     )
     List<Review> findReviews(@Param("bookId") Long bookId);

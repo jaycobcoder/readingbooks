@@ -53,4 +53,20 @@ public class Review extends BaseEntity{
         this.content = content;
         this.starRating = starRating;
     }
+
+    public void addCommentsCount(){
+        commentsCount++;
+    }
+
+    public void subtractCommentsCount(){
+        commentsCount--;
+    }
+
+    public void addLikesCount(){
+        likesCount++;
+    }
+
+    public void subtractLikesCount(){
+        likesCount--;
+    }
 }

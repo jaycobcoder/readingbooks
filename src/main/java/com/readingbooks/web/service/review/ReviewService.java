@@ -165,6 +165,7 @@ public class ReviewService {
         Long bookId = book.getId();
 
         List<Review> reviews = reviewRepository.findReviews(bookId);
+
         return reviews.stream()
                 .map(r -> new ReviewResponse(r))
                 .collect(Collectors.toList());

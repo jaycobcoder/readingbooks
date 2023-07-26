@@ -24,9 +24,12 @@ public class ReviewCommentService {
      */
     public Long comment(Member member, Review review, String content) {
         validateForm(content);
-
+        
+        /* --- 댓글 작성 --- */
         ReviewComment reviewComment = ReviewComment.createReviewComment(member, review, content);
-
+        
+        /* --- 댓글 수량 증가 --- */
+        review.addCommentsCount();
         return reviewCommentRepository.save(reviewComment).getId();
     }
 
