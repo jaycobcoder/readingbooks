@@ -3,6 +3,7 @@ package com.readingbooks.web.controller;
 import com.readingbooks.web.exception.base.NotFoundException;
 import com.readingbooks.web.exception.base.PresentException;
 import com.readingbooks.web.exception.login.NotLoginException;
+import com.readingbooks.web.exception.review.ReviewException;
 import com.readingbooks.web.exception.wishlist.WishlistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -47,7 +48,7 @@ public class ControllerExceptionAdvice {
 
     @ExceptionHandler(WishlistException.class)
     public ResponseEntity<Object> handlerWishlistException(Exception e){
-        log.info("예외 발생 - IllegalArgumentException : ", e.getMessage());
+        log.info("예외 발생 - WishlistException : ", e.getMessage());
 
         BaseResponse response = new BaseResponse(HttpStatus.FORBIDDEN, e.getMessage(), false);
         return ResponseEntity
@@ -57,11 +58,20 @@ public class ControllerExceptionAdvice {
 
     @ExceptionHandler(NotLoginException.class)
     public ResponseEntity<Object> handlerNotLoginException(Exception e){
-        log.info("예외 발생 - IllegalArgumentException : ", e.getMessage());
+        log.info("예외 발생 - NotLoginException : ", e.getMessage());
 
         BaseResponse response = new BaseResponse(HttpStatus.UNAUTHORIZED, e.getMessage(), false);
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
+                .body(response);
+    }
+    @ExceptionHandler(ReviewException.class)
+    public ResponseEntity<Object> handlerReviewException(ReviewException e){
+        log.info("예외 발생 - ReviewException : ", e.getMessage());
+
+        BaseResponse response = new BaseResponse(e.getStatus(), e.getMessage(), false);
+        return ResponseEntity
+                .status(e.getStatus())
                 .body(response);
     }
 }

@@ -40,4 +40,9 @@ public class Review extends BaseEntity{
         review.isPurchased = isPurchased;
         return review;
     }
+
+    public void update(String content, int starRating) {
+        this.content = content;
+        this.starRating = starRating;
+    }
 }
