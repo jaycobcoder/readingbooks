@@ -143,6 +143,7 @@ public class ReviewService {
      * 리뷰 삭제 메소드
      * @param member
      * @param reviewId
+     * @return isDeleted
      */
     @Transactional
     public boolean delete(Member member, Long reviewId) {
@@ -160,12 +161,16 @@ public class ReviewService {
         return true;
     }
 
+    /**
+     * 도서의 리뷰들 반환해주는 메소드
+     * @param isbn
+     * @return Review Dto List
+     */
     public List<ReviewResponse> findReviews(String isbn){
         Book book = bookService.findBook(isbn);
         Long bookId = book.getId();
 
         List<Review> reviews = reviewRepository.findReviews(bookId);
-
         return reviews.stream()
                 .map(r -> new ReviewResponse(r))
                 .collect(Collectors.toList());

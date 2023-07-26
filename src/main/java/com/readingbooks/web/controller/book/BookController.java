@@ -1,6 +1,7 @@
 package com.readingbooks.web.controller.book;
 
 import com.readingbooks.web.domain.entity.member.Member;
+import com.readingbooks.web.domain.entity.review.Review;
 import com.readingbooks.web.exception.author.AuthorNotfoundException;
 import com.readingbooks.web.exception.base.NotFoundException;
 import com.readingbooks.web.exception.book.BookNotFoundException;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -83,6 +85,30 @@ public class BookController {
 
         /* --- 도서에 작성된 리뷰 --- */
         List<ReviewResponse> reviews = reviewService.findReviews(isbn);
+        if(reviews.size() != 0){
+            /* --- 몇 명이 평가했고, 평점의 평균 구하기 --- */
+            int totalReviewRating = 0;
+            int reviewCount = 0;
+            for (ReviewResponse review : reviews) {
+                reviewCount++;
+                totalReviewRating += review.getStarRating();
+            }
+            double starRatingAvg = totalReviewRating / reviewCount;
+            model.addAttribute("starRatingAvg", starRatingAvg);
+            model.addAttribute("reviewCount", reviewCount);
+        }else{
+            model.addAttribute("starRatingAvg", 0.0);
+            model.addAttribute("reviewCount", 0);
+        }
+
+        /* --- 본인 확인용 이메일 --- */
+        String email = "";
+        if(principal != null){
+            email = principal.getName();
+        }else{
+            email = "";
+        }
+        model.addAttribute("email", email);
 
         model.addAttribute("myReview", myReview);
         model.addAttribute("reviews", reviews);

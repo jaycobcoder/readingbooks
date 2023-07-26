@@ -18,6 +18,7 @@ public class ReviewResponse {
     private String content;
     private String likesCount;
     private String commentsCount;
+    private int starRating;
     private List<ReviewCommentResponse> reviewComments;
 
     public ReviewResponse(Review review) {
@@ -29,6 +30,7 @@ public class ReviewResponse {
         this.content = review.getContent();
         this.likesCount = createLikesCount(review.getLikesCount());
         this.commentsCount = createCommentsCount(review.getCommentsCount());
+        this.starRating = review.getStarRating();
 
         List<ReviewComment> reviewComments = review.getReviewComments();
         this.reviewComments = reviewComments.stream()
