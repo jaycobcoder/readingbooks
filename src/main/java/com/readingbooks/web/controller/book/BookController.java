@@ -93,7 +93,7 @@ public class BookController {
                 reviewCount++;
                 totalReviewRating += review.getStarRating();
             }
-            double starRatingAvg = totalReviewRating / reviewCount;
+            double starRatingAvg = (totalReviewRating / (reviewCount * 1.0));
             model.addAttribute("starRatingAvg", starRatingAvg);
             model.addAttribute("reviewCount", reviewCount);
         }else{
