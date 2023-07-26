@@ -6,6 +6,9 @@ import com.readingbooks.web.domain.entity.member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 public class Review extends BaseEntity{
@@ -20,6 +23,7 @@ public class Review extends BaseEntity{
     private boolean isPurchased;
     private boolean isHidden;
     private int likesCount;
+    private int commentsCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
@@ -29,6 +33,9 @@ public class Review extends BaseEntity{
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @OneToMany(mappedBy = "review", orphanRemoval = true)
+    private List<ReviewComment> reviewComments = new ArrayList<>();
+
     public static Review createReview(Member member, Book book, String content, int starRating, boolean isPurchased) {
         Review review = new Review();
         review.member = member;
@@ -36,6 +43,7 @@ public class Review extends BaseEntity{
         review.content = content;
         review.starRating = starRating;
         review.likesCount = 0;
+        review.commentsCount = 0;
         review.isHidden = false;
         review.isPurchased = isPurchased;
         return review;

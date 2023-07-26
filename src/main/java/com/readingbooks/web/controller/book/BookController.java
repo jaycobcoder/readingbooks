@@ -13,6 +13,7 @@ import com.readingbooks.web.service.book.dto.BookGroupInformationResponse;
 import com.readingbooks.web.service.book.dto.BookInformationResponse;
 import com.readingbooks.web.service.member.MemberService;
 import com.readingbooks.web.service.review.MyWroteReviewResponse;
+import com.readingbooks.web.service.review.ReviewResponse;
 import com.readingbooks.web.service.review.ReviewService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -68,7 +69,7 @@ public class BookController {
             authorInformation = null;
         }
 
-        /* --- 리뷰에 관련한 정보 --- */
+        /* --- 내가 작성한 리뷰 --- */
         MyWroteReviewResponse myReview = null;
         try{
             Member member = memberService.findMember(principal);
@@ -80,7 +81,11 @@ public class BookController {
             model.addAttribute("isLogin", false);
         }
 
+        /* --- 도서에 작성된 리뷰 --- */
+        List<ReviewResponse> reviews = reviewService.findReviews(isbn);
+
         model.addAttribute("myReview", myReview);
+        model.addAttribute("reviews", reviews);
         model.addAttribute("information", bookInformation);
         model.addAttribute("booksInGroup", seriesInformation);
         model.addAttribute("authorNameAndIdList", authorNameAndIdList);
