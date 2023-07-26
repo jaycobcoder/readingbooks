@@ -1,11 +1,19 @@
 package com.readingbooks.web.controller.book;
 
+import com.readingbooks.web.domain.entity.member.Member;
 import com.readingbooks.web.exception.author.AuthorNotfoundException;
+import com.readingbooks.web.exception.base.NotFoundException;
+import com.readingbooks.web.exception.book.BookNotFoundException;
+import com.readingbooks.web.exception.login.NotLoginException;
+import com.readingbooks.web.exception.review.ReviewNotFoundException;
 import com.readingbooks.web.service.book.*;
 import com.readingbooks.web.service.book.dto.AuthorInformationResponse;
 import com.readingbooks.web.service.book.dto.AuthorNameAndIdResponse;
 import com.readingbooks.web.service.book.dto.BookGroupInformationResponse;
 import com.readingbooks.web.service.book.dto.BookInformationResponse;
+import com.readingbooks.web.service.member.MemberService;
+import com.readingbooks.web.service.review.MyWroteReviewResponse;
+import com.readingbooks.web.service.review.ReviewService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -27,29 +36,51 @@ import java.util.List;
 public class BookController {
 
     private final BookInformationService bookInformationService;
+    private final MemberService memberService;
+    private final ReviewService reviewService;
 
     @GetMapping("/book/{isbn}")
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public String book(@PathVariable String isbn, HttpServletResponse response, Model model) throws IOException {
+    public String book(@PathVariable String isbn, HttpServletResponse response, Principal principal, Model model) throws IOException {
+        /* --- 도서 정보 --- */
         BookInformationResponse bookInformation = bookInformationService.getBookInformation(isbn);
 
+        /* --- isbn에 해당하는 도서가 없다면 404 --- */
         if(bookInformation == null){
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return "/error/404";
         }
 
+        /* --- 시리즈 정보 --- */
         List<BookGroupInformationResponse> seriesInformation = bookInformationService.getSeriesInformation(isbn);
+
+        /* --- 작가의 이름과 아이디 --- */
         List<AuthorNameAndIdResponse> authorNameAndIdList = bookInformationService.getAuthorNameAndIdList(isbn);
 
+        /* --- 작가, 번역가, 삽화가의 국적, 소개와 같은 정보들 --- */
         AuthorInformationResponse authorInformation = null;
         Long authorId = bookInformation.getAuthorDto().getAuthorId();
 
+        /* --- 만약 작가 아이디를 조작한 뒤 요청했다면, ControllerAdvice로 예외 처리를 하지 않기 위해 null로 반환 --- */
         try{
             authorInformation = bookInformationService.getAuthorInformation(isbn, authorId);
         } catch (AuthorNotfoundException e){
             authorInformation = null;
         }
 
+        /* --- 리뷰에 관련한 정보 --- */
+        MyWroteReviewResponse myReview = null;
+        try{
+            Member member = memberService.findMember(principal);
+            Long memberId = member.getId();
+
+            myReview = reviewService.findWroteReview(memberId, isbn);
+            model.addAttribute("isLogin", true);
+        } catch (NotLoginException e){
+            model.addAttribute("isLogin", false);
+        }
+
+        model.addAttribute("myReview", myReview);
         model.addAttribute("information", bookInformation);
         model.addAttribute("booksInGroup", seriesInformation);
         model.addAttribute("authorNameAndIdList", authorNameAndIdList);

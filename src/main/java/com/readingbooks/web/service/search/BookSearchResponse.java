@@ -20,8 +20,14 @@ public class BookSearchResponse {
 
     private String categoryGroupName;
 
+    private String reviewRatingAvg;
+    private int reviewCount;
+
     @QueryProjection
-    public BookSearchResponse(Long bookId, String isbn, String savedImageName, String title, String publisher, String description, int ebookPrice, int discountRate, String author, Long authorCount, String translator, String categoryGroupName) {
+    public BookSearchResponse(Long bookId, String isbn, String savedImageName, String title,
+                              String publisher, String description, int ebookPrice, int discountRate,
+                              String author, Long authorCount, String translator, String categoryGroupName,
+                              int totalStarRating, int reviewCount) {
         this.bookId = bookId;
         this.isbn = isbn;
         this.savedImageName = savedImageName;
@@ -37,6 +43,16 @@ public class BookSearchResponse {
         }
         this.translator = translator;
         this.categoryGroupName = categoryGroupName;
+        this.reviewRatingAvg = calculateReviewAvg(totalStarRating, reviewCount);
+        this.reviewCount = reviewCount;
+    }
+
+    private String calculateReviewAvg(int totalReviewRating, int reviewCount) {
+        if(totalReviewRating == 0){
+            return "0";
+        }
+        double avg = (double) totalReviewRating / reviewCount;
+        return String.format("%.1f", avg);
     }
 
     private int calculateSalePrice(int ebookPrice, int discountRate) {

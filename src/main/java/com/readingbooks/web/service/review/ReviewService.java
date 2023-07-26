@@ -3,10 +3,12 @@ package com.readingbooks.web.service.review;
 import com.readingbooks.web.domain.entity.book.Book;
 import com.readingbooks.web.domain.entity.member.Member;
 import com.readingbooks.web.domain.entity.review.Review;
+import com.readingbooks.web.exception.base.NotFoundException;
 import com.readingbooks.web.exception.review.ReviewNotFoundException;
 import com.readingbooks.web.exception.review.ReviewPresentException;
 import com.readingbooks.web.repository.library.LibraryRepository;
 import com.readingbooks.web.repository.review.ReviewRepository;
+import com.readingbooks.web.service.book.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,10 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Slf4j
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final LibraryRepository libraryRepository;
+    private final BookService bookService;
 
     /**
      * 리뷰 작성 메소드
@@ -33,7 +37,7 @@ public class ReviewService {
         validateForm(content, starRating);
 
         /* --- 이미 해당 도서에 리뷰를 작성했는지 검증 --- */
-        validateMemberWroteReviewInSameBook(member.getId());
+        validateMemberWroteReviewInSameBook(member.getId(), book.getId());
 
         /* --- 리뷰 작성자가 리뷰를 작성했는지 확인 --- */
         boolean isPurchased = libraryRepository.existsByMemberId(member.getId());
@@ -45,8 +49,8 @@ public class ReviewService {
         return reviewRepository.save(review).getId();
     }
 
-    private void validateMemberWroteReviewInSameBook(Long memberId) {
-        boolean result = reviewRepository.existsByMemberId(memberId);
+    private void validateMemberWroteReviewInSameBook(Long memberId, Long bookId) {
+        boolean result = reviewRepository.existsByMemberIdAndBookId(memberId, bookId);
         if(result == true){
             throw new ReviewPresentException("이미 해당 도서에 리뷰를 작성했습니다.");
         }
@@ -73,5 +77,31 @@ public class ReviewService {
     public Review findReview(Long reviewId) {
         return reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewNotFoundException("리뷰 아이디로 리뷰를 찾을 수 없습니다."));
+    }
+
+    public Review findReview(Long memberId, Long bookId){
+        return reviewRepository.findByMemberIdAndBookId(memberId, bookId)
+                .orElseThrow(() -> new ReviewNotFoundException("리뷰를 찾을 수 없습니다. 회원 아이디와 도서 아이디를 확인해주세요."));
+    }
+
+    /**
+     * 도서에서 내가 작성한 리뷰 반환해주는 메소드
+     *
+     * @param memberId
+     * @param isbn
+     * @return MyWroteReviewResponse DTO
+     */
+    public MyWroteReviewResponse findWroteReview(Long memberId, String isbn) {
+        Book book = bookService.findBook(isbn);
+        Long bookId = book.getId();
+
+        Review review = null;
+        try{
+            review = findReview(memberId, bookId);
+        } catch (NotFoundException e){
+            return null;
+        }
+        MyWroteReviewResponse response = new MyWroteReviewResponse(review);
+        return response;
     }
 }

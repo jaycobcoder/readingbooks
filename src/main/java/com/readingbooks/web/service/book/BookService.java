@@ -26,4 +26,9 @@ public class BookService {
         }
         return bookRepository.findAllById(bookIdList);
     }
+
+    public Book findBook(String isbn) {
+        return bookRepository.findByIsbn(isbn)
+                .orElseThrow(() -> new BookNotFoundException("검색되는 도서가 없습니다. isbn을 다시 확인해주세요."));
+    }
 }

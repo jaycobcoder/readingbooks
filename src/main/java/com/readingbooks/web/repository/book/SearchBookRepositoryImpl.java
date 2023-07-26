@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.readingbooks.web.domain.entity.review.QReview;
 import com.readingbooks.web.domain.enums.AuthorOption;
 import com.readingbooks.web.repository.searchcond.SearchCondUtils;
 import com.readingbooks.web.service.search.BookSearchCondition;
@@ -20,6 +21,7 @@ import java.util.List;
 import static com.querydsl.jpa.JPAExpressions.select;
 import static com.readingbooks.web.domain.entity.book.QBook.book;
 import static com.readingbooks.web.domain.entity.book.QBookAuthorList.bookAuthorList;
+import static com.readingbooks.web.domain.entity.review.QReview.*;
 
 public class SearchBookRepositoryImpl implements SearchBookRepository{
     private final JPAQueryFactory queryFactory;
@@ -108,7 +110,15 @@ public class SearchBookRepositoryImpl implements SearchBookRepository{
                                                 .limit(1),
                                         "translator"
                                 ),
-                                book.category.categoryGroup.name
+                                book.category.categoryGroup.name,
+                            ExpressionUtils.as(
+                                    select(review.starRating.sum())
+                                            .from(review)
+                                            .join(review.book)
+                                            .where(book.id.eq(review.book.id)),
+                                    "totalStarRating"
+                            ),
+                            book.reviewCount
                         )
                 )
                 .from(book)
