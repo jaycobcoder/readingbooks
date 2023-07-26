@@ -1,6 +1,7 @@
 package com.readingbooks.web.controller.login;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.web.csrf.CsrfToken;
@@ -19,7 +20,11 @@ public class LoginViewController {
     @GetMapping("/login")
     public String login(@RequestParam(required = false) boolean hasMessage,
                         @RequestParam(required = false) String message,
+                        @RequestParam(required = false) String returnUrl,
+                        HttpServletRequest request,
                         Model model){
+        HttpSession session = request.getSession();
+        session.setAttribute("returnUrl", returnUrl);
 
         model.addAttribute("hasMessage", hasMessage);
         model.addAttribute("message", message);

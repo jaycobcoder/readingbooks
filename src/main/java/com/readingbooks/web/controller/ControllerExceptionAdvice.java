@@ -65,6 +65,7 @@ public class ControllerExceptionAdvice {
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(response);
     }
+
     @ExceptionHandler(ReviewException.class)
     public ResponseEntity<Object> handlerReviewException(ReviewException e){
         log.info("예외 발생 - ReviewException : ", e.getMessage());
