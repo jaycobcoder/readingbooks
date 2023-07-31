@@ -1,4 +1,4 @@
-package com.readingbooks.config;
+package com.readingbooks.config.security;
 
 import com.readingbooks.web.security.userdetailsservice.MemberDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +28,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                     .csrfTokenRequestHandler(requestHandler)
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .ignoringRequestMatchers("/account/login/**", "/logout/**", "/register", "/register/validate/email")
+                    .ignoringRequestMatchers(
+                            "/account/login/**", "/logout/**", "/register", "/register/validate/email", "/account/find-id", "/account/find-password"
+                    )
                 )
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/cart", "/library", "/user/**").hasAnyRole("MEMBER", "ADMIN")
+                        .requestMatchers("/wishlist/**", "/library", "/user/**", "/orders/**", "/review").hasAnyRole("MEMBER", "ADMIN")
                         .requestMatchers(
                                 "/manage/**",
                                 "/register/author", "/update/author", "/delete/author", "/search/author",

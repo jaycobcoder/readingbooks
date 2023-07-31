@@ -1,4 +1,4 @@
-package com.readingbooks.config;
+package com.readingbooks.config.security;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

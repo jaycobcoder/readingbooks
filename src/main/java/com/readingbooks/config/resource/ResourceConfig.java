@@ -1,5 +1,6 @@
-package com.readingbooks.config;
+package com.readingbooks.config.resource;
 
+import com.readingbooks.config.PathConst;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

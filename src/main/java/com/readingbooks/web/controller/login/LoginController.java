@@ -46,4 +46,16 @@ public class LoginController {
                 .status(HttpStatus.OK)
                 .body(maskedEmail);
     }
+
+    @PostMapping("/account/find-password")
+    public ResponseEntity<Object> findPassword(@RequestParam String email, @RequestParam String phoneNo){
+        memberService.changePasswordAndSendEmail(email, phoneNo);
+
+        BaseResponse response = new BaseResponse(
+                HttpStatus.OK, "비밀번호가 변경되었습니다.", true
+        );
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
 }

@@ -3,6 +3,9 @@ package com.readingbooks.web.service.member;
 import com.readingbooks.web.domain.entity.member.Member;
 import com.readingbooks.web.domain.enums.Gender;
 import com.readingbooks.web.exception.member.MemberPresentException;
+import com.readingbooks.web.repository.member.MemberRepository;
+import com.readingbooks.web.service.mail.MailService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,15 +14,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 @Transactional
 class MemberServiceTest {
-    @Autowired
     private MemberService memberService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @BeforeEach
+    void beforeEach(){
+        MailService mailService = mock(MailService.class);
+        memberService = new MemberService(memberRepository, passwordEncoder, mailService);
+    }
 
     @Test
     void whenRegisteringFormNull_thenThrowException(){
@@ -130,6 +142,23 @@ class MemberServiceTest {
         assertThat(findMember.getName()).isEqualTo("test");
         assertThat(findMember.getBirthYear()).isEqualTo("1999");
         assertThat(findMember.getGender()).isEqualTo(Gender.SECRET);
+    }
+
+    @Test
+    void whenChangedTempPassword_thenVerifyField(){
+        //given
+        RegisterRequest request = new RegisterRequest("test@gmail.com", "testtest1234", "testtest1234", "홍길동", "1999", Gender.SECRET, "01055555555");
+        Long memberId = memberService.register(request);
+
+        //when
+        String email = "test@gmail.com";
+        String tempPassword = memberService.changePasswordAndSendEmail(email, "01055555555");
+
+        Member member = memberService.findMember(memberId);
+
+
+        //then
+        assertThat(passwordEncoder.matches(tempPassword, member.getPassword())).isTrue();
     }
 
     private RegisterRequest createRequest(String email, String password, String passwordConfirm, String name, String birthYear, Gender gender, String phoneNo){

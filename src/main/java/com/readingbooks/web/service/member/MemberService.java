@@ -7,8 +7,10 @@ import com.readingbooks.web.exception.member.MemberException;
 import com.readingbooks.web.exception.member.MemberNotFoundException;
 import com.readingbooks.web.exception.member.MemberPresentException;
 import com.readingbooks.web.repository.member.MemberRepository;
+import com.readingbooks.web.service.mail.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
 
     @Transactional
     public Long register(RegisterRequest request){
@@ -52,14 +56,7 @@ public class MemberService {
 
     private void validateForm(RegisterRequest request) {
         String email = request.getEmail();
-        if(email == null){
-            throw new IllegalArgumentException("이메일을 올바르게 입력해주세요.");
-        }
-
-        String[] splitEmail = email.split("@");
-        if(splitEmail[0].length() < 4 || splitEmail[0].length() > 24){
-            throw new IllegalArgumentException("이메일을 올바르게 입력해주세요.");
-        }
+        validateEmail(email);
 
         String password = request.getPassword();
         String passwordConfirm = request.getPasswordConfirm();
@@ -92,14 +89,28 @@ public class MemberService {
         if(gender == null){
             throw new IllegalArgumentException("성별을 올바르게 입력해주세요.");
         }
-
         String phoneNo = request.getPhoneNo();
+        validatePhoneNo(phoneNo);
+    }
+
+    private void validatePhoneNo(String phoneNo) {
         if(phoneNo == null || phoneNo.trim().equals("")){
             throw new IllegalArgumentException("핸드폰 번호를 올바르게 입력해주세요.");
         }
 
         if(phoneNo.length() != 11){
             throw new IllegalArgumentException("핸드폰 번호를 올바르게 입력해주세요.");
+        }
+    }
+
+    private void validateEmail(String email) {
+        if(email == null || email.trim().equals("")){
+            throw new IllegalArgumentException("이메일을 올바르게 입력해주세요.");
+        }
+
+        String[] splitEmail = email.split("@");
+        if(splitEmail[0].length() < 4 || splitEmail[0].length() > 24){
+            throw new IllegalArgumentException("이메일을 올바르게 입력해주세요.");
         }
     }
 
@@ -207,5 +218,40 @@ public class MemberService {
         String domain = email.substring(atIndex);
         String maskedPrefix = prefix + "*".repeat(atIndex - 3); // 빼기 3을 한 이유는, 앞 3글자는 마스킹 되지 않아야 함
         return maskedPrefix + domain;
+    }
+
+
+    /**
+     * 임시 비밀번호로 변경 이후 이메일 전송 메소드
+     * @param email
+     * @param phoneNo
+     * @return tempPassword
+     */
+    @Transactional
+    public String changePasswordAndSendEmail(String email, String phoneNo) {
+        /* --- 폼 검증 --- */
+        validateEmail(email);
+        validatePhoneNo(phoneNo);
+
+        Member member = findMember(email, phoneNo);
+
+        /* --- 임시 비밀번호 변경 --- */
+        String tempPassword = createTempPassword();
+        String encodedTempPassword = passwordEncoder.encode(tempPassword);
+        member.updatePassword(encodedTempPassword);
+
+        /* --- 이메일 전송 --- */
+        mailService.send(email, tempPassword);
+        return tempPassword;
+    }
+
+    private String createTempPassword() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString().substring(0, 8);
+    }
+
+    private Member findMember(String email, String phoneNo) {
+        return memberRepository.findByEmailAndPhoneNo(email, phoneNo)
+                .orElseThrow(() -> new MemberNotFoundException("해당 이메일과 핸드폰 번호로 회원 정보를 찾을 수 없습니다."));
     }
 }
