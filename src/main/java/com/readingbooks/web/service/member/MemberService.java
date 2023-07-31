@@ -28,6 +28,7 @@ public class MemberService {
     public Long register(RegisterRequest request){
         String email = request.getEmail();
         validateIsExistsEmail(email);
+
         validateForm(request);
 
         Member member = Member.createMember(request);
@@ -88,6 +89,15 @@ public class MemberService {
         Gender gender = request.getGender();
         if(gender == null){
             throw new IllegalArgumentException("성별을 올바르게 입력해주세요.");
+        }
+
+        String phoneNo = request.getPhoneNo();
+        if(phoneNo == null || phoneNo.trim().equals("")){
+            throw new IllegalArgumentException("핸드폰 번호를 올바르게 입력해주세요.");
+        }
+
+        if(phoneNo.length() != 11){
+            throw new IllegalArgumentException("핸드폰 번호를 올바르게 입력해주세요.");
         }
     }
 

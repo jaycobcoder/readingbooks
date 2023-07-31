@@ -29,6 +29,8 @@ public class Member extends BaseEntity {
     private String name;
     private String birthYear;
 
+    private String phoneNo;
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
@@ -55,6 +57,7 @@ public class Member extends BaseEntity {
         member.birthYear = request.getBirthYear();
         member.gender = request.getGender();
         member.role = MemberRole.ROLE_MEMBER;
+        member.phoneNo = request.getPhoneNo();
         return member;
     }
 
