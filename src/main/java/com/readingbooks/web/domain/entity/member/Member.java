@@ -1,11 +1,19 @@
 package com.readingbooks.web.domain.entity.member;
 
 import com.readingbooks.web.domain.entity.BaseEntity;
+import com.readingbooks.web.domain.entity.library.Library;
+import com.readingbooks.web.domain.entity.orders.Orders;
+import com.readingbooks.web.domain.entity.review.Review;
+import com.readingbooks.web.domain.entity.review.ReviewComment;
+import com.readingbooks.web.domain.entity.wishlist.Wishlist;
 import com.readingbooks.web.domain.enums.Gender;
 import com.readingbooks.web.domain.enums.MemberRole;
 import com.readingbooks.web.service.member.RegisterRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -29,6 +37,18 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
+    List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
+    List<ReviewComment> reviewComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
+    List<Wishlist> wishlists = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
+    List<Library> libraries = new ArrayList<>();
+
     public static Member createMember(RegisterRequest request){
         Member member = new Member();
         member.email = request.getEmail();
@@ -43,5 +63,9 @@ public class Member extends BaseEntity {
 
     public void encodePassword(String encodedPassword){
         password = encodedPassword;
+    }
+
+    public void updatePassword(String changingPassword) {
+        password = changingPassword;
     }
 }

@@ -3,6 +3,7 @@ package com.readingbooks.web.controller;
 import com.readingbooks.web.exception.base.NotFoundException;
 import com.readingbooks.web.exception.base.PresentException;
 import com.readingbooks.web.exception.login.NotLoginException;
+import com.readingbooks.web.exception.member.MemberException;
 import com.readingbooks.web.exception.review.ReviewException;
 import com.readingbooks.web.exception.wishlist.WishlistException;
 import lombok.extern.slf4j.Slf4j;
@@ -73,6 +74,16 @@ public class ControllerExceptionAdvice {
         BaseResponse response = new BaseResponse(e.getStatus(), e.getMessage(), false);
         return ResponseEntity
                 .status(e.getStatus())
+                .body(response);
+    }
+
+    @ExceptionHandler(MemberException.class)
+    public ResponseEntity<Object> handlerMemberException(Exception e){
+        log.info("예외 발생 - MemberException : ", e.getMessage());
+
+        BaseResponse response = new BaseResponse(HttpStatus.BAD_REQUEST, e.getMessage(), false);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(response);
     }
 }

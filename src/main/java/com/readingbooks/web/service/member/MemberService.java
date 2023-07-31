@@ -2,8 +2,8 @@ package com.readingbooks.web.service.member;
 
 import com.readingbooks.web.domain.entity.member.Member;
 import com.readingbooks.web.domain.enums.Gender;
-import com.readingbooks.web.exception.login.LoginCheckFailException;
 import com.readingbooks.web.exception.login.NotLoginException;
+import com.readingbooks.web.exception.member.MemberException;
 import com.readingbooks.web.exception.member.MemberNotFoundException;
 import com.readingbooks.web.exception.member.MemberPresentException;
 import com.readingbooks.web.repository.member.MemberRepository;
@@ -111,5 +111,64 @@ public class MemberService {
     public Member findMember(Long memberId){
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("해당 아이디로 회원을 찾을 수 없습니다. 회원 아이디를 다시 확인해주세요."));
+    }
+
+    /**
+     * 비밀번호 확인 이후 DTO 반환 메소드
+     * @param rawPassword
+     * @param member
+     * @return dto
+     */
+    public ModifyMemberResponse matchPasswordThenReturnResponse(String rawPassword, Member member) {
+        String encodedPassword = member.getPassword();
+
+        matchPasswords(rawPassword, encodedPassword);
+
+        return new ModifyMemberResponse(member);
+    }
+
+    private void matchPasswords(String rawPassword, String encodedPassword) {
+        boolean result = passwordEncoder.matches(rawPassword, encodedPassword);
+
+        if(result == false){
+            throw new MemberException("비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+    /**
+     * 비밀번호 업데이트
+     * @param password
+     * @param newPassword
+     * @param newPasswordConfirm
+     * @param member
+     */
+    @Transactional
+    public void update(String password, String newPassword, String newPasswordConfirm, Member member) {
+        String encodedPassword = member.getPassword();
+
+        validatePasswords(password, newPassword, newPasswordConfirm);
+
+        matchPasswords(password, encodedPassword);
+
+        String changingPassword = passwordEncoder.encode(newPassword);
+        member.updatePassword(changingPassword);
+    }
+
+    private void validatePasswords(String password, String newPassword, String newPasswordConfirm) {
+        if(password == null || password.trim().equals("")){
+            throw new IllegalArgumentException("현재 비밀번호나 새 비밀번호 또는 새 비밀번호 확인을 입력하세요.");
+        }
+
+        if(newPassword == null || newPassword.trim().equals("")){
+            throw new IllegalArgumentException("현재 비밀번호나 새 비밀번호 또는 새 비밀번호 확인을 입력하세요.");
+        }
+
+        if(newPasswordConfirm == null || newPasswordConfirm.trim().equals("")){
+            throw new IllegalArgumentException("현재 비밀번호나 새 비밀번호 또는 새 비밀번호 확인을 입력하세요.");
+        }
+
+        if(!newPassword.equals(newPasswordConfirm)){
+            throw new IllegalArgumentException("변경할 비밀번호가 일치하지 않습니다.");
+        }
     }
 }
