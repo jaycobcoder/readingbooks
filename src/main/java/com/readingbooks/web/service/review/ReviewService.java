@@ -62,6 +62,14 @@ public class ReviewService {
     }
 
     private void validateForm(String content, int starRating) {
+        validateContent(content);
+
+        if (starRating > 5 || starRating < 1) {
+            throw new IllegalArgumentException("별점은 1에서 5의 정수만 올 수 있습니다.");
+        }
+    }
+
+    private void validateContent(String content) {
         if(content == null || content.trim() == ""){
             throw new IllegalArgumentException("리뷰를 남겨주세요.");
         }
@@ -72,10 +80,6 @@ public class ReviewService {
 
         if(content.length() > 2000){
             throw new IllegalArgumentException("2000자 미만의 리뷰를 남겨주세요.");
-        }
-
-        if (starRating > 5 || starRating < 1) {
-            throw new IllegalArgumentException("별점은 1에서 5의 정수만 올 수 있습니다.");
         }
     }
 
@@ -96,7 +100,7 @@ public class ReviewService {
      * @param isbn
      * @return MyWroteReviewResponse DTO
      */
-    public MyWroteReviewResponse findWroteReview(Long memberId, String isbn) {
+    public MyWroteReviewInBookResponse findWroteReview(Long memberId, String isbn) {
         Book book = bookService.findBook(isbn);
         Long bookId = book.getId();
 
@@ -106,7 +110,7 @@ public class ReviewService {
         } catch (NotFoundException e){
             return null;
         }
-        MyWroteReviewResponse response = new MyWroteReviewResponse(review);
+        MyWroteReviewInBookResponse response = new MyWroteReviewInBookResponse(review);
         return response;
     }
 
@@ -174,5 +178,36 @@ public class ReviewService {
         return reviews.stream()
                 .map(r -> new ReviewResponse(r))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 본인이 작성한 리뷰들 가져오는 메소드
+     * @param memberId
+     * @return List<DTO>
+     */
+    public List<MyWroteReviewResponse> findWroteReviews(Long memberId) {
+        return reviewRepository.findAllByMemberId(memberId).stream()
+                .map(r -> new MyWroteReviewResponse(r))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 리뷰 수정 메소드
+     * @param member
+     * @param reviewId
+     * @param content
+     */
+    @Transactional
+    public void update(Member member, Long reviewId, String content) {
+        Long memberId = member.getId();
+        Review review = findReview(reviewId);
+
+        /* --- 수정하고자 하는 리뷰가 본인이 작성한 리뷰인지 검증 --- */
+        validateReviewIdentification(review, memberId);
+
+        /* --- 폼 검증 --- */
+        validateContent(content);
+
+        review.update(content);
     }
 }

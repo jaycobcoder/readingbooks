@@ -1,19 +1,15 @@
 package com.readingbooks.web.controller.book;
 
 import com.readingbooks.web.domain.entity.member.Member;
-import com.readingbooks.web.domain.entity.review.Review;
 import com.readingbooks.web.exception.author.AuthorNotfoundException;
-import com.readingbooks.web.exception.base.NotFoundException;
-import com.readingbooks.web.exception.book.BookNotFoundException;
 import com.readingbooks.web.exception.login.NotLoginException;
-import com.readingbooks.web.exception.review.ReviewNotFoundException;
 import com.readingbooks.web.service.book.*;
 import com.readingbooks.web.service.book.dto.AuthorInformationResponse;
 import com.readingbooks.web.service.book.dto.AuthorNameAndIdResponse;
 import com.readingbooks.web.service.book.dto.BookGroupInformationResponse;
 import com.readingbooks.web.service.book.dto.BookInformationResponse;
 import com.readingbooks.web.service.member.MemberService;
-import com.readingbooks.web.service.review.MyWroteReviewResponse;
+import com.readingbooks.web.service.review.MyWroteReviewInBookResponse;
 import com.readingbooks.web.service.review.ReviewResponse;
 import com.readingbooks.web.service.review.ReviewService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,7 +27,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -72,7 +67,7 @@ public class BookController {
         }
 
         /* --- 내가 작성한 리뷰 --- */
-        MyWroteReviewResponse myReview = null;
+        MyWroteReviewInBookResponse myReview = null;
         try{
             Member member = memberService.findMember(principal);
             Long memberId = member.getId();

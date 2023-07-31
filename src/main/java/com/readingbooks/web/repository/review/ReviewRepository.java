@@ -1,6 +1,7 @@
 package com.readingbooks.web.repository.review;
 
 import com.readingbooks.web.domain.entity.review.Review;
+import com.readingbooks.web.service.review.MyWroteReviewInBookResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -32,4 +33,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
                     "order by r.likesCount desc, r.createdTime asc "
     )
     List<Review> findReviews(@Param("bookId") Long bookId);
+
+    @Query(
+            "select r from Review r " +
+                    "join fetch r.book " +
+                    "join r.member " +
+                    "where r.member.id = :memberId " +
+                    "order by r.createdTime desc "
+    )
+    List<Review> findAllByMemberId(@Param("memberId") Long memberId);
 }

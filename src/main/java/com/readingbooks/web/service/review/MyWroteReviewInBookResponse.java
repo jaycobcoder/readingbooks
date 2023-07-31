@@ -7,21 +7,18 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Getter
-public class MyWroteReviewResponse {
+public class MyWroteReviewInBookResponse {
     private Long reviewId;
-    private Long bookId;
-    private String title;
     private String content;
     private int starRating;
     private String wroteDate;
 
-    public MyWroteReviewResponse(Review review) {
-        this.reviewId = review.getId();
-        this.bookId = review.getBook().getId();
-        this.title = review.getBook().getTitle();
-        this.content = review.getContent();
-        this.starRating = review.getStarRating();
-        wroteDate = createWroteDate(review.getCreatedTime());
+    public MyWroteReviewInBookResponse(Review review) {
+        reviewId = review.getId();
+        content = review.getContent();
+        starRating = review.getStarRating();
+        LocalDateTime createdTime = review.getCreatedTime();
+        wroteDate = createWroteDate(createdTime);
     }
 
     private String createWroteDate(LocalDateTime currentDate) {

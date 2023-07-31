@@ -69,4 +69,8 @@ public class Review extends BaseEntity{
     public void subtractLikesCount(){
         likesCount--;
     }
+
+    public void update(String content) {
+        this.content = content;
+    }
 }

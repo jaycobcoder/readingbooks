@@ -41,6 +41,7 @@ public class OrderViewController {
         PagingOrdersDto paging = new PagingOrdersDto(responses);
         model.addAttribute("responses", responses);
         model.addAttribute("paging", paging);
+        model.addAttribute("active", "orders");
         return "user/orders/history";
     }
 
