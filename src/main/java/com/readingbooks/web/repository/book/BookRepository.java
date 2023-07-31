@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface BookRepository extends JpaRepository<Book, Long>, SearchBookRepository {
+public interface BookRepository extends JpaRepository<Book, Long>, SearchBookRepository, HomeRepository{
     boolean existsByCategoryId(Long categoryId);
 
     boolean existsByBookGroupId(Long bookGroupId);
