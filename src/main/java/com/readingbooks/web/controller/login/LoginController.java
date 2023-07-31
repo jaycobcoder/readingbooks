@@ -6,10 +6,10 @@ import com.readingbooks.web.service.member.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,5 +34,16 @@ public class LoginController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
+    }
+
+    @PostMapping("/account/find-id")
+    public ResponseEntity<Object> findId(@RequestBody HashMap<String, String> request){
+        String name = request.get("name");
+        String phoneNo = request.get("phoneNo");
+        List<String> maskedEmail = memberService.findEmail(name, phoneNo);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(maskedEmail);
     }
 }

@@ -108,6 +108,14 @@ class MemberServiceTest {
     }
 
     @Test
+    void maskingTest(){
+        String email = "test1234@gmail.com";
+        String maskedEmail = memberService.maskEmail(email);
+
+        assertThat(maskedEmail).isEqualTo("tes*****@gmail.com");
+    }
+
+    @Test
     void whenMemberRegistered_thenVerifyFields(){
         //given
         RegisterRequest request = createRequest("success@example.com", "test1234!", "test1234!","test", "1999",  Gender.SECRET, "01012341234");

@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -185,5 +187,25 @@ public class MemberService {
     public MemberInformationResponse findMemberInformation(Principal principal) {
         Member member = findMember(principal);
         return new MemberInformationResponse(member);
+    }
+
+    public List<String> findEmail(String name, String phoneNo) {
+        List<Member> members = memberRepository.findByNameAndPhoneNo(name, phoneNo);
+
+        if(members.size() == 0){
+            throw new MemberNotFoundException("이름과 핸드폰 번호에 해당하는 아이디를 찾을 수 없습니다.");
+        }
+
+        return members.stream().map(m -> maskEmail(m.getEmail()))
+                .collect(Collectors.toList());
+    }
+
+    public String maskEmail(String email){
+        int atIndex = email.indexOf('@');
+
+        String prefix = email.substring(0, 3);
+        String domain = email.substring(atIndex);
+        String maskedPrefix = prefix + "*".repeat(atIndex - 3); // 빼기 3을 한 이유는, 앞 3글자는 마스킹 되지 않아야 함
+        return maskedPrefix + domain;
     }
 }
