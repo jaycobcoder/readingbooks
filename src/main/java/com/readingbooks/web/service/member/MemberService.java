@@ -171,4 +171,9 @@ public class MemberService {
             throw new IllegalArgumentException("변경할 비밀번호가 일치하지 않습니다.");
         }
     }
+
+    public MemberInformationResponse findMemberInformation(Principal principal) {
+        Member member = findMember(principal);
+        return new MemberInformationResponse(member);
+    }
 }
