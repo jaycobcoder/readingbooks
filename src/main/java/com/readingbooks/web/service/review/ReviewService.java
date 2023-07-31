@@ -44,9 +44,9 @@ public class ReviewService {
         /* --- 이미 해당 도서에 리뷰를 작성했는지 검증 --- */
         validateMemberWroteReviewInSameBook(member.getId(), book.getId());
 
-        /* --- 리뷰 작성자가 리뷰를 작성했는지 확인 --- */
-        boolean isPurchased = libraryRepository.existsByMemberId(member.getId());
-
+        /* --- 리뷰 작성자가 해당 도서를 구매했는지 확인 --- */
+        boolean isPurchased = libraryRepository.existsByMemberIdAndBookId(member.getId(), book.getId());
+        
         /* --- 리뷰 카운트 추가 --- */
         book.addReviewCount();
 
