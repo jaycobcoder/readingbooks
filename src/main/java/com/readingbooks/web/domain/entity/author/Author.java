@@ -26,6 +26,8 @@ public class Author extends BaseEntity {
     private AuthorOption authorOption;
 
     private String nationality;
+
+    @Column(length = 2000)
     private String description;
     private String birthYear;
 
