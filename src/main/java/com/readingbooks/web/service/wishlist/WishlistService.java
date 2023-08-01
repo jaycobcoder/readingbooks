@@ -38,7 +38,7 @@ public class WishlistService {
         validateIsBookExisted(bookId, memberId, new BookPresentException("위시리스트에 이미 해당 도서가 존재합니다."));
 
         /* --- 위시리스트에 담으려고 하는 도서를 구매했는지 확인 --- */
-        validateAddingBookAlreadyBuyed(book);
+        validateAddingBookAlreadyBuyed(book, memberId);
 
 
         Wishlist wishlist = Wishlist.createWishlist(book, member);
@@ -46,9 +46,9 @@ public class WishlistService {
         return wishlistRepository.save(wishlist).getId();
     }
 
-    private void validateAddingBookAlreadyBuyed(Book book) {
+    private void validateAddingBookAlreadyBuyed(Book book, Long memberId) {
         Long bookId = book.getId();
-        boolean isExistsBook = libraryRepository.existsByBookId(bookId);
+        boolean isExistsBook = libraryRepository.existsByBookIdAndMemberId(bookId, memberId);
         if(isExistsBook == true){
             throw new BookPresentException("이미 구매한 도서입니다.");
         }
