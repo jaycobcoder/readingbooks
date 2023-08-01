@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <th:block th:replace="~{common/fragments/csrf :: csrf}"></th:block>
+  <title>리딩북스</title>
+
+  <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/home/navbar.css}" type="text/css">
+  <link rel="stylesheet" th:href="@{/css/user/home.css}" type="text/css">
+
+  <script th:src="@{/js/user/library/library.js}"></script>
+  <script th:src="@{/js/common/call-ajax.js}"></script>
+</head>
+<body>
+<div class="container h-auto">
+  <header class="header mt-1 mb-5">
+    <th:block th:replace="~{common/fragments/navbar :: navbar}"></th:block>
+  </header>
+  <main class="main container">
+    <section>
+      <div class="title mb-5 border-bottom">
+        <a class="fw-bold fs-4 text-black" th:href="@{/book/{isbn}(isbn = ${response.isbn})}" th:text="${response.title}">제목</a>
+      </div>
+      <div class="content" th:text="${response.content}">
+
+      </div>
+      <div class="button-wrap mt-2 d-flex justify-content-center">
+        <a href="/library" class="btn btn-lg btn-outline-grey me-2 w-25">라이브러리</a>
+        <a href="/" class="btn btn-lg btn-primary w-25">홈으로</a>
+      </div>
+    </section>
+  </main>
+
+</div>
+<th:block th:replace="~{/common/fragments/footer :: footer}"></th:block>
+</body>
+</html>

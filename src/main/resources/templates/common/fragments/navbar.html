@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:fragment="navbar">
+  <nav class="navbar">
+    <picture class="navbar-brand">
+      <a href="/">
+        <img src="/images/logo/reading.png" alt="리딩" height="25">
+        <img src="/images/logo/books.png" alt="북스" height="25">
+      </a>
+    </picture>
+    <div class="navbar-content d-flex justify-content-between align-items-center">
+      <div class="navbar-left">
+        <div class="search__wrap d-flex justify-content-center align-items-center">
+          <input type="text" name="query" id="query" class="query"/>
+          <button type="button" class="query" id="query-btn">
+            <i class="bi bi-search"></i>
+          </button>
+          <script>
+            function validateQuery(query) {
+              if(query.trim() == ''){
+                return false;
+              }
+            }
+
+            $(function(){
+              $('#query-btn').on("click", function (){
+                const query = $('#query').val();
+                const result = validateQuery(query);
+                if(result == false){
+                  return false;
+                }
+                location.href='/search?query='+query;
+              })
+              $('#query').on("focus", function () {
+                $(this).on("keydown", function(event) {
+                  if (event.key === "Enter") {
+                    const query = $('#query').val();
+                    const result = validateQuery(query);
+                    if(result == false){
+                      return false;
+                    }
+                    location.href='/search?query='+query;
+                  }
+                });
+              })
+            })
+          </script>
+        </div>
+      </div>
+      <div class="navbar-right">
+        <th:block sec:authorize="isAnonymous()">
+          <!-- 인증 받지 않음 -->
+          <a href="/account/login" class="btn btn-outline-grey">로그인</a>
+          <a href="/account/register" class="btn btn-primary">회원가입</a>
+        </th:block>
+
+        <th:block sec:authorize="isAuthenticated()">
+          <!-- 인증 받음 -->
+          <a href="/wishlist" class="icons me-2 ms-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000" class="bi bi-basket3" viewBox="0 0 16 16">
+              <path d="M5.757 1.071a.5.5 0 0 1 .172.686L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15.5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5v-1A.5.5 0 0 1 .5 6h1.717L5.07 1.243a.5.5 0 0 1 .686-.172zM3.394 15l-1.48-6h-.97l1.525 6.426a.75.75 0 0 0 .729.574h9.606a.75.75 0 0 0 .73-.574L15.056 9h-.972l-1.479 6h-9.21z"/>
+            </svg>
+          </a>
+          <a href="/library" class="icons me-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000" class="bi bi-collection-fill" viewBox="0 0 16 13">
+              <path d="M2.5 3.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11zm2-2a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM0 13a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 16 13V6a1.5 1.5 0 0 0-1.5-1.5h-13A1.5 1.5 0 0 0 0 6v7zm1.5.5A.5.5 0 0 1 1 13V6a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-13z"/>
+            </svg>
+          </a>
+          <a href="/user/home" class="icons">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#000" class="bi bi-person-fill" viewBox="0 0 16 14">
+              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
+            </svg>
+          </a>
+        </th:block>
+        <th:block sec:authorize="hasRole('ADMIN')">
+          <a href="/manage/home" class="btn btn-primary admin">관리자</a>
+        </th:block>
+      </div>
+    </div>
+  </nav>
+</th:block>

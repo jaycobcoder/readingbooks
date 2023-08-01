@@ -13,7 +13,7 @@
   <link rel="stylesheet" th:href="@{/css/management/management.css}" type="text/css">
 
   <script th:src="@{/js/common/call-ajax.js}"></script>
-  <script th:src="@{/js/manage/book/book.js}"></script>
+  <script th:src="@{/js/manage/category/category.js}"></script>
 </head>
 <body>
 <div class="container">
@@ -26,11 +26,11 @@
         <th:block th:replace="~{manage/fragments/navbar :: navbar}"></th:block>
       </div>
       <div class="col-10">
-        <form class="book-form content-box" action="" enctype="multipart/form-data">
-          <label for="bookId">도서 아이디</label>
-          <input type="text" name="bookId" id="bookId" class="form-control mb-3 p-2"/>
+        <form class="category-form content-box" action="/result/category" method="get">
+          <label for="name">카테고리명 검색</label>
+          <input type="text" name="name" id="name" class="form-control mb-3 p-2"/>
 
-          <button type="button" class="btn btn-primary w-100 p-3 delete">삭제하기</button>
+          <button type="button" class="btn btn-primary w-100 p-3 search">검색하기</button>
         </form>
       </div>
     </div>

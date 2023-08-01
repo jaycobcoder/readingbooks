@@ -13,7 +13,7 @@
   <link rel="stylesheet" th:href="@{/css/management/management.css}" type="text/css">
 
   <script th:src="@{/js/common/call-ajax.js}"></script>
-  <script th:src="@{/js/manage/book/book.js}"></script>
+  <script th:src="@{/js/manage/bookcontent/bookcontent.js}"></script>
 </head>
 <body>
 <div class="container">
@@ -26,11 +26,24 @@
         <th:block th:replace="~{manage/fragments/navbar :: navbar}"></th:block>
       </div>
       <div class="col-10">
-        <form class="book-form content-box" action="" enctype="multipart/form-data">
-          <label for="bookId">도서 아이디</label>
-          <input type="text" name="bookId" id="bookId" class="form-control mb-3 p-2"/>
+        <form class="bookauthorlist-form content-box" action="" enctype="multipart/form-data">
+          <th:block th:if="${isSearched eq true}">
+            <div class="w-100">
+              <span class="fs-1 fw-bold" th:text="${response.bookTitle}"></span>
+            </div>
 
-          <button type="button" class="btn btn-primary w-100 p-3 delete">삭제하기</button>
+            <label for="bookId">도서 아이디</label>
+            <input type="text" name="bookId" id="bookId" class="form-control mb-3 p-2" th:value="${response.bookId}" disabled/>
+
+            <label for="content">도서 내용</label>
+            <textarea name="content" id="content" class="form-control mb-3 p-2" style="height: 700px" th:text="${response.content}"></textarea>
+
+            <button type="button" class="btn btn-primary w-100 p-3 update">수정하기</button>
+          </th:block>
+
+          <th:block th:if="${isSearched eq false}">
+            검색 결과가 없습니다.
+          </th:block>
         </form>
       </div>
     </div>

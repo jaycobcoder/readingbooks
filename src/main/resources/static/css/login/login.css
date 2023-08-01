@@ -1,0 +1,21 @@
+body{
+    background-color: #e4afff;
+}
+
+.container main .login-form{
+    width: 350px;
+}
+
+.container main .login-form form a{
+    color: var(--main-dark-grey);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 14px 18px;
+}
+
+.container main .login-form form .middle .message{
+    color: var(--main-red);
+    font-size: 14px;
+    padding-bottom: 4px;
+}

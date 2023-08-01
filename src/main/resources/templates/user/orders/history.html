@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>리딩북스</title>
+
+  <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/home/navbar.css}" type="text/css">
+  <link rel="stylesheet" th:href="@{/css/user/home.css}" type="text/css">
+
+  <script>
+    $(function () {
+      $('.link').on("click", function (){
+        const link = $(this).data('link');
+        location.href = link;
+      })
+    });
+  </script>
+  <style>
+    .link:hover{
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header class="header mt-1 mb-5">
+    <th:block th:replace="~{common/fragments/navbar :: navbar}"></th:block>
+  </header>
+  <main class="main container">
+    <div class="row">
+      <div class="col-3">
+        <th:block th:replace="~{user/fragments/navbar :: navbar}"></th:block>
+      </div>
+      <div class="col-9">
+        <section>
+          <table class="table table-hover">
+            <thead class="bg-light-grey">
+              <tr>
+                <td>구매일</td>
+                <td>결제 내역</td>
+                <td>주문 금액</td>
+                <td>결제 수단</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="link" th:each="response:${responses}" th:data-link="${'/orders/'+response.orderId}">
+                <td>
+                  <span class="text-grey" th:text="${response.purchasedDate}" style="font-size: 14px"></span>
+                </td>
+                <td>
+                  <span class="fw-bold" th:text="${response.orderName}"></span>
+                </td>
+                <td class="fw-bold text-primary">
+                  <span th:text="${#numbers.formatInteger(response.paymentAmount, 3, 'COMMA')}"></span>원
+                </td>
+                <td>
+                  <span th:text="${response.choosingOption}"></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <section th:if="${responses.totalElements ne 0}" class="mt-2 d-flex justify-content-center">
+    <nav aria-label="Page navigation">
+      <ul class="pagination">
+        <li class="page-item" th:class="${responses.first} ? 'disabled'">
+          <a class="page-link" th:href="@{/orders/history(page=${paging.prevPageNumber})}" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <th:block th:with="start = ${paging.startPageNumberInThisPageGroup}, end = ${paging.lastPageNumberInThisPageGroup}">
+          <li class="page-item" th:each="num : ${#numbers.sequence(start, end)}" th:class="${responses.pageable.pageNumber eq num - 1} ? 'active' : ''">
+            <a class="page-link" th:href="@{/orders/history(page=${num} - 1)}" th:text="${num}">1</a>
+          </li>
+        </th:block>
+        <li class="page-item" th:class="${responses.last} ? 'disabled' : ''">
+          <a class="page-link" th:href="@{/orders/history(page=${paging.nextPageNumber})}" aria-label="Previous">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+
+</div>
+<th:block th:replace="~{/common/fragments/footer :: footer}"></th:block>
+</body>
+</html>

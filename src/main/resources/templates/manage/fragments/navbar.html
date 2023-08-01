@@ -1,0 +1,142 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:fragment="navbar">
+  <aside class="admin-navbar__wrap">
+    <ul>
+      <li class="navbar-box">
+        <div class="title">
+          <b>
+            <a href="/manage/home">관리자 홈</a>
+          </b>
+        </div>
+      </li>
+      <li class="navbar-box">
+        <div class="title">작가 관리</div>
+        <ul class="content">
+          <li>
+            <a href="/register/author"
+                 th:classappend="${selectFlag eq 'registerAuthor'} ? 'selected' : ''">작가 등록</a>
+          </li>
+          <li>
+            <a href="/update/author"
+               th:classappend="${selectFlag eq 'updateAuthor'} ? 'selected' : ''">작가 수정</a>
+          </li>
+          <li>
+            <a href="/delete/author"
+               th:classappend="${selectFlag eq 'deleteAuthor'} ? 'selected' : ''">작가 삭제</a>
+          </li>
+          <li>
+            <a href="/search/author"
+               th:classappend="${selectFlag eq 'searchAuthor'} ? 'selected' : ''">작가 검색</a>
+          </li>
+        </ul>
+        <ul class="content">
+          <li>
+            <a href="/register/book-author-list"
+               th:classappend="${selectFlag eq 'registerBookAuthorList'} ? 'selected' : ''">도서 작가 등록</a>
+          </li>
+          <li>
+            <a href="/delete/book-author-list"
+               th:classappend="${selectFlag eq 'deleteBookAuthorList'} ? 'selected' : ''">도서 작가 삭제</a>
+          </li>
+        </ul>
+      </li>
+      <li class="navbar-box">
+        <div class="title">도서 관리</div>
+        <ul class="content">
+          <li>
+            <a href="/register/book"
+               th:classappend="${selectFlag eq 'registerBook'} ? 'selected' : ''">도서 등록</a>
+          </li>
+          <li>
+            <a href="/update/search/book"
+               th:classappend="${selectFlag eq 'updateBook'} ? 'selected' : ''">도서 수정</a>
+          </li>
+          <li>
+            <a href="/delete/book"
+               th:classappend="${selectFlag eq 'deleteBook'} ? 'selected' : ''">도서 삭제</a>
+          </li>
+          <li>
+            <a href="/search/book"
+               th:classappend="${selectFlag eq 'searchBook'} ? 'selected' : ''">도서 검색</a>
+          </li>
+          <li>
+            <a href="/register/book-content"
+               th:classappend="${selectFlag eq 'registerBookContent'} ? 'selected' : ''">도서 내용 입력</a>
+          </li>
+          <li>
+            <a href="/update/search/book-content"
+               th:classappend="${selectFlag eq 'updateBookContent'} ? 'selected' : ''">도서 내용 수정</a>
+          </li>
+          <li>
+            <a href="/delete/book-content"
+               th:classappend="${selectFlag eq 'deleteBookContent'} ? 'selected' : ''">도서 내용 삭제</a>
+          </li>
+        </ul>
+        <ul class="content">
+          <li>
+            <a href="/register/book-group"
+               th:classappend="${selectFlag eq 'registerBookGroup'} ? 'selected' : ''">도서 그룹 등록</a>
+          </li>
+          <li>
+            <a href="/update/book-group"
+               th:classappend="${selectFlag eq 'updateBookGroup'} ? 'selected' : ''">도서 그룹 수정</a>
+          </li>
+          <li>
+            <a href="/delete/book-group"
+               th:classappend="${selectFlag eq 'deleteBookGroup'} ? 'selected' : ''">도서 그룹 삭제</a>
+          </li>
+          <li>
+            <a href="/search/book-group"
+               th:classappend="${selectFlag eq 'searchBookGroup'} ? 'selected' : ''">도서 그룹 조회</a>
+          </li>
+        </ul>
+      </li>
+      <li class="navbar-box">
+        <div class="title">카테고리</div>
+        <ul class="content">
+          <li>
+            <a href="/register/category-group"
+               th:classappend="${selectFlag eq 'registerCategoryGroup'} ? 'selected' : ''">카테고리 그룹 등록</a>
+          </li>
+          <li>
+            <a href="/update/category-group"
+               th:classappend="${selectFlag eq 'updateCategoryGroup'} ? 'selected' : ''">카테고리 그룹 수정</a>
+          </li>
+          <li>
+            <a href="/delete/category-group"
+               th:classappend="${selectFlag eq 'deleteCategoryGroup'} ? 'selected' : ''">카테고리 그룹 삭제</a>
+          </li>
+          <li>
+            <a href="/search/category-group"
+               th:classappend="${selectFlag eq 'searchCategoryGroup'} ? 'selected' : ''">카테고리 그룹 조회</a>
+          </li>
+        </ul>
+        <ul class="content">
+          <li>
+            <a href="/register/category"
+               th:classappend="${selectFlag eq 'registerCategory'} ? 'selected' : ''">카테고리 등록</a>
+          </li>
+          <li>
+            <a href="/update/category"
+               th:classappend="${selectFlag eq 'updateCategory'} ? 'selected' : ''">카테고리 수정</a>
+          </li>
+          <li>
+            <a href="/delete/category"
+               th:classappend="${selectFlag eq 'deleteCategory'} ? 'selected' : ''">카테고리 삭제</a>
+          </li>
+          <li>
+            <a href="/search/category"
+               th:classappend="${selectFlag eq 'searchCategory'} ? 'selected' : ''">카테고리 조회</a>
+          </li>
+        </ul>
+        <ul class="content">
+          <li>
+            <a href="/search/categories"
+               th:classappend="${selectFlag eq 'searchCategories'} ? 'selected' : ''">카테고리 전체조회</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </aside>
+</th:block>

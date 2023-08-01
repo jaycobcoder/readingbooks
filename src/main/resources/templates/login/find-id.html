@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <th:block th:replace="~{common/fragments/csrf :: csrf}"></th:block>
+  <title>리딩북스</title>
+
+  <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/login/login.css}" type="text/css">
+
+  <script th:src="@{/js/login/find-id.js}"></script>
+  <script th:src="@{/js/common/call-ajax.js}"></script>
+</head>
+<body>
+<div class="container d-flex justify-content-center align-items-center flex-column">
+  <header class="header mb-5 mt-5">
+    <nav>
+      <a href="/">
+        <img src="/images/logo/reading.png" alt="리딩" width="200">
+      </a>
+    </nav>
+  </header>
+  <main class="main">
+    <input type="text" class="name form-control mb-2" placeholder="이름"/>
+    <input type="text" class="phoneNo form-control mb-2" placeholder="핸드폰 번호"/>
+    <button type="button" class="btn btn-primary w-100 find-id">아이디 찾기</button>
+  </main>
+</div>
+</body>
+</html>

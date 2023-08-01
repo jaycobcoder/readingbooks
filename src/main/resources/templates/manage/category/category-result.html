@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <th:block th:replace="~{common/fragments/csrf :: csrf}"></th:block>
+  <title>리딩북스</title>
+
+  <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/home/navbar.css}" type="text/css">
+  <link rel="stylesheet" th:href="@{/css/management/management.css}" type="text/css">
+</head>
+<body>
+<div class="container">
+  <header class="header mb-5 mt-1">
+    <th:block th:replace="~{common/fragments/navbar :: navbar}"></th:block>
+  </header>
+  <main class="main">
+    <div class="row">
+      <div class="col-2">
+        <th:block th:replace="~{manage/fragments/navbar :: navbar}"></th:block>
+      </div>
+      <div class="col-10">
+        <form class="category-form content-box" action="">
+          <table class="table" th:if="${response.searched eq true}">
+            <thead class="table-light">
+              <tr>
+                <td class="border-end">카테고리 그룹 아이디</td>
+                <td class="border-end">카테고리 그룹명</td>
+                <td class="border-end">카테고리 아이디</td>
+                <td>카테고리명</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="border-end" th:text="${response.categoryGroupId}"></td>
+                <td class="border-end" th:text="${response.categoryGroupName}"></td>
+                <td class="border-end" th:text="${response.categoryId}"></td>
+                <td th:text="${response.categoryName}"></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="content-box" th:if="${response.searched eq false}">
+            '<span th:text="${response.categoryName}"></span>'에 대한 검색 결과가 없습니다.
+          </div>
+
+          <a href="/search/category" class="btn btn-primary w-100 p-3 mb-3 register">돌아가기</a>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

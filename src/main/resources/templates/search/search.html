@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <th:block th:replace="~{common/fragments/csrf :: csrf}"></th:block>
+  <title>리딩북스</title>
+
+  <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/home/navbar.css}" type="text/css">
+  <link rel="stylesheet" th:href="@{/css/search/search.css}" type="text/css">
+
+  <script th:src="@{/js/common/call-ajax.js}"></script>
+  <script th:src="@{/js/search/search.js}"></script>
+
+  <link rel="stylesheet" th:href="@{/css/search/search.css}" type="text/css">
+</head>
+<body>
+<div class="container">
+  <header class="header mt-1">
+    <th:block th:replace="~{common/fragments/navbar :: navbar}"></th:block>
+  </header>
+  <main class="main">
+    <section class="mt-5">
+      <div class="pb-1">
+        <span class="fs-4 fw-bold">
+          &lsquo;<span th:text="${query}"></span>&rsquo; 검색 결과
+        </span>
+        <span>
+          전체 (<span th:text="${responses.totalElements}"></span>건)
+        </span>
+      </div>
+    </section>
+    <section class="mt-2">
+      <input type="hidden" class="query" th:value="${query}">
+      <input type="hidden" class="page" th:value="${responses.number}">
+      <select class="form-select condition-select w-25">
+        <option th:selected="${condition.order eq ''}" value="none">정확도순</option>
+        <option th:selected="${condition.order eq 'latest'}" value="latest">최신순</option>
+        <option th:selected="${condition.order eq 'reviews'}" value="reviews">리뷰 많은순</option>
+        <option th:selected="${condition.order eq 'price'}" value="price">낮은 가격순</option>
+      </select>
+    </section>
+
+    <section th:if="${responses.totalElements eq 0}" class="not-found mt-5 mb-5">
+      <div class="text-center fs-2">'<span th:text="${query}"></span>'에 대한 검색 결과가 없습니다.</div>
+    </section>
+    <section class="mt-2" th:each="response : ${responses}">
+
+      <div class="pt-2 pb-2 border-bottom">
+        <div class="d-flex">
+          <div class="img-wrap p-2">
+            <a th:href="@{/book/{isbn}(isbn=${response.isbn})}">
+              <img th:src="@{/images/book/{image}(image=${response.savedImageName})}" th:alt="${response.title + '의 표지'}" style="width: 100px; height: 180px">
+            </a>
+          </div>
+          <div class="p-2">
+            <div class="book-title">
+              <a th:href="@{/book/{isbn}(isbn=${response.isbn})}">
+                <span th:text="${response.title}">제목</span>
+              </a>
+            </div>
+            <div>
+              <p>
+                <span class="author" th:text="${response.author}">홍길동</span>
+                <th:block th:if="${response.authorCountExceptMainAuthor ne 0}">
+                  외 <span th:text="${response.authorCountExceptMainAuthor}"></span>명
+                </th:block>
+              </p>
+              <p>
+                <th:block th:if="${response.translator ne null}">
+                  <span th:text="${response.translator}"></span> 역
+                </th:block>
+              </p>
+              <p class="fs-6 fw-bold text-orange">
+                <span class="text-black fw-normal" th:if="${response.reviewRatingAvg eq '0'}">
+                  리뷰를 남기지 않은 도서입니다.
+                </span>
+                <th:block th:if="${response.reviewRatingAvg ne '0'}">
+                  <span th:text="${response.reviewRatingAvg}"></span>점(<span th:text="${response.reviewCount}"></span>)
+                </th:block>
+              </p>
+              <p class="publisher">
+                <a th:href="@{/search(query=${'출판사_'+response.publisher})}">
+                  <span th:text="${response.publisher}">출판사</span>
+                </a>
+              </p>
+            </div>
+            <div class="description">
+              <a th:href="@{/book/{isbn}(isbn=${response.isbn})}">
+                <th:block th:utext="${response.description}"></th:block>
+              </a>
+            </div>
+            <div class="mt-1">
+              소장
+              <span class="fw-bold text-primary"><span th:text="${#numbers.formatInteger(response.salePrice, 3, 'COMMA')}">10,500</span>원</span>
+              |
+              <span th:text="${response.categoryGroupName}"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+    <section th:if="${responses.totalElements ne 0}" class="mt-2 d-flex justify-content-center">
+      <nav aria-label="Page navigation">
+        <ul class="pagination">
+          <li class="page-item" th:class="${responses.first} ? 'disabled'">
+            <a class="page-link" th:href="@{/search(query=${query}, page=${paging.firstPageNumber}, order=${condition.order})}" aria-label="Previous">
+              <span aria-hidden="true">&laquo;&laquo;</span>
+            </a>
+          </li>
+          <li class="page-item" th:class="${responses.first} ? 'disabled'">
+            <a class="page-link" th:href="@{/search(query=${query}, page=${paging.prevPageNumber}, order=${condition.order})}" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <th:block th:with="start = ${paging.startPageNumberInThisPageGroup}, end = ${paging.lastPageNumberInThisPageGroup}">
+            <li class="page-item" th:each="num : ${#numbers.sequence(start, end)}" th:class="${responses.pageable.pageNumber eq num - 1} ? 'active' : ''">
+              <a class="page-link" th:href="@{/search(query=${query}, page=${num} - 1, order=${condition.order})}" th:text="${num}">1</a>
+            </li>
+          </th:block>
+          <li class="page-item" th:class="${responses.last} ? 'disabled' : ''">
+            <a class="page-link" th:href="@{/search(query=${query}, page=${paging.nextPageNumber}, order=${condition.order})}" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+          <li class="page-item" th:class="${responses.last} ? 'disabled' : ''">
+            <a class="page-link" th:href="@{/search(query=${query}, page=${paging.lastPageNumber}, order=${condition.order})}" aria-label="Next">
+              <span aria-hidden="true">&raquo;&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+  </main>
+</div>
+<th:block th:replace="~{common/fragments/footer :: footer}"></th:block>
+</body>
+</html>

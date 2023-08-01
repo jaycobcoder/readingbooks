@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <th:block th:replace="~{common/fragments/csrf :: csrf}"></th:block>
+  <title>리딩북스</title>
+
+  <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/home/navbar.css}" type="text/css">
+  <link rel="stylesheet" th:href="@{/css/management/management.css}" type="text/css">
+
+  <script th:src="@{/js/common/call-ajax.js}"></script>
+  <script th:src="@{/js/manage/book/book.js}"></script>
+
+  <script src="/js/ckeditor/ckeditor.js"></script>
+  <style>
+    .ck-editor__editable{
+      height: 400px;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header class="header mb-5 mt-1">
+    <th:block th:replace="~{common/fragments/navbar :: navbar}"></th:block>
+  </header>
+  <main class="main">
+    <div class="row">
+      <div class="col-2">
+        <th:block th:replace="~{manage/fragments/navbar :: navbar}"></th:block>
+      </div>
+      <div class="col-10">
+        <form class="book-form content-box" action="" enctype="multipart/form-data">
+          <label for="title">도서 제목</label>
+          <input type="text" name="title" id="title" class="form-control mb-3 p-2"/>
+
+          <label for="isbn">ISBN</label>
+          <input type="text" name="isbn" id="isbn" class="form-control mb-3 p-2"/>
+
+          <label for="publisher">출판사</label>
+          <input type="text" name="publisher" id="publisher" class="form-control mb-3 p-2"/>
+
+          <label for="publisher">출판일</label>
+          <input type="text" name="publishingDate" id="publishingDate" class="form-control mb-3 p-2"
+                 placeholder="예) 2023.01.07"/>
+
+          <label for="publisher">종이책 가격</label>
+          <input type="text" name="paperPrice" id="paperPrice" class="form-control mb-3 p-2"
+                 placeholder="적지 않아도 됩니다."/>
+
+          <label for="publisher">전자책 가격</label>
+          <input type="text" name="ebookPrice" id="ebookPrice" class="form-control mb-3 p-2"
+                 placeholder="꼭 적어야 합니다."/>
+
+          <label for="publisher">할인율</label>
+          <input type="text" name="discountRate" id="discountRate" class="form-control mb-3 p-2"
+                 placeholder="예) 5% 할인이면 5라고 기입, 할인이 없으면 0이라 기입"/>
+
+          <label for="publisher">카테고리 아이디</label>
+          <input type="text" name="categoryId" id="categoryId" class="form-control mb-3 p-2"/>
+
+          <label for="publisher">도서 그룹 아이디</label>
+          <input type="text" name="bookGroupId" id="bookGroupId" class="form-control mb-3 p-2"
+                 placeholder="해당 도서가 시리즈와 같은 그룹으로 묶여있지 않다면 기입하지 않아도 됩니다."/>
+
+          <label for="description">도서 설명</label>
+          <textarea name="description" id="description" class="form-control mb-3 p-2"></textarea>
+          <script>
+            ClassicEditor.create(document.querySelector('#description'));
+          </script>
+          <label for="file">도서 썸네일 이미지</label>
+          <input type="file" name="file" id="file" class="form-control mb-3 p-2"
+                 accept="image/gif, image/jpeg, image/jpg, image/png"/>
+
+          <button type="button" class="btn btn-primary w-100 p-3 mb-3 register">등록하기</button>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

@@ -26,11 +26,11 @@
         <th:block th:replace="~{manage/fragments/navbar :: navbar}"></th:block>
       </div>
       <div class="col-10">
-        <form class="book-form content-box" action="" enctype="multipart/form-data">
+        <form name="bookSearchForm" action="/update/book" method="get" class="content-box" id="bookSearchForm">
           <label for="bookId">도서 아이디</label>
           <input type="text" name="bookId" id="bookId" class="form-control mb-3 p-2"/>
 
-          <button type="button" class="btn btn-primary w-100 p-3 delete">삭제하기</button>
+          <button type="button" class="btn btn-primary w-100 p-3 mb-3 update-search">도서 아이디로 검색</button>
         </form>
       </div>
     </div>

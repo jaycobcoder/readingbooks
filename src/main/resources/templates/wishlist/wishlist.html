@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <th:block th:replace="~{common/fragments/csrf :: csrf}"></th:block>
+    <title>리딩북스</title>
+
+    <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/home/navbar.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/wishlist/wishlist.css}" type="text/css">
+
+    <script th:src="@{/js/wishlist/wishlist.js}"></script>
+    <script th:src="@{/js/wishlist/order.js}"></script>
+
+    <script th:src="@{/js/common/call-ajax.js}"></script>
+
+    <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+    <script>
+        IMP.init("imp57053858");
+    </script>
+</head>
+<body>
+<div class="container h-100">
+    <header class="header mt-1 mb-5">
+        <th:block th:replace="~{common/fragments/navbar :: navbar}"></th:block>
+    </header>
+    <main class="main container">
+        <div class="top">
+            <nav class="select-all-wrap d-flex align-items-center" th:if="${responses.size() > 0}">
+                <input type="checkbox" name="select-all" id="select-all" class="select-all me-2 checkbox"/>
+                <label for="select-all" class="me-2">전체선택</label>
+                <button class="btn btn-primary me-2 order-all" type="button">주문하기</button>
+                <button class="btn btn-outline-grey delete-all" type="button">삭제</button>
+            </nav>
+            <table class="wishlist-table">
+                <thead>
+                    <tr class="text-center">
+                        <th colspan="2">
+                            <div class="pt-3 pb-3">상품정보</div>
+                        </th>
+                        <th>
+                            <div class="pt-3 pb-3">상품금액</div>
+                        </th>
+                        <th>
+                            <div class="pt-3 pb-3">주문</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${responses.size() eq 0}">
+                        <td colspan="4" class="fs-4 text-center p-5">
+                            위시리스트에 추가한 도서가 없습니다.
+                        </td>
+                    </tr>
+                    <tr th:each="response : ${responses}" class="book-content-wrap">
+                        <td class="img-wrap">
+                            <input type="checkbox" class="checkbox check-book me-2" th:data-sale-price="${response.salePrice}" th:data-discount-price="${response.discountPrice}" th:data-ebook-price="${response.ebookPrice}" th:data-book="${response.bookId}" th:data-wishlist="${response.wishlistId}"/>
+                            <a th:href="@{/book/{isbn}(isbn = ${response.isbn})}">
+                                <img class="thumbnail mt-2 mb-2" th:src="@{/images/book/{savedImageName}(savedImageName = ${response.savedImageName})}" alt="" width="80" height="120">
+                            </a>
+                        </td>
+                        <td class="title">
+                            <div>
+                                <a th:href="@{/book/{isbn}(isbn = ${response.isbn})}">
+                                    <span th:text="${response.title}"></span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-square" viewBox="0 0 16 16">
+                                        <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                                        <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                                    </svg>
+                                </a>
+                            </div>
+                            <div class="price-wrap">
+                                <span class="ebook-price" th:if="${response.ebookPrice ne response.salePrice}">
+                                    <span th:text="${#numbers.formatInteger(response.ebookPrice, 3, 'COMMA')}"></span>원
+                                </span>
+                                <span class="sale-price">
+                                    <span th:text="${#numbers.formatInteger(response.salePrice, 3, 'COMMA')}"></span>원
+                                </span>
+                                <span class="discount-rate" th:if="${response.ebookPrice ne response.salePrice}">
+                                    (<span th:text="${response.discountRate}"></span>% 할인)
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-bold fs-5 text-primary">
+                                <span th:text="${#numbers.formatInteger(response.salePrice, 3, 'COMMA')}">1,000</span>
+                                <span>원</span>
+                            </div>
+                        </td>
+                        <td class="d-flex flex-column">
+                            <button class="mt-2 btn btn-outline-grey delete-one" type="button" th:data-wishlist="${response.wishlistId}">삭제</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="bottom">
+            <div class="price-content-wrap" th:if="${responses.size() > 0}">
+                <table class="price-table table mt-5">
+                    <thead>
+                        <tr class="fs-5 fw-bold">
+                            <td>총 상품 금액</td>
+                            <td>총 할인 금액</td>
+                            <td>최종 결제 금액</td>
+                        </tr>
+                    </thead>
+                    <tbody class="fs-4">
+                        <tr>
+                            <td>
+                                <span class="total-price" th:text="${#numbers.formatInteger(totalPrice, 3, 'COMMA')}"></span>원
+                            </td>
+                            <td>
+                                <th:block th:if="${totalDiscountPrice ne 0}">
+                                    <span class="total-discount-price" th:text="${#numbers.formatInteger(totalDiscountPrice, 3, 'COMMA')}"></span>원
+                                </th:block>
+                                <th:block th:if="${totalDiscountPrice eq 0}">
+                                    <span class="total-discount-price" th:text="${totalDiscountPrice}"></span>원
+                                </th:block>
+                            </td>
+                            <td>
+                                <span class="total-sale-price" th:text="${#numbers.formatInteger(totalSalePrice, 3, 'COMMA')}"></span>원
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="order-wrap">
+                    <button class="btn btn-primary order-all" type="button">주문하기</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+    <th:block th:replace="~{common/fragments/footer :: footer}"></th:block>
+</body>
+</html>

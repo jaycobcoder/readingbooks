@@ -11,9 +11,6 @@
   <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
   <link rel="stylesheet" th:href="@{/css/home/navbar.css}" type="text/css">
   <link rel="stylesheet" th:href="@{/css/management/management.css}" type="text/css">
-
-  <script th:src="@{/js/common/call-ajax.js}"></script>
-  <script th:src="@{/js/manage/book/book.js}"></script>
 </head>
 <body>
 <div class="container">
@@ -26,12 +23,24 @@
         <th:block th:replace="~{manage/fragments/navbar :: navbar}"></th:block>
       </div>
       <div class="col-10">
-        <form class="book-form content-box" action="" enctype="multipart/form-data">
-          <label for="bookId">도서 아이디</label>
-          <input type="text" name="bookId" id="bookId" class="form-control mb-3 p-2"/>
-
-          <button type="button" class="btn btn-primary w-100 p-3 delete">삭제하기</button>
-        </form>
+        <table class="table">
+          <thead>
+            <tr>
+              <td>카테고리 그룹 아이디</td>
+              <td>카테고리 그룹명</td>
+              <td>카테고리 아이디</td>
+              <td>카테고리명</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="response : ${responses}">
+              <td th:text="${response.categoryGroupId}"></td>
+              <td th:text="${response.categoryGroupName}"></td>
+              <td th:text="${response.categoryId}"></td>
+              <td th:text="${response.categoryName}"></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </main>

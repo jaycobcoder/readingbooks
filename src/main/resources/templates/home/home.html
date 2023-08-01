@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <th:block th:replace="~{common/fragments/csrf :: csrf}"></th:block>
+    <title>리딩북스</title>
+
+    <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/home/home.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/home/navbar.css}" type="text/css">
+</head>
+<body>
+    <div class="container">
+        <header class="header mt-1">
+            <th:block th:replace="~{common/fragments/navbar :: navbar}"></th:block>
+        </header>
+        <main class="main">
+            <section class="mt-3 carousel-wrap">
+                <div id="carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+
+                        <div class="carousel-item active d-flex justify-content-around align-items-center" data-bs-interval="7000" style="background-color: rgb(191, 172, 131)">
+                            <div class="right">
+                                <div class="title">
+                                    <h1 class="fs-4 fw-bold text-white">
+                                        독서하고 싶을 때
+                                    </h1>
+                                </div>
+                                <div class="content">
+                                    <span class="text-white">
+                                        '최저가'와 함께 리딩해 보세요.
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="left">
+                                <img src="/images/book.gif" class="d-block" id="first" width="240" height="340">
+                            </div>
+                        </div>
+                        <div class="carousel-item bg-primary d-flex justify-content-around align-items-center" data-bs-interval="7000">
+                            <div class="right">
+                                <div class="title">
+                                    <h1 class="fs-4 fw-bold text-white">
+                                        해리포터, 리딩에 상륙!
+                                    </h1>
+                                </div>
+                                <div class="content">
+                                    <span class="text-white">
+                                        '리딩과 해리포터의 운명적 만남!'
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="left">
+                                <img src="/images/novel1.png" class="d-block" id="second" width="240" height="340">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="button-wrap">
+                    <button class="prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left-fill" viewBox="0 0 16 16">
+                            <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
+                        </svg>
+                    </button>
+                    <button class="next" type="button" data-bs-target="#carousel" data-bs-slide="next">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+                            <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+            <section class="book-wrap">
+                <div class="content">
+                    <h1 class="fs-3 fw-bold">베스트 도서</h1>
+                    <ul class="d-flex justify-content-between flex-row w-100">
+                        <li class="me-2 ext-center" th:each="book : ${bestBooks}">
+                            <a th:href="@{/book/{isbn}(isbn=${book.isbn})}">
+                                <img th:src="@{/images/book/{savedBookName}(savedBookName=${book.savedImageName})}" th:alt="${book.title + '의 표지'}" width="120" height="180">
+                                <div th:text="${book.title}"></div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+            <section class="book-wrap">
+                <div class="content">
+                    <h1 class="fs-3 fw-bold">새로 나온 도서</h1>
+                    <ul class="d-flex justify-content-between w-100">
+                        <li class="me-2" th:each="book : ${newBooks}">
+                            <a th:href="@{/book/{isbn}(isbn=${book.isbn})}">
+                                <img th:src="@{/images/book/{savedBookName}(savedBookName=${book.savedImageName})}" th:alt="${book.title + '의 표지'}" width="180" height="260">
+                                <div class="fs-5 fw-bold" th:text="${book.title}">도서 제목</div>
+                                <div>
+                                    <th:block th:if="${book.reviewRatingAvg eq '0'}">
+                                        <span>아직 리뷰가 없습니다.</span>
+                                    </th:block>
+                                    <th:block th:if="${book.reviewRatingAvg ne '0'}">
+                                        <span class="text-orange" th:text="${book.reviewRatingAvg + ' 점'}"></span>
+                                        <span class="text-grey" th:text="${'('+book.reviewCount+')'}"></span>
+                                    </th:block>
+                                </div>
+                                <div class="text-grey">
+                                    <span th:text="${book.author}"></span>
+                                    <th:block th:if="${book.authorCountExceptMainAuthor ne 0}">
+                                        외 <span th:text="${book.authorCountExceptMainAuthor}"></span>명
+                                    </th:block>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+    <th:block th:replace="~{common/fragments/footer :: footer}"></th:block>
+</body>
+</html>

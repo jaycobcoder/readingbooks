@@ -1,0 +1,40 @@
+ul, li{
+    margin: 0px;
+    padding: 0px
+}
+
+aside.admin-navbar__wrap a{
+    font-size: 1rem;
+    font-weight: inherit;
+    color: inherit;
+}
+
+aside.admin-navbar__wrap ul li.navbar-box{
+    margin-bottom: 1rem;
+}
+
+aside.admin-navbar__wrap ul li.navbar-box .title{
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--bs-primary);
+}
+
+aside.admin-navbar__wrap ul li.navbar-box .content{
+    margin-left: 0.6rem;
+    margin-top: 0.6rem;
+}
+
+aside.admin-navbar__wrap ul li.navbar-box .content .selected{
+    font-weight: 700;
+    color: var(--bs-primary);
+}
+
+.content-box{
+    border-radius: 8px;
+    border: 2px solid var(--bs-info);
+    padding: 1rem;
+    margin-bottom: 0.7rem;
+}
+
+
+

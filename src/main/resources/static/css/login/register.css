@@ -1,0 +1,30 @@
+body{
+    background-color: #e4afff;
+}
+
+.container main .register-form{
+    width: 350px;
+}
+
+.container main .register-form .top input::placeholder {
+    color: var(--main-dark-grey);
+}
+
+.container main .register-form .top select{
+    color: var(--main-dark-grey);
+}
+
+.container main .register-form .top .result{
+    color: var(--main-red);
+    font-size: 14px;
+    padding-bottom: 1rem;
+}
+
+.container main .register-form .middle{
+    width: 100%;
+}
+.container main .register-form .middle button{
+    width: 100%;
+    padding: 1rem;
+    font-weight: 700;
+}

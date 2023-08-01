@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <th:block th:replace="~{common/fragments/csrf :: csrf}"></th:block>
+  <title>리딩북스</title>
+
+  <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/home/navbar.css}" type="text/css">
+  <link rel="stylesheet" th:href="@{/css/user/home.css}" type="text/css">
+
+  <script th:src="@{/js/login/leave.js}"></script>
+  <script th:src="@{/js/common/call-ajax.js}"></script>
+</head>
+<body>
+<div class="container">
+  <header class="header mt-1 mb-5">
+    <th:block th:replace="~{common/fragments/navbar :: navbar}"></th:block>
+  </header>
+  <main class="main container">
+    <div class="row">
+      <div class="col-3">
+        <th:block th:replace="~{user/fragments/navbar :: navbar}"></th:block>
+      </div>
+      <div class="col-9">
+        <section>
+          <h3 class="fs-4 fw-bold">회원 탈퇴</h3>
+          <ul>
+            <li class="fs-5 fw-bold text-primary">다음 사항을 꼭 확인해 주세요.</li>
+            <li>회원 탈퇴 시 구매한 도서는 복구할 수 없습니다.</li>
+            <li>회원 탈퇴 시 리뷰, 리뷰의 좋아요, 리뷰의 댓글은 삭제됩니다.</li>
+            <li class="mt-5">
+              <div class="fs-5 fw-bold text-primary">본인 확인을 위해 비밀번호를 입력해주세요.</div>
+              <input type="password" class="password form-control w-25" placeholder="비밀번호 입력"/>
+            </li>
+            <li>
+              <div class="alert alert-warning text-black mt-2">
+                탈퇴 완료된 계정은 다시 <strong>복구할 수 없습니다.</strong>
+              </div>
+            </li>
+            <li>
+              <a href="/" class="btn btn-outline-grey">취소</a>
+              <button type="button" class="btn btn-primary leave">모든 내용을 인지하며 회원탈퇴 신청</button>
+            </li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+<th:block th:replace="~{/common/fragments/footer :: footer}"></th:block>
+</body>
+</html>

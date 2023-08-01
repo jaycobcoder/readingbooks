@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <th:block th:replace="~{common/fragments/csrf :: csrf}"></th:block>
+  <title>리딩북스</title>
+
+  <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/home/navbar.css}" type="text/css">
+  <link rel="stylesheet" th:href="@{/css/book/book.css}" type="text/css">
+
+  <script th:src="@{/js/book/book.js}"></script>
+  <script th:src="@{/js/book/review.js}"></script>
+  <script th:src="@{/js/common/call-ajax.js}"></script>
+</head>
+<body>
+<div class="container">
+  <header class="header mt-1">
+    <th:block th:replace="~{common/fragments/navbar :: navbar}"></th:block>
+  </header>
+  <main class="main">
+    <section class="mt-5 w-100 d-block d-flex">
+      <div class="">
+        <img th:src="@{/images/book/{image}(image=${information.bookDto.savedImageName})}" th:alt="${information.bookDto.title + '의 표지'}" style="width: 180px; height: 250px">
+      </div>
+      <div class="ms-4 w-100">
+        <div class="mt-1">
+          <span th:text="${information.bookDto.categoryGroupName}">소설</span> > <span th:text="${information.bookDto.categoryName}">판타지 소설</span>
+        </div>
+        <div class="mt-1">
+          <h1 class="fs-2 fw-bold" th:text="${information.bookDto.title}">해리포터와 마법사의 돌</h1>
+        </div>
+        <div class="mt-1 fs-6 fw-bold text-orange">
+          <span th:text="${starRatingAvg}"></span>점(<span th:text="${reviewCount}"></span>명)
+        </div>
+        <div class="mt-1">
+          <span th:text="${information.authorDto.author}">메인작가</span>
+          <th:block th:if="${information.authorDto.authorCountExceptMainAuthor ne 0}">
+            외 <span th:text="${information.authorDto.authorCountExceptMainAuthor}"></span>명
+          </th:block>
+          저
+          <th:block th:if="${information.authorDto.translator eq null}">
+            <br>
+          </th:block>
+          <th:block th:if="${information.authorDto.translator ne null}">
+            |
+            <span th:text="${information.authorDto.translator}">메인번역가</span> 역<br/>
+          </th:block>
+          <a th:href="@{/search(query='출판사_'+${information.bookDto.publisher})}">
+            <span th:text="${information.bookDto.publisher}">민음사</span>
+          </a> 출판
+        </div>
+        <div class="d-table border w-100 mt-4">
+          <div class="d-table-cell text-center bg-primary text-white pt-3 pb-3" style="vertical-align: middle">
+            소장
+          </div>
+          <div class="d-table-cell w-50 pt-3 pb-3 ps-1 pe-1">
+            <div class="d-flex justify-content-between">
+              <th:block th:if="${information.bookDto.paperPrice ne 0}">
+                <span class="ms-1 me-2">종이책 정가</span>
+                <span class="fw-bold"><th:block th:text="${#numbers.formatInteger(information.bookDto.paperPrice, 3, 'COMMA')}"></th:block>원</span>
+              </th:block>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="ms-1 me-2">전자책 정가</span>
+              <span class="fw-bold"><th:block th:text="${#numbers.formatInteger(information.bookDto.ebookPrice, 3, 'COMMA')}"></th:block>원</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="ms-1 me-2">판매가</span>
+              <span class="fw-bold text-primary"><th:block th:text="${#numbers.formatInteger(information.bookDto.salePrice, 3, 'COMMA')}"></th:block>원</span>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end mt-2">
+          <button type="button" class="btn btn-primary me-1 wishlist-btn" th:value="${information.bookDto.bookId}">위시리스트</button>
+        </div>
+      </div>
+    </section>
+    <section class="mt-5">
+      <h2 class="mb-4 fs-3 fw-bold text-grey border-bottom">작품 소개</h2>
+      <div class="description" th:utext="${information.bookDto.description}"></div>
+    </section>
+    <section class="mt-5" th:if="${booksInGroup.size() ne 0}">
+      <h2 class="mb-4 fs-3 fw-bold text-grey border-bottom">이 책의 시리즈</h2>
+      <ul th:each="book : ${booksInGroup}">
+        <li class="border-bottom d-flex pb-2">
+          <a class="text-black fs-6 d-flex" th:href="@{/book/{isbn}(isbn=${book.isbn})}">
+            <div class="me-2">
+              <img th:src="@{/images/book/{image}(image=${book.savedImageName})}"
+                   class="img-thumbnail" style="width: 50px; height: 70px">
+            </div>
+            <div class="d-flex align-items-center fw-bold" th:text="${book.title}">
+              개정 번역판 | 해리포터와 마법사의 돌
+            </div>
+          </a>
+        </li>
+      </ul>
+    </section>
+    <section class="mt-5">
+      <h2 class="mb-4 fs-3 fw-bold text-grey border-bottom">저자 프로필</h2>
+      <div class="d-flex">
+        <th:block th:each="author : ${authorNameAndIdList}">
+          <ul class="d-flex m-0 p-0">
+            <li th:if="${author.option eq 'AUTHOR'}" class="me-2">
+              <button class="m-0 p-0 author-btn" th:text="${author.name}" th:value="${author.id}">
+                작가이름
+              </button>
+            </li>
+            <li th:if="${author.option eq 'TRANSLATOR'}">
+              <button class="m-0 p-0 author-btn" th:text="${author.name}" th:value="${author.id}">
+                번역가 이름
+              </button>
+            </li>
+            <li th:if="${author.option eq 'ILLUSTRATOR'}">
+              <button class="m-0 p-0 author-btn" th:text="${author.name}" th:value="${author.id}">
+                삽화가 이름
+              </button>
+            </li>
+          </ul>
+        </th:block>
+      </div>
+      <div>
+        <ul class="m-0 mt-4 p-0 author-info-wrap">
+          <li class="mb-2 author-name fs-5 fw-bold">
+            <span class="author-name" th:text="${authorInformation.name}">홍길동</span>
+          </li>
+          <li class="mb-2">
+            <span>국적</span> <span class="author-nationality" th:text="${authorInformation.nationality}">대한민국</span>
+          </li>
+          <li class="mb-2">
+            <span>출생</span> <span class="author-birthYear" th:text="${authorInformation.birthYear}">1999</span>년생
+          </li>
+          <li class="mb-2">
+            <span>성별</span> <span class="author-gender" th:text="${authorInformation.gender}">대한민국</span>
+          </li>
+          <li class="mb-2">
+            <span>설명</span> <span class="author-description" th:text="${authorInformation.description}">설명</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <section class="mt-5">
+      <h2 class="mb-4 fs-3 fw-bold text-grey border-bottom">리뷰</h2>
+      <div class="mt-1">
+        <div class="row">
+          <div class="col-4 text-center">
+            <div class="border h-100 d-flex justify-content-center align-items-center">
+              <div>
+                <span class="fw-bold">
+                  평점
+                </span><br/>
+                <span class="fw-bold fs-2 text-orange">
+                  <span th:text="${starRatingAvg}"></span>
+                </span><br/>
+                <span class="border-top mt-1 pt-1">
+                  <span th:text="${reviewCount}">300</span>명이 평가함
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="star-comment d-flex justify-content-center p-3 fw-bold fs-4"></div>
+            <div th:if="${isLogin eq false}" class="star-rating">
+              <input type="radio" id="5-stars" name="rating" value="5">
+              <label for="5-stars" class="star">★</label>
+              <input type="radio" id="4-stars" name="rating" value="4">
+              <label for="4-stars" class="star">★</label>
+              <input type="radio" id="3-stars" name="rating" value="3">
+              <label for="3-stars" class="star">★</label>
+              <input type="radio" id="2-stars" name="rating" value="2">
+              <label for="2-stars" class="star">★</label>
+              <input type="radio" id="1-star" name="rating" value="1">
+              <label for="1-star" class="star">★</label>
+            </div>
+
+            <div th:if="${isLogin ne false}" class="star-rating">
+              <input type="radio" id="5-stars" name="rating" value="5">
+              <label for="5-stars" class="star">★</label>
+              <input type="radio" id="4-stars" name="rating" value="4">
+              <label for="4-stars" class="star">★</label>
+              <input type="radio" id="3-stars" name="rating" value="3">
+              <label for="3-stars" class="star">★</label>
+              <input type="radio" id="2-stars" name="rating" value="2">
+              <label for="2-stars" class="star">★</label>
+              <input type="radio" id="1-stars" name="rating" value="1">
+              <label for="1-star" class="star">★</label>
+
+              <th:block th:if="${myReview ne null}">
+                <script th:inline="javascript">
+                  $(document).ready(function () {
+                    const starRating = [[${myReview.starRating}]]
+                    switch (starRating){
+                      case 5:
+                        $('#5-stars').prop("checked", true);
+                        break;
+                      case 4:
+                        $('#4-stars').prop("checked", true);
+                        break;
+                      case 3:
+                        $('#3-stars').prop("checked", true);
+                        break;
+                      case 2:
+                        $('#2-stars').prop("checked", true);
+                        break;
+                      case 1:
+                        $('#1-stars').prop("checked", true);
+                        break;
+                    }
+
+                    $('input[name=rating]').trigger("change");
+                  });
+                </script>
+
+              </th:block>
+            </div>
+
+            <th:block th:if="${isLogin eq false}">
+              <!-- 비 로그인 시 -->
+              <textarea class=" mt-1 mb-1 pb-4 pt-4 form-control comment"
+                        placeholder="욕설, 비속어 및 광고와 같이 부적절한 리뷰 작성 시 비공개될 수 있습니다."></textarea>
+              <script>
+                $(function () {
+                  $('.comment').on("click", function (){
+                    const result = confirm('로그인 이후 가능합니다. 로그인 페이지로 이동합니다.');
+                    if(result == false){
+                      $('.comment').blur();
+                      return false;
+                    }
+                    const returnUrl = window.location.href;
+                    location.href = '/account/login?returnUrl='+returnUrl;
+                  });
+                });
+              </script>
+            </th:block>
+            <th:block th:if="${isLogin ne false}">
+              <!-- 로그인 시 -->
+              <th:block th:if="${myReview eq null}">
+                <!-- 리뷰 미 작성 시 -->
+                <textarea class=" mt-1 mb-1 pb-4 pt-4 form-control comment"
+                          placeholder="욕설, 비속어 및 광고와 같이 부적절한 리뷰 작성 시 비공개될 수 있습니다."></textarea>
+              </th:block>
+            </th:block>
+            <th:block th:if="${myReview eq null}">
+              <div class="w-100 mt-2 mb-2 text-end">
+                <button class="btn btn-primary review-btn" th:data-book="${information.bookDto.bookId}">리뷰 남기기</button>
+              </div>
+            </th:block>
+            <th:block th:if="${myReview ne null}">
+              <!-- 리뷰 작성 시 -->
+              <div class="bg-light-grey p-5 rounded">
+                <div class="d-flex justify-content-between">
+                  <div class="wrote-date-wrap" th:text="${myReview.wroteDate}"></div>
+                  <div class="btn-wrap">
+                    <button class="btn btn-danger btn-review-delete" th:data-review="${myReview.reviewId}">삭제</button>
+                    <button class="btn btn-primary btn-review-update">수정</button>
+
+                    <script th:inline="javascript">
+                      $('.btn-review-update').on("click", function () {
+                        const comment = [[${myReview.content}]];
+                        const reviewId = [[${myReview.reviewId}]];
+                        const myWroteComment = $(this).closest('.bg-light-grey').find('.my-wrote-comment');
+                        let textarea = myWroteComment.find('textarea');
+
+                        const reviewBtn = $('<button>', {
+                          class: 'btn btn-dark update-confirm',
+                          'data-review' : reviewId
+                        });
+                        reviewBtn.text('확인');
+
+                        if (!textarea.length) {
+                          // textarea가 존재하지 않는 경우, 새로 생성하여 추가
+                          textarea = $('<textarea>', {
+                            class: 'mt-1 mb-1 pb-4 pt-4 form-control comment',
+                            placeholder: '욕설, 비속어 및 광고와 같이 부적절한 리뷰 작성 시 비공개될 수 있습니다.',
+                          });
+                          textarea.text(comment);
+                          myWroteComment.empty().append(textarea);
+                          $(this).text("취소");
+                          $('.btn-wrap').append(reviewBtn);
+                        } else {
+                          // textarea가 이미 존재하는 경우, 해당 요소를 제거하여 숨기기
+                          myWroteComment.empty().text(comment);
+                          $(this).text('수정');
+                          $('.update-confirm').remove();
+                        }
+                      });
+                    </script>
+                  </div>
+                </div>
+                <div class="my-wrote-comment" th:text="${myReview.content}"></div>
+              </div>
+            </th:block>
+
+          </div>
+        </div>
+
+        <div class="mt-3 review-container">
+          <div class="border-bottom fw-bold fs-5">
+            전체 <span th:text="${information.bookDto.reviewCount}"></span>건
+          </div>
+          <div class="review-wrap" th:each="review : ${reviews}">
+            <div class="d-table border-bottom pt-3 pb-4 w-100">
+              <div class="d-table-cell pe-4" style="width: 180px">
+                <span th:text="${review.maskedId}"></span>
+                <th:block th:if="${review.purchased}">
+                  <span class="badge rounded-pill bg-primary">구매자</span>
+                </th:block>
+              </div>
+              <div class="d-table-cell review_wrap">
+                <div class="pt-2 pb-2" th:text="${review.content}">
+                  리뷰 내용
+                </div>
+                <div class="bg-light-grey ps-4 pe-4 pt-2 pb-2 border-top border-4" th:if="${review.reviewComments.size() ne 0}">
+                  <div class="mt-2 border-bottom border-1" th:each="reviewComment : ${review.reviewComments}">
+                    <div th:text="${reviewComment.content}"></div>
+                    <div class="mt-1">
+                      <span class="me-2" th:text="${reviewComment.maskedId}"></span>
+                      <span class="me-2" th:text="${reviewComment.wroteDate}"></span>
+                      <button th:if="${email eq reviewComment.email}" class="btn btn-sm btn-danger delete-review-comment" th:data-review-comment="${reviewComment.reviewCommentId}">삭제</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="pt-1 pb-1 w-100 text-end">
+                  <button class="btn btn-primary comment-btn" th:data-review="${review.reviewId}">댓글 <span th:text="${review.commentsCount}"></span></button>
+                  <button class="btn btn-outline-grey like-btn" th:data-review="${review.reviewId}">좋아요 <span th:text="${review.likesCount}"></span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<th:block th:replace="~{common/fragments/footer :: footer}"></th:block>
+</body>
+</html>

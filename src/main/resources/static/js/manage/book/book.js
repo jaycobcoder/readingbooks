@@ -1,79 +1,146 @@
 $(function () {
     $('.register').on("click", function (){
         const title = $('#title').val();
-        const inputFileValue = $('#file')[0].files[0];
+        const isbn = $('#isbn').val();
+        const publisher = $('#publisher').val();
+        const publishingDate = $('#publishingDate').val();
+        let paperPrice = $('#paperPrice').val();
+        const ebookPrice = $('#ebookPrice').val();
+        const discountRate = $('#discountRate').val();
+        const categoryId = $('#categoryId').val();
+        const description = $('#description').val();
+        let bookGroupId = $('#bookGroupId').val();
+        const file = $('#file')[0].files[0];
 
-        const isValidTitle = validateTitle(title);
-        if(isValidTitle == false){
+        const isValidForm = validateRequestForm(title, isbn, publisher, publishingDate, ebookPrice, discountRate, categoryId, description);
+        if(isValidForm == false){
             return false;
         }
 
-        const isValidFile = validateFile(inputFileValue);
+        if(paperPrice.trim() == ''){
+            paperPrice = 0;
+        }
+        if(bookGroupId.trim() == ''){
+            bookGroupId = 0;
+        }
+
+        const isValidFile = validateFile(file);
         if(isValidFile == false){
             return false;
         }
 
         const formData = new FormData();
-        formData.append('file', inputFileValue);
-        formData.append('title', title)
+        formData.append('title', title);
+        formData.append('isbn', isbn);
+        formData.append('publisher', publisher);
+        formData.append('publishingDate', publishingDate);
+        formData.append('paperPrice', paperPrice);
+        formData.append('ebookPrice', ebookPrice);
+        formData.append('discountRate', discountRate);
+        formData.append('categoryId', categoryId);
+        formData.append('bookGroupId', bookGroupId);
+        formData.append("description", description);
+        formData.append('file', file);
 
-        uploadFileUsingAjax('post', '/manage/book-group', formData);
+        uploadFileUsingAjax('post', '/manage/book', formData);
     });
 
-    $('.update-title').on("click", function (){
-        const bookGroupId = $('#bookGroupId-content').val();
-        const title = $('#title').val();
-
-        const isValidId = validateId(bookGroupId);
-        if(isValidId == false){
+    $('.update-search').on("click", function (){
+        const bookId = $('#bookId').val();
+        if(bookId.trim() == ''){
+            alert('도서 아이디를 입력해주세요');
             return false;
         }
 
-        const isValidTitle = validateTitle(title);
-        if(isValidTitle == false){
+        $('#bookSearchForm').submit();
+    });
+
+    $('.update-content').on("click", function (){
+        const bookId = $('#bookId-content').val();
+        const title = $('#title').val();
+        const isbn = $('#isbn').val();
+        const publisher = $('#publisher').val();
+        const publishingDate = $('#publishingDate').val();
+        let paperPrice = $('#paperPrice').val();
+        const ebookPrice = $('#ebookPrice').val();
+        const discountRate = $('#discountRate').val();
+        const categoryId = $('#categoryId').val();
+        let bookGroupId = $('#bookGroupId').val();
+        const description = ckeditorInstance.getData()
+
+        if(bookId.trim() == ''){
+            alert('도서 아이디를 입력해주세요');
             return false;
+        }
+
+        validateRequestForm(title, isbn, publisher, publishingDate, ebookPrice, discountRate, categoryId, description);
+
+        if(paperPrice.trim() == ''){
+            paperPrice = 0;
+        }
+        if(bookGroupId.trim() == ''){
+            bookGroupId = 0;
         }
 
         const data = {
-            "title" : title
+            "title" : title,
+            "isbn" : isbn,
+            "publisher" : publisher,
+            "publishingDate" : publishingDate,
+            "paperPrice" : paperPrice,
+            "ebookPrice" : ebookPrice,
+            "discountRate" : discountRate,
+            "categoryId" : categoryId,
+            "bookGroupId" : bookGroupId,
+            "description" : description
         }
 
-        callAjax("patch", "/manage/book-group/title/"+bookGroupId, data);
+        callAjax('patch', '/manage/book/content/'+bookId, data);
     });
 
     $('.update-image').on("click", function (){
-        const bookGroupId = $('#bookGroupId-image').val();
-        const inputFileValue = $('#file')[0].files[0];
+        const bookId = $('#bookId-image').val();
+        const file = $('#file')[0].files[0];
 
-        const isValidId = validateId(bookGroupId);
-        if(isValidId == false){
+        if(bookId.trim() == ''){
+            alert('도서 아이디를 입력해주세요');
             return false;
         }
 
-        const isValidFile = validateFile(inputFileValue);
+        const isValidFile = validateFile(file);
         if(isValidFile == false){
             return false;
         }
 
         const formData = new FormData();
-        formData.append('file', inputFileValue);
-        uploadFileUsingAjax('patch', '/manage/book-group/image/'+bookGroupId, formData);
+        formData.append('file', file);
+
+        uploadFileUsingAjax('patch', '/manage/book/image/'+bookId, formData);
     });
 
     $('.search').on("click", function (){
         const title = $('#title').val();
-
-        const isValidTitle = validateTitle(title);
-        if(isValidTitle == false){
+        if(title.trim() == ''){
+            alert('도서 제목을 입력하세요.');
             return false;
         }
 
-        $('.bookgroup-form').submit();
+        $(".book-form").submit();
     });
 
     $('.delete').on("click", function (){
+        const bookId = $('#bookId').val();
+        if(bookId.trim() == ''){
+            alert('도서 아이디를 입력하세요.');
+            return false;
+        }
 
-        // callAjax('delete', '/manage/category-group/'+categoryGroupId);
+        const result = confirm('삭제하면 복구할 수 없습니다. 삭제하시겠습니까?');
+        if(result == false){
+            return false;
+        }
+
+        callAjax('delete', '/manage/book/'+bookId);
     });
 });
 
@@ -96,16 +163,44 @@ function validateFile(file){
     }
 }
 
-function validateTitle(title) {
+function validateRequestForm(title, isbn, publisher, publishingDate, ebookPrice, discountRate, categoryId, description) {
     if(title.trim() == ''){
-        alert('도서 그룹 제목을 입력해주세요.')
+        alert('도서 제목을 입력해주세요.')
         return false;
     }
-}
 
-function validateId(bookGroupId) {
-    if(bookGroupId.trim() == ''){
-        alert('도서 그룹 아이디를 입력해주세요.')
+    if(isbn.trim() == ''){
+        alert('isbn을 입력해주세요.')
+        return false;
+    }
+
+    if(publisher.trim() == ''){
+        alert('출판사를 입력해주세요.')
+        return false;
+    }
+
+    if(publishingDate.trim() == ''){
+        alert('출판일을 입력해주세요.')
+        return false;
+    }
+
+    if(ebookPrice.trim() == ''){
+        alert('전자책 가격을 입력해주세요.')
+        return false;
+    }
+
+    if(discountRate.trim() == ''){
+        alert('할인율을 입력해주세요.')
+        return false;
+    }
+
+    if(categoryId.trim() == ''){
+        alert('카테고리 아이디를 입력해주세요.')
+        return false;
+    }
+    
+    if(description.trim() == ''){
+        alert('도서 설명을 입력해주세요.')
         return false;
     }
 }

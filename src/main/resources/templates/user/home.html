@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>리딩북스</title>
+
+    <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/home/navbar.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/user/home.css}" type="text/css">
+</head>
+<body>
+<div class="container">
+    <header class="header mt-1 mb-5">
+        <th:block th:replace="~{common/fragments/navbar :: navbar}"></th:block>
+    </header>
+    <main class="main container">
+        <div class="row">
+            <div class="col-3">
+                <th:block th:replace="~{user/fragments/navbar :: navbar}"></th:block>
+            </div>
+            <div class="col-9">
+                <section>
+                    <article class="myreading-wrap d-flex justify-content-between">
+                        <div class="left bg-info p-2 d-flex justify-content-between flex-column">
+                            <div class="content">
+                                <div class="fs-5 fw-bold mt-2">
+                                    <span th:text="${response.name}"></span> 님
+                                </div>
+                                <div th:text="${response.email}"></div>
+                            </div>
+                            <div>
+                                <form action="/logout" method="post">
+                                    <button type="submit" class="logout btn btn-primary mb-2">로그아웃</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="right d-flex justify-content-around align-items-center w-100 border-bottom">
+                            <div class="text-center">
+                                <a href="/wishlist">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-basket3" viewBox="0 0 16 16">
+                                        <path d="M5.757 1.071a.5.5 0 0 1 .172.686L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15.5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5v-1A.5.5 0 0 1 .5 6h1.717L5.07 1.243a.5.5 0 0 1 .686-.172zM3.394 15l-1.48-6h-.97l1.525 6.426a.75.75 0 0 0 .729.574h9.606a.75.75 0 0 0 .73-.574L15.056 9h-.972l-1.479 6h-9.21z"/>
+                                    </svg>
+                                    <span class="d-block fs-5 fw-bold mt-1">
+                                        위시리스트
+                                    </span>
+                                </a>
+                            </div>
+                            <div class="text-center">
+                                <a href="/library">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-collection" viewBox="0 0 16 16">
+                                        <path d="M2.5 3.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11zm2-2a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM0 13a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 16 13V6a1.5 1.5 0 0 0-1.5-1.5h-13A1.5 1.5 0 0 0 0 6v7zm1.5.5A.5.5 0 0 1 1 13V6a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-13z"/>
+                                    </svg>
+                                    <span class="d-block fs-5 fw-bold mt-1">
+                                        내 서재
+                                    </span>
+                                </a>
+                            </div>
+                            <div class="text-center">
+                                <a href="/review">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+                                        <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+                                        <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
+                                    </svg>
+                                    <span class="d-block fs-5 fw-bold mt-1">
+                                        리뷰 관리
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+            </div>
+        </div>
+    </main>
+</div>
+<th:block th:replace="~{/common/fragments/footer :: footer}"></th:block>
+</body>
+</html>

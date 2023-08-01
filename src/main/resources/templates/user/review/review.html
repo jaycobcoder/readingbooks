@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <th:block th:replace="~{common/fragments/csrf :: csrf}"></th:block>
+    <title>리딩북스</title>
+
+    <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/home/navbar.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/user/home.css}" type="text/css">
+
+    <script th:src="@{/js/user/review/review.js}"></script>
+    <script th:src="@{/js/common/call-ajax.js}"></script>
+</head>
+<body>
+<div class="container">
+    <header class="header mt-1 mb-5">
+        <th:block th:replace="~{common/fragments/navbar :: navbar}"></th:block>
+    </header>
+    <main class="main container">
+        <div class="row">
+            <div class="col-3">
+                <th:block th:replace="~{user/fragments/navbar :: navbar}"></th:block>
+            </div>
+            <div class="col-9">
+                <ul th:each="response : ${responses}">
+                    <li class="border p-4 mb-2">
+                        <div class="review_box" th:data-content="${response.content}" th:data-book-id="${response.bookId}" th:data-review-id="${response.reviewId}">
+                            <h3 class="title fs-5 fw-bold" th:text="${response.title}">도서 제목</h3>
+                            <ul class="d-flex">
+                                <li class="me-2 text-orange fw-bold"><span th:text="${response.starRating}"></span>점</li>
+                                <li th:text="${response.wroteDate}">2022.12.19.</li>
+                            </ul>
+                            <div class="textarea-wrap" th:text="${response.content}">볼 때마다 마음이 따듯해지는 만화</div>
+                            <div class="modify-box mt-1">
+                                <button type="button" class="btn btn-outline-grey btn-form">수정</button>
+                                <button type="button" class="btn btn-outline-grey btn-delete">삭제</button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+</div>
+<th:block th:replace="~{/common/fragments/footer :: footer}"></th:block>
+</body>
+</html>

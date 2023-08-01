@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>리딩북스</title>
+
+  <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/home/navbar.css}" type="text/css">
+  <link rel="stylesheet" th:href="@{/css/user/home.css}" type="text/css">
+
+  <script>
+    $(function () {
+      $('.link').on("click", function (){
+        const link = $(this).data('link');
+        location.href = link;
+      })
+    });
+  </script>
+</head>
+<body>
+<div class="container">
+  <header class="header mt-1 mb-5">
+    <th:block th:replace="~{common/fragments/navbar :: navbar}"></th:block>
+  </header>
+  <main class="main container">
+    <div class="row">
+      <div class="col-3">
+        <th:block th:replace="~{user/fragments/navbar :: navbar}"></th:block>
+      </div>
+      <div class="col-9">
+        <section>
+          <table class="table">
+            <tbody>
+              <tr>
+                <th class="table-active text-end fw-bold">주문 번호</th>
+                <td>
+                  <span th:text="${response.orderNo}"></span>
+                </td>
+              </tr>
+              <tr>
+                <th class="table-active text-end fw-bold">구분</th>
+                <td>
+                  <th:block th:each="book : ${books}">
+                    <a class="fw-normal text-black fs-6" th:href="@{/book/{isbn}(isbn = ${book.isbn})}">
+                      <div th:text="${book.title}"></div>
+                    </a>
+                  </th:block>
+                </td>
+              </tr>
+              <tr>
+                <th class="table-active text-end fw-bold">주문 금액</th>
+                <td class="fw-bold text-primary">
+                  <span th:text="${#numbers.formatInteger(response.orderAmount, 3, 'COMMA')}"></span>원
+                </td>
+              </tr>
+              <tr>
+                <th class="table-active text-end fw-bold">할인 금액</th>
+                <td class="fw-bold text-primary">
+                  <span th:if="${response.discountAmount > 1000 }" th:text="${#numbers.formatInteger(response.discountAmount, 3, 'COMMA')}"></span>
+                  <span th:if="${response.discountAmount < 1000 }" th:text="${response.discountAmount}"></span>원
+                </td>
+              </tr>
+              <tr>
+                <th class="table-active text-end fw-bold">주문 금액</th>
+                <td class="fw-bold text-primary">
+                  <span th:text="${#numbers.formatInteger(response.paymentAmount, 3, 'COMMA')}"></span>원
+                </td>
+              </tr>
+              <tr>
+                <th class="table-active text-end fw-bold">결제 수단</th>
+                <td>
+                  <span th:text="${response.choosingOption}"></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+<th:block th:replace="~{/common/fragments/footer :: footer}"></th:block>
+</body>
+</html>

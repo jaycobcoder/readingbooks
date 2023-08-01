@@ -1,0 +1,49 @@
+ul, ol, li{
+    margin: 0;
+    padding: 0;
+}
+nav.navbar-content{
+    max-width: 150px;
+}
+
+nav.navbar-content .content{
+    font-size: 20px;
+    color: var(--main-dark-grey);
+    font-weight: 500;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--main-dark-grey);
+}
+
+nav.navbar-content .content li a{
+    font-size: inherit;
+}
+
+nav.navbar-content .content .title{
+    color: #000;
+}
+
+nav.navbar-content .content .title a{
+    color: inherit;
+}
+
+nav.navbar-content .content .fw-bold{
+    margin-bottom: 8px;
+}
+
+nav.navbar-content .content .li-content{
+    padding-left: 1rem;
+}
+
+nav.navbar-content .content .li-content:hover{
+    color: #495057;
+    transition: color 0.5s;
+}
+
+.myreading-wrap{
+    border: 2px solid var(--main-grey);
+    height: 250px;
+}
+
+.text-center a{
+    color: #000;
+}

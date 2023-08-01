@@ -1,0 +1,60 @@
+.not-found{
+    height: 100vh;
+}
+
+p{
+    padding: 0;
+    margin: 0;
+}
+
+a{
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.description a p,
+.description a p span,
+.description a p div,
+.description a p p,
+.description a p strong,
+.description a p br{
+    display: inline;
+    content: "";
+    font-weight: 500;
+    word-break: break-all;
+}
+
+.description p a,
+.description p a span,
+.description p a div,
+.description p a p,
+.description p a strong,
+.description p a br{
+    display: inline;
+    content: "";
+    font-weight: 500;
+    word-break: break-all;
+}
+
+.book-title{
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.author{
+    font-size: 1.1rem;
+}
+
+section div div div.img-wrap{
+    height: 100%;
+    position: relative;
+    width: 100px;
+    margin-right: 1rem;
+}
+
+section div div div.img-wrap img{
+    max-height: 150px;
+    width: 100%;
+    display: block;
+}

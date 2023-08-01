@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>리딩북스</title>
+
+    <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
+    <script th:src="@{/js/login/register.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/login/register.css}" type="text/css">
+</head>
+<body>
+<div class="container d-flex justify-content-center align-items-center flex-column">
+    <header class="header mb-5 mt-5">
+        <nav>
+            <a href="/">
+                <img src="/images/logo/reading.png" alt="리딩" width="200">
+            </a>
+        </nav>
+    </header>
+    <main class="main">
+        <div class="register-form w-100">
+            <button type="button" class="btn btn-primary w-100" onclick="location.href='/account/register/email'">이메일 계정으로 가입하기</button>
+        </div>
+        <div class="text-center mt-3 mb-1">
+            <a href="/account/login">혹시 이미 회원이신가요?</a>
+        </div>
+    </main>
+</div>
+</body>
+</html>

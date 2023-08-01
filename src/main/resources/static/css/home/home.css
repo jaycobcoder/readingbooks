@@ -1,0 +1,87 @@
+main{
+    /*max-width: 1170px;*/
+    /*padding-left: 30px;*/
+    /*padding-right: 30px;*/
+    /*margin: 0 auto;*/
+    /*margin-top: 40px;*/
+}
+
+ul, li, ol{
+    margin: 0;
+    padding: 0;
+}
+
+a{
+    font-size: inherit;
+    color: inherit;
+    font-weight: inherit;
+}
+
+.footer{
+}
+
+main .carousel-wrap{
+    position: relative;
+    margin: 0 -3px;
+    /*max-width: 1116px;*/
+    height: 400px;
+}
+main .carousel-wrap .carousel{
+    z-index: 1;
+    height: inherit;
+}
+
+main .carousel-wrap .carousel .carousel-inner{
+    height: inherit;
+}
+
+main .carousel-wrap .carousel .carousel-inner .carousel-item{
+    height: inherit;
+}
+
+
+.button-wrap{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+}
+
+.button-wrap .prev{
+    position: absolute;
+    left: 8px;
+    background-color: var(--main-white);
+    width: 40px;
+    height: 40px;
+    border: 0px;
+    border: 1px solid var(--main-light-grey);
+    border-radius: 50%;
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.06);
+}
+
+.button-wrap .next{
+    position: absolute;
+    right: 8px;
+    background-color: var(--main-white);
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--main-light-grey);
+    border-radius: 50%;
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.06);
+}
+
+.book-wrap{
+    margin-top: 5rem;
+}
+
+a img, .left img{
+    border-radius: 0.5rem;
+}
+
+picture a img{
+    border-radius: 0;
+}

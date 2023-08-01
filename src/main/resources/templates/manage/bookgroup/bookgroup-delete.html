@@ -13,7 +13,10 @@
   <link rel="stylesheet" th:href="@{/css/management/management.css}" type="text/css">
 
   <script th:src="@{/js/common/call-ajax.js}"></script>
-  <script th:src="@{/js/manage/book/book.js}"></script>
+  <script th:src="@{/js/manage/bookgroup/bookgroup.js}"></script>
+
+  <script th:src="@{/js/common/call-ajax.js}"></script>
+  <script th:src="@{/js/manage/bookcontent/bookcontent.js}"></script>
 </head>
 <body>
 <div class="container">
@@ -26,9 +29,9 @@
         <th:block th:replace="~{manage/fragments/navbar :: navbar}"></th:block>
       </div>
       <div class="col-10">
-        <form class="book-form content-box" action="" enctype="multipart/form-data">
-          <label for="bookId">도서 아이디</label>
-          <input type="text" name="bookId" id="bookId" class="form-control mb-3 p-2"/>
+        <form class="bookauthorlist-form content-box" action="" enctype="multipart/form-data">
+          <label for="bookGroupId">도서 그룹 아이디</label>
+          <input type="text" name="bookGroupId" id="bookGroupId" class="form-control mb-3 p-2"/>
 
           <button type="button" class="btn btn-primary w-100 p-3 delete">삭제하기</button>
         </form>

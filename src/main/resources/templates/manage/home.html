@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>리딩북스</title>
+
+  <th:block th:replace="~{common/fragments/common-settings :: settings}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/home/navbar.css}" type="text/css">
+  <link rel="stylesheet" th:href="@{/css/management/management.css}" type="text/css">
+</head>
+<body>
+<div class="container">
+  <header class="header mt-1 mb-5">
+    <th:block th:replace="~{common/fragments/navbar :: navbar}"></th:block>
+  </header>
+  <main class="main">
+    <div class="row">
+      <div class="col-3">
+        <th:block th:replace="~{manage/fragments/navbar :: navbar}"></th:block>
+      </div>
+      <div class="col-9">
+        <div class="sales_wrap d-flex justify-content-between">
+          <div class="card w-25 shadow-sm">
+            <div class="card-header bg-primary text-white">오늘 매출</div>
+            <div class="card-body" th:text="${#numbers.formatInteger(sales.todaySales, 3, 'COMMA') + '원'}"></div>
+          </div>
+          <div class="card w-25 shadow-sm">
+            <div class="card-header bg-primary text-white">이번 주 매출</div>
+            <div class="card-body" th:text="${#numbers.formatInteger(sales.weekSales, 3, 'COMMA') + '원'}"></div>
+          </div>
+          <div class="card w-25 shadow-sm">
+            <div class="card-header bg-primary text-white">이번 달 매출</div>
+            <div class="card-body" th:text="${#numbers.formatInteger(sales.monthSales, 3, 'COMMA') + '원'}"></div>
+          </div>
+        </div>
+        <div class="member_wrap d-flex justify-content-between mt-5">
+          <div class="card w-25 shadow-sm">
+            <div class="card-header bg-danger text-white">오늘 가입자</div>
+            <div class="card-body" th:if="${registeredMemberCount>999}" th:text="${#numbers.formatInteger(registeredMemberCount, 3, 'COMMA') + '명'}"></div>
+            <div class="card-body" th:if="${registeredMemberCount<999}" th:text="${registeredMemberCount + '명'}"></div>
+          </div>
+        </div>
+        <div class="member_wrap d-flex justify-content-between mt-5">
+          <div class="card w-25 shadow-sm">
+            <div class="card-header bg-warning text-white">오늘 리뷰 수</div>
+            <div class="card-body" th:if="${todayReviewCount>999}" th:text="${#numbers.formatInteger(todayReviewCount, 3, 'COMMA') + '개'}"></div>
+            <div class="card-body" th:if="${todayReviewCount<999}" th:text="${todayReviewCount + '개'}"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>
