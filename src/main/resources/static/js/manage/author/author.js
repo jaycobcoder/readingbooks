@@ -7,7 +7,10 @@ $(function () {
         const gender = $('#gender').val();
         const description = $('#description').val();
 
-        validateForm(name, nationality, birthYear, description);
+        const result = validateForm(name, nationality, birthYear, description);
+        if(result == false){
+            return false;
+        }
 
         const data = {
             "name" : name,

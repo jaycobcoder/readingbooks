@@ -70,7 +70,10 @@
           <label for="description">도서 설명</label>
           <textarea name="description" id="description" class="form-control mb-3 p-2"></textarea>
           <script>
-            ClassicEditor.create(document.querySelector('#description'));
+            ClassicEditor.create(document.querySelector('#description'))
+                    .then(editor => {
+                      window.ckeditorInstance = editor;
+                    })
           </script>
           <label for="file">도서 썸네일 이미지</label>
           <input type="file" name="file" id="file" class="form-control mb-3 p-2"

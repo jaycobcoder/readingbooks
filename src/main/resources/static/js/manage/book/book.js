@@ -8,7 +8,7 @@ $(function () {
         const ebookPrice = $('#ebookPrice').val();
         const discountRate = $('#discountRate').val();
         const categoryId = $('#categoryId').val();
-        const description = $('#description').val();
+        const description = ckeditorInstance.getData()
         let bookGroupId = $('#bookGroupId').val();
         const file = $('#file')[0].files[0];
 
