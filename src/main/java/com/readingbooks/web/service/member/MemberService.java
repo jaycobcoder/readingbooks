@@ -335,4 +335,14 @@ public class MemberService {
         return true;
     }
 
+    /**
+     * 오늘 회원가입자
+     * @return
+     */
+    public int findTodayRegisterMemberCount() {
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime startOfToday = today.with(LocalTime.MIN);
+        LocalDateTime endOfToday = today.with(LocalTime.MAX);
+        return memberRepository.countByCreatedTimeBetween(startOfToday, endOfToday);
+    }
 }

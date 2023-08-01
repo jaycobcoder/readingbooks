@@ -33,8 +33,11 @@ public class Review extends BaseEntity{
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "review", orphanRemoval = true)
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewComment> reviewComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewLikeLog> logs = new ArrayList<>();
 
     public static Review createReview(Member member, Book book, String content, int starRating, boolean isPurchased) {
         Review review = new Review();

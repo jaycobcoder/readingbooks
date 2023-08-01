@@ -1,8 +1,8 @@
 package com.readingbooks.web.repository.book;
 
 import com.readingbooks.web.domain.entity.book.Book;
-import com.readingbooks.web.domain.entity.book.BookGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,4 +27,10 @@ public interface BookRepository extends JpaRepository<Book, Long>, SearchBookRep
     Optional<Book> findByIsbn(String isbn);
 
     List<Book> findByBookGroupId(Long bookGroupId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update Book b " +
+            "set b.reviewCount = b.reviewCount - 1 " +
+            "where b.id in :bookIds")
+    void updateReviewCountByBookIdInQuery(@Param("bookIds") List<Long> bookIds);
 }

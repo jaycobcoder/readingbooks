@@ -8,13 +8,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
     Page<Orders> findByMemberId(Pageable pageable, Long memberId);
 
-    List<Orders> findByMemberId(Long memberId);
+    List<Orders> findAllByMemberId(Long memberId);
 
     @Modifying(clearAutomatically = true)
     @Query(
@@ -23,4 +24,6 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
                     "where o.id in (:orderIds)"
     )
     void bulkMemberIdNull(@Param("orderIds") List<Long> orderIds);
+
+    List<Orders> findByCreatedTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
 }

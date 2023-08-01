@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -220,5 +222,33 @@ public class OrderService {
         return orderBooksRepository.findByOrdersId(ordersId).stream()
                 .map(ob -> new OrderBooksResponse(ob.getBook()))
                 .collect(Collectors.toList());
+    }
+
+    public SaleResponse findSalesOfTodayAndWeekAndMonth() {
+        LocalDateTime today = LocalDateTime.now();
+
+        /* --- 금일 수입 --- */
+        LocalDateTime startOfToday = today.with(LocalTime.MIN);
+        LocalDateTime endOfToday = today.with(LocalTime.MAX);
+        List<Orders> todayOrders = ordersRepository.findByCreatedTimeBetween(startOfToday, endOfToday);
+        int todaySales = sumOrdersPaymentAmount(todayOrders);
+
+        /* --- 금주 수입 --- */
+        LocalDateTime startOfWeek = today.toLocalDate().minusDays(today.getDayOfWeek().getValue() - 1).atStartOfDay();
+        LocalDateTime endOfWeek = startOfWeek.plusDays(7).minusNanos(1);
+        List<Orders> weekOrders = ordersRepository.findByCreatedTimeBetween(startOfWeek, endOfWeek);
+        int weekSales = sumOrdersPaymentAmount(weekOrders);
+
+        /* --- 한달 수입 --- */
+        LocalDateTime startOfMonth = today.toLocalDate().withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusNanos(1);
+        List<Orders> monthOrders = ordersRepository.findByCreatedTimeBetween(startOfMonth, endOfMonth);
+        int monthSales = sumOrdersPaymentAmount(monthOrders);
+
+        return new SaleResponse(todaySales, weekSales, monthSales);
+    }
+
+    private int sumOrdersPaymentAmount(List<Orders> todayOrders) {
+        return todayOrders.stream().mapToInt(Orders::getPaymentAmount).sum();
     }
 }
