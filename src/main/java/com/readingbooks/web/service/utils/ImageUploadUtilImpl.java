@@ -1,13 +1,11 @@
 package com.readingbooks.web.service.utils;
 
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-@Service
 public class ImageUploadUtilImpl implements ImageUploadUtil{
 
     /**
@@ -17,7 +15,7 @@ public class ImageUploadUtilImpl implements ImageUploadUtil{
      */
     @Override
     public String upload(MultipartFile file) {
-        String filename = createFileName();
+        String filename = createFilename();
         String fileExtension = extractExtension(file.getOriginalFilename());
         String filePath = getFilePath(UPLOAD_PATH, filename, fileExtension);
 
@@ -58,7 +56,7 @@ public class ImageUploadUtilImpl implements ImageUploadUtil{
         existFile.delete();
     }
 
-    private String createFileName() {
+    private String createFilename() {
         return UUID.randomUUID().toString();
     }
 
