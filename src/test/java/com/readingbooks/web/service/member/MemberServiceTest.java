@@ -1,16 +1,31 @@
 package com.readingbooks.web.service.member;
 
+import com.readingbooks.web.domain.entity.book.Book;
 import com.readingbooks.web.domain.entity.member.Member;
+import com.readingbooks.web.domain.entity.orders.Orders;
+import com.readingbooks.web.domain.entity.review.Review;
 import com.readingbooks.web.domain.enums.Gender;
 import com.readingbooks.web.exception.member.MemberPresentException;
+import com.readingbooks.web.repository.book.BookRepository;
+import com.readingbooks.web.repository.like.ReviewLikeLogRepository;
 import com.readingbooks.web.repository.member.MemberRepository;
+import com.readingbooks.web.repository.orders.OrdersRepository;
+import com.readingbooks.web.repository.review.ReviewRepository;
+import com.readingbooks.web.repository.reviewcomment.ReviewCommentRepository;
 import com.readingbooks.web.service.mail.MailService;
+import com.readingbooks.web.service.order.OrderRequest;
+import com.readingbooks.web.service.order.OrderService;
+import com.readingbooks.web.service.review.ReviewService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -27,10 +42,24 @@ class MemberServiceTest {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private OrdersRepository ordersRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
+    @Autowired
+    private ReviewCommentRepository reviewCommentRepository;
+    @Autowired
+    private ReviewLikeLogRepository reviewLikeLogRepository;
+    @Autowired
+    private ReviewService reviewService;
+
     @BeforeEach
     void beforeEach(){
         MailService mailService = mock(MailService.class);
-        memberService = new MemberService(memberRepository, passwordEncoder, mailService);
+        memberService = new MemberService(memberRepository, passwordEncoder, mailService, ordersRepository, reviewRepository, reviewCommentRepository, reviewLikeLogRepository, reviewService, bookRepository);
     }
 
     @Test
@@ -159,6 +188,55 @@ class MemberServiceTest {
 
         //then
         assertThat(passwordEncoder.matches(tempPassword, member.getPassword())).isTrue();
+    }
+
+    @Test
+    void whenLeavedMember_thenVerifyReview(){
+        //given
+        /* --- 회원가입 --- */
+        Member member = getMember();
+
+        /* --- 도서 등록 --- */
+        Book book = bookRepository.save(new Book());
+
+        /* --- 리뷰 작성 --- */
+        Review review = reviewRepository.save(Review.createReview(member, book, "test", 5, true));
+
+        //when
+        boolean isDeleted = memberService.leave(member, "testtest1234");
+        Optional<Review> findReview = reviewRepository.findById(review.getId());
+
+        assertThat(isDeleted).isTrue();
+        assertThat(findReview.isEmpty()).isTrue();
+    }
+
+    @Test
+    void whenLeavedMember_thenVerifyOrders(){
+        //given
+        /* --- 회원가입 --- */
+        Member member = getMember();
+
+        /* --- 도서 등록 --- */
+        bookRepository.save(new Book());
+
+        /* --- 주문 상황 --- */
+        List bookIdList = new ArrayList<>();
+        bookIdList.add(1L);
+        Orders orders = Orders.createOrders(member, new OrderRequest("test", "test", "test", "test", "test", 1000, 100, 900, bookIdList));
+        ordersRepository.save(orders);
+
+        //when
+        memberService.leave(member, "testtest1234");
+        Orders findOrder = ordersRepository.findById(orders.getId()).get();
+
+        //then
+        assertThat(findOrder.getMember()).isNull();
+    }
+
+    private Member getMember() {
+        RegisterRequest request = new RegisterRequest("test@gmail.com", "testtest1234", "testtest1234", "홍길동", "1999", Gender.SECRET, "01055555555");
+        Long memberId = memberService.register(request);
+        return memberService.findMember(memberId);
     }
 
     private RegisterRequest createRequest(String email, String password, String passwordConfirm, String name, String birthYear, Gender gender, String phoneNo){

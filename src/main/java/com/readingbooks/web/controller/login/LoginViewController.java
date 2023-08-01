@@ -46,6 +46,11 @@ public class LoginViewController {
         return "/login/find-password";
     }
 
+    @GetMapping("/leave")
+    public String leave(){
+        return "/login/leave";
+    }
+
     @GetMapping("/register/email")
     public String registerForm(Model model, HttpServletRequest request){
         CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());

@@ -1,21 +1,32 @@
 package com.readingbooks.web.service.member;
 
 import com.readingbooks.web.domain.entity.member.Member;
+import com.readingbooks.web.domain.entity.orders.Orders;
+import com.readingbooks.web.domain.entity.review.Review;
+import com.readingbooks.web.domain.entity.review.ReviewComment;
+import com.readingbooks.web.domain.entity.review.ReviewLikeLog;
 import com.readingbooks.web.domain.enums.Gender;
 import com.readingbooks.web.exception.login.NotLoginException;
 import com.readingbooks.web.exception.member.MemberException;
 import com.readingbooks.web.exception.member.MemberNotFoundException;
 import com.readingbooks.web.exception.member.MemberPresentException;
+import com.readingbooks.web.repository.book.BookRepository;
+import com.readingbooks.web.repository.like.ReviewLikeLogRepository;
 import com.readingbooks.web.repository.member.MemberRepository;
+import com.readingbooks.web.repository.orders.OrdersRepository;
+import com.readingbooks.web.repository.review.ReviewRepository;
+import com.readingbooks.web.repository.reviewcomment.ReviewCommentRepository;
 import com.readingbooks.web.service.mail.MailService;
+import com.readingbooks.web.service.review.ReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,6 +40,12 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
+    private final OrdersRepository ordersRepository;
+    private final ReviewRepository reviewRepository;
+    private final ReviewCommentRepository reviewCommentRepository;
+    private final ReviewLikeLogRepository reviewLikeLogRepository;
+    private final ReviewService reviewService;
+    private final BookRepository bookRepository;
 
     @Transactional
     public Long register(RegisterRequest request){
@@ -254,4 +271,68 @@ public class MemberService {
         return memberRepository.findByEmailAndPhoneNo(email, phoneNo)
                 .orElseThrow(() -> new MemberNotFoundException("해당 이메일과 핸드폰 번호로 회원 정보를 찾을 수 없습니다."));
     }
+
+    /**
+     * 회원탈퇴 메소드
+     * @param member
+     * @param password
+     * @return isDeleted
+     */
+    @Transactional
+    public boolean leave(Member member, String password) {
+        /* --- 비밀번호 일치하는지 확인 --- */
+        String encodedPassword = member.getPassword();
+        matchPasswords(password, encodedPassword);
+
+        Long memberId = member.getId();
+
+        /* --- 주문의 member null처리--- */
+        List<Orders> orders = ordersRepository.findAllByMemberId(memberId);
+        List<Long> orderIds = orders.stream()
+                .map(order -> order.getId())
+                .collect(Collectors.toList());
+
+        ordersRepository.bulkMemberIdNull(orderIds);
+
+        /* --- 리뷰 제거 --- */
+        List<Review> reviews = reviewRepository.findAllByMemberId(memberId);
+
+        List<Long> reviewIds = reviews.stream()
+                .map(r -> r.getId())
+                .collect(Collectors.toList());
+
+        //리뷰의 좋아요들 제거
+        reviewLikeLogRepository.deleteAllByReviewIdInQuery(reviewIds);
+
+        //리뷰의 댓글들 제거
+        reviewCommentRepository.deleteAllByReviewIdInQuery(reviewIds);
+
+        //도서의 리뷰 건수 빼기
+        List<Long> bookIds = reviews.stream()
+                .map(r -> r.getBook().getId())
+                .collect(Collectors.toList());
+        bookRepository.updateReviewCountByBookIdInQuery(bookIds);
+
+        reviewService.deleteAll(reviews);
+
+        /* --- 리뷰 댓글 제거 --- */
+        List<ReviewComment> reviewComments = reviewCommentRepository.findAllByMemberId(memberId);
+        List<Long> reviewCommentIds = reviewComments.stream()
+                .map(rc -> rc.getId())
+                .collect(Collectors.toList());
+
+        reviewCommentRepository.deleteAllByIdInQuery(reviewCommentIds);
+
+        /* --- 좋아요 로그 제거 --- */
+        List<ReviewLikeLog> reviewLikeLogs = reviewLikeLogRepository.findAllByMemberId(memberId);
+        List<Long> reviewLikeLogIds = reviewLikeLogs.stream()
+                .map(log -> log.getId())
+                .collect(Collectors.toList());
+
+        reviewLikeLogRepository.deleteAllByIdInQuery(reviewLikeLogIds);
+
+        memberRepository.delete(member);
+        return true;
+    }
+
 }

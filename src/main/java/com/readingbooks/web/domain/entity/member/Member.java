@@ -5,6 +5,7 @@ import com.readingbooks.web.domain.entity.library.Library;
 import com.readingbooks.web.domain.entity.orders.Orders;
 import com.readingbooks.web.domain.entity.review.Review;
 import com.readingbooks.web.domain.entity.review.ReviewComment;
+import com.readingbooks.web.domain.entity.review.ReviewLikeLog;
 import com.readingbooks.web.domain.entity.wishlist.Wishlist;
 import com.readingbooks.web.domain.enums.Gender;
 import com.readingbooks.web.domain.enums.MemberRole;
@@ -37,16 +38,10 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
-    @OneToMany(mappedBy = "member", orphanRemoval = true)
-    List<Review> reviews = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member", orphanRemoval = true)
-    List<ReviewComment> reviewComments = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member", orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Wishlist> wishlists = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Library> libraries = new ArrayList<>();
 
     public static Member createMember(RegisterRequest request){
