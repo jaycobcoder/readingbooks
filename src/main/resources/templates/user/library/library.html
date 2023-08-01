@@ -22,11 +22,14 @@
   </header>
   <main class="main container">
     <section class="d-flex justify-content-start align-items-start flex-wrap flex-row">
-      <div class="text-center me-4" th:each="response:${responses}">
+      <div class="text-center me-4" th:if="${responses.size() ne 0}" th:each="response:${responses}">
         <a class="fs-6 fw-bold" th:href="@{/library/{bookId}(bookId=${response.bookId})}">
           <img th:src="@{/images/book/{savedImageName}(savedImageName = ${response.savedImageName})}" th:alt="${response.title + '의 표지'}" width="110" height="160">
           <p th:text="${response.title}">도서 제목</p>
         </a>
+      </div>
+      <div class="h4 text-center me-4" th:if="${responses.size() eq 0}">
+        아직 구매한 도서가 없습니다.
       </div>
     </section>
   </main>
