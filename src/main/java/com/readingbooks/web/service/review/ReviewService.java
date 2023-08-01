@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -209,5 +211,26 @@ public class ReviewService {
         validateContent(content);
 
         review.update(content);
+    }
+
+    /**
+     * 리뷰 제거 메소드
+     * @param reviews
+     */
+    @Transactional
+    public void deleteAll(List<Review> reviews) {
+        List<Long> reviewIds = reviews.stream()
+                .map(r -> r.getId())
+                .collect(Collectors.toList());
+
+        reviewRepository.deleteAllByIdInQuery(reviewIds);
+    }
+
+    public int findTodayReviewCount() {
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime startOfToday = today.with(LocalTime.MIN);
+        LocalDateTime endOfToday = today.with(LocalTime.MAX);
+
+        return reviewRepository.countByCreatedTimeBetween(startOfToday, endOfToday);
     }
 }
