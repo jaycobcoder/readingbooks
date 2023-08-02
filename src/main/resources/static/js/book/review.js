@@ -87,16 +87,14 @@ $(function (){
 
     $(document).on("click", ".delete-review-comment", function (){
         const result = confirm("정말 삭제하시겠습니까?");
+
         if(result == false){
             return false;
         }
 
         const reviewCommentId = $(this).data('review-comment');
-        console.log(reviewCommentId);
-        const data = {
-            reviewCommentId : reviewCommentId
-        }
-        callAjax("delete", "/review-comment", data);
+
+        callAjax("delete", "/review-comment/"+reviewCommentId);
     })
 
     $('.like-btn').on("click", function (){

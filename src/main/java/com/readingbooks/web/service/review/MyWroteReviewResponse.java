@@ -11,16 +11,18 @@ public class MyWroteReviewResponse {
     private Long reviewId;
     private Long bookId;
     private String title;
+    private String isbn;
     private String content;
     private int starRating;
     private String wroteDate;
 
     public MyWroteReviewResponse(Review review) {
-        this.reviewId = review.getId();
-        this.bookId = review.getBook().getId();
-        this.title = review.getBook().getTitle();
-        this.content = review.getContent();
-        this.starRating = review.getStarRating();
+        reviewId = review.getId();
+        bookId = review.getBook().getId();
+        title = review.getBook().getTitle();
+        isbn = review.getBook().getIsbn();
+        content = review.getContent();
+        starRating = review.getStarRating();
         wroteDate = createWroteDate(review.getCreatedTime());
     }
 
