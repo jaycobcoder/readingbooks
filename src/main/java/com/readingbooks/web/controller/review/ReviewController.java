@@ -38,8 +38,8 @@ public class ReviewController {
                 .body(baseResponse);
     }
 
-    @PatchMapping
-    public ResponseEntity<Object> update(Principal principal, Long reviewId, String content, Double starRating){
+    @PatchMapping("/{reviewId}")
+    public ResponseEntity<Object> update(Principal principal, @PathVariable Long reviewId, String content, Double starRating){
         Member member = memberService.findMember(principal);
         int intStarRating = starRating.intValue();
 
@@ -53,28 +53,14 @@ public class ReviewController {
                 .body(baseResponse);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Object> delete(Principal principal, Long reviewId){
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Object> delete(Principal principal, @PathVariable Long reviewId){
         Member member = memberService.findMember(principal);
 
         reviewService.delete(member, reviewId);
 
         BaseResponse baseResponse = new BaseResponse(
                 HttpStatus.OK, "리뷰가 삭제되었습니다.", true
-        );
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(baseResponse);
-    }
-
-    @PatchMapping("/{reviewId}")
-    public ResponseEntity<Object> update(Principal principal, @PathVariable Long reviewId, String content){
-        Member member = memberService.findMember(principal);
-
-        reviewService.update(member, reviewId, content);
-
-        BaseResponse baseResponse = new BaseResponse(
-                HttpStatus.OK, "리뷰가 수정되었습니다.", true
         );
         return ResponseEntity
                 .status(HttpStatus.OK)

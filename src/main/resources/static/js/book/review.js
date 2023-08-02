@@ -46,12 +46,11 @@ $(function (){
 
         const reviewId = $(this).data('review');
         const data = {
-            reviewId : reviewId,
             content : content,
             starRating : starRating
         }
 
-        callAjax("patch", "/review", data);
+        callAjax("patch", "/review/"+reviewId, data);
     });
 
     $(".btn-review-delete").on("click", function (){
@@ -61,11 +60,7 @@ $(function (){
         }
         const reviewId = $(this).data('review');
 
-        const data = {
-            reviewId : reviewId
-        }
-
-        callAjax("delete", "/review", data);
+        callAjax("delete", "/review/"+reviewId);
     });
 
     $(document).on("click", ".comment-submit", function (){
