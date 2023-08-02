@@ -27,7 +27,7 @@
     <header class="header mt-1 mb-5">
         <th:block th:replace="~{common/fragments/navbar :: navbar}"></th:block>
     </header>
-    <main class="main container">
+    <main class="main container min-vh-100">
         <div class="top">
             <nav class="select-all-wrap d-flex align-items-center" th:if="${responses.size() > 0}">
                 <input type="checkbox" name="select-all" id="select-all" class="select-all me-2 checkbox"/>
