@@ -3,7 +3,7 @@
 - [노션으로 확인하기](https://obtainable-elm-65d.notion.site/e8f0c444c1ca471b9d8fc3d81dfa50df)
 # 🛠 사용 기술 스택
 - `Language`: Java 17, JUnit 5
-- `Framework`: Spring Boot 3.1.0
+- `Framework`: Spring Boot 3.1.0, Spring Security 6.1.0
 - `Database`: H2, MySQL
 - `ORM`: Spring Data JPA, QueryDsl
 # ERD
