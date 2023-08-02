@@ -80,6 +80,7 @@ public class HomeRepositoryImpl implements HomeRepository{
                 .from(orderBooks)
                 .join(orderBooks.book)
                 .where(orderBooks.book.id.in(bestBooksQuery))
+                .limit(7)
                 .fetch();
     }
 
