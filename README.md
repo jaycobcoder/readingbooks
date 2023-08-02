@@ -7,13 +7,13 @@
 - `Database`: H2, MySQL
 - `ORM`: Spring Data JPA, QueryDsl
 # ERD
-- https://www.erdcloud.com/d/9LKxatzFAvNKsriQx 데이터베이스 설계
+- [데이터베이스 설계](https://www.erdcloud.com/d/9LKxatzFAvNKsriQx)
   
 ![erd](https://github.com/jaykayBaek/readingbooks/assets/113520315/a53ae577-a6dc-4c06-9ea7-4b82ea8c79ac)
 # 기획 및 설계
-- https://obtainable-elm-65d.notion.site/bff94e7464084a69820f5fff1d76f1ed
+- [요구사항 분석](https://obtainable-elm-65d.notion.site/bff94e7464084a69820f5fff1d76f1ed)
   
-- https://www.notion.so/RESTFull-API-2fa99899699e4e3e9e41fc558c71ecbd
+- [RESTFull API 설계](https://www.notion.so/RESTFull-API-2fa99899699e4e3e9e41fc558c71ecbd)
 
 # 📝 Posting
 - https://jaykaybaek.tistory.com/33
