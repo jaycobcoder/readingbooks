@@ -25,10 +25,25 @@ $(function () {
     $(document).on("click", ".btn-edit", function (){
         const reviewId = $(this).closest('.review_box').data('review-id');
         const content = $(this).closest('.review_box').find('.review-textarea').val();
+        const starRating = $(this).closest('.review_box').data('star-rating');
+
         const data = {
-            content : content
+            content : content,
+            starRating : starRating
         }
+
         callAjaxNoAlert("patch", "/review/"+reviewId, data);
+    });
+
+    $('.btn-delete').on("click", function (){
+        const reviewId = $(this).closest('.review_box').data('review-id');
+        const result = confirm('삭제하면 복구할 수 없습니다. 삭제하시겠습니까?');
+
+        if(result == false){
+            return false;
+        }
+
+        callAjaxNoAlert("delete", "/review/"+reviewId);
     });
 
 })

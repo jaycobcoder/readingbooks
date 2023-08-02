@@ -28,7 +28,7 @@
             <div class="col-9">
                 <ul th:each="response : ${responses}">
                     <li class="border p-4 mb-2">
-                        <div class="review_box" th:data-content="${response.content}" th:data-book-id="${response.bookId}" th:data-review-id="${response.reviewId}">
+                        <div class="review_box" th:data-content="${response.content}" th:data-book-id="${response.bookId}" th:data-review-id="${response.reviewId}" th:data-star-rating="${response.starRating}">
                             <h3 class="title fs-5 fw-bold" th:text="${response.title}">도서 제목</h3>
                             <ul class="d-flex">
                                 <li class="me-2 text-orange fw-bold"><span th:text="${response.starRating}"></span>점</li>
