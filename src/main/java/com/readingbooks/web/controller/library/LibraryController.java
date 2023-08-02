@@ -49,7 +49,7 @@ public class LibraryController {
         } catch (NotBoughtBookException e) {
             /* --- 본인이 구매하지 않은 도서를 조회할 시 --- */
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return "/error/403";
+            return "error/403";
         }
 
         model.addAttribute("response", bookContentResponse);

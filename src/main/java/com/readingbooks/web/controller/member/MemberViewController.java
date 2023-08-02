@@ -30,6 +30,6 @@ public class MemberViewController {
     @GetMapping("/modify")
     public String modifyForm(Model model){
         model.addAttribute("active", "modifyAccount");
-        return "/user/modify/modify";
+        return "user/modify/modify";
     }
 }

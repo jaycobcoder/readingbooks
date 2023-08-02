@@ -26,7 +26,7 @@ public class WishlistViewController {
     @GetMapping
     public String wishlist(Principal principal, Model model){
         if(principal == null){
-            return "/login/login";
+            return "login/login";
         }
 
         String email = principal.getName();

@@ -46,7 +46,7 @@ public class BookController {
         /* --- isbn에 해당하는 도서가 없다면 404 --- */
         if(bookInformation == null){
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return "/error/404";
+            return "error/404";
         }
 
         /* --- 시리즈 정보 --- */
