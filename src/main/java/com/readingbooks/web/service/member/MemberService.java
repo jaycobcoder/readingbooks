@@ -64,9 +64,9 @@ public class MemberService {
     }
 
     public void validateIsExistsEmail(String email) {
-        Optional<Member> findMember = memberRepository.findByEmail(email);
+        boolean isExists = memberRepository.existsByEmail(email);
 
-        if(findMember.isPresent()){
+        if(isExists == true){
             throw new MemberPresentException("이미 가입된 이메일입니다.");
         }
     }

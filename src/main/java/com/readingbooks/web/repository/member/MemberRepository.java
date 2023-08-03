@@ -15,4 +15,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByEmailAndPhoneNo(String email, String phoneNo);
 
     int countByCreatedTimeBetween(LocalDateTime startOfToday, LocalDateTime endOfToday);
+
+    boolean existsByEmail(String email);
 }
