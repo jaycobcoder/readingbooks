@@ -1,6 +1,6 @@
 # 📚 리딩북스(ReadingBooks)
 - 오프라인이 아닌 온라인으로 도서를 볼 수 있는 온라인 서점 사이트
-- [노션으로 확인하기](https://obtainable-elm-65d.notion.site/e8f0c444c1ca471b9d8fc3d81dfa50df)
+- [노션으로 확인하기(리딩북스 사이트 주소 포함)](https://obtainable-elm-65d.notion.site/e8f0c444c1ca471b9d8fc3d81dfa50df)
 # 🛠 사용 기술 스택
 - `Language`: Java 17, JUnit 5
 - `Framework`: Spring Boot 3.1.0, Spring Security 6.1.0
