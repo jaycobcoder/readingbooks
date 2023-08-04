@@ -41,7 +41,7 @@ public class BookController {
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public String book(@PathVariable String isbn, HttpServletResponse response, Principal principal, Model model) throws IOException {
         /* --- 도서 정보 --- */
-        BookInformationResponse bookInformation = bookInformationService.getBookInformation(isbn);
+        BookInformationResponse bookInformation = bookInformationService.findBookInformation(isbn);
 
         /* --- isbn에 해당하는 도서가 없다면 404 --- */
         if(bookInformation == null){
@@ -50,10 +50,10 @@ public class BookController {
         }
 
         /* --- 시리즈 정보 --- */
-        List<BookGroupInformationResponse> seriesInformation = bookInformationService.getSeriesInformation(isbn);
+        List<BookGroupInformationResponse> seriesInformation = bookInformationService.findSeriesInformation(isbn);
 
         /* --- 작가의 이름과 아이디 --- */
-        List<AuthorNameAndIdResponse> authorNameAndIdList = bookInformationService.getAuthorNameAndIdList(isbn);
+        List<AuthorNameAndIdResponse> authorNameAndIdList = bookInformationService.findAuthorNameAndIdList(isbn);
 
         /* --- 작가, 번역가, 삽화가의 국적, 소개와 같은 정보들 --- */
         AuthorInformationResponse authorInformation = null;
@@ -61,7 +61,7 @@ public class BookController {
 
         /* --- 만약 작가 아이디를 조작한 뒤 요청했다면, ControllerAdvice로 예외 처리를 하지 않기 위해 null로 반환 --- */
         try{
-            authorInformation = bookInformationService.getAuthorInformation(isbn, authorId);
+            authorInformation = bookInformationService.findAuthorInformation(isbn, authorId);
         } catch (AuthorNotfoundException e){
             authorInformation = null;
         }
@@ -117,7 +117,7 @@ public class BookController {
     @GetMapping("/book/{isbn}/{authorId}")
     @ResponseBody
     public ResponseEntity<Object> getAuthorInformation(@PathVariable String isbn, @PathVariable Long authorId){
-        AuthorInformationResponse authorInformation = bookInformationService.getAuthorInformation(isbn, authorId);
+        AuthorInformationResponse authorInformation = bookInformationService.findAuthorInformation(isbn, authorId);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(authorInformation);

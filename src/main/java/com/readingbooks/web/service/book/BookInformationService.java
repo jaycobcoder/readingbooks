@@ -26,7 +26,7 @@ public class BookInformationService {
     private final BookRepository bookRepository;
     private final BookAuthorListRepository bookAuthorListRepository;
 
-    public BookInformationResponse getBookInformation(String isbn) {
+    public BookInformationResponse findBookInformation(String isbn) {
         Optional<Book> tempBook = bookRepository.getBookInformation(isbn);
 
         if(tempBook.isEmpty()){
@@ -57,7 +57,7 @@ public class BookInformationService {
         return response;
     }
 
-    public List<BookGroupInformationResponse> getSeriesInformation(String isbn) {
+    public List<BookGroupInformationResponse> findSeriesInformation(String isbn) {
         Optional<Book> book = bookRepository.findByIsbn(isbn);
         Optional<BookGroup> bookGroup = Optional.ofNullable(book.get().getBookGroup());
 
@@ -70,13 +70,13 @@ public class BookInformationService {
                 .collect(Collectors.toList());
     }
 
-    public List<AuthorNameAndIdResponse> getAuthorNameAndIdList(String isbn) {
+    public List<AuthorNameAndIdResponse> findAuthorNameAndIdList(String isbn) {
         return bookAuthorListRepository.getAuthorNameAndIdList(isbn).stream()
                 .map(bal -> new AuthorNameAndIdResponse(bal.getAuthor().getName(), bal.getAuthor().getId(), bal.getAuthor().getAuthorOption().toString()))
                 .collect(Collectors.toList());
     }
 
-    public AuthorInformationResponse getAuthorInformation(String isbn, Long authorId) {
+    public AuthorInformationResponse findAuthorInformation(String isbn, Long authorId) {
         return bookAuthorListRepository.getAuthorInformation(isbn, authorId)
                 .map(bal -> new AuthorInformationResponse(bal.getAuthor()))
                 .orElseThrow(() -> new AuthorNotfoundException("작가를 찾을 수 없습니다."));
