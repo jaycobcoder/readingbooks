@@ -214,14 +214,14 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public OrderFindResponse getOrderDetail(Long orderId) {
+    public OrderFindResponse findOrderDetails(Long orderId) {
         Orders orders = findOrders(orderId);
         OrderFindResponse response = new OrderFindResponse(orders);
         return response;
     }
 
     @Transactional(readOnly = true)
-    public List<OrderBooksResponse> getOrderBooks(Long ordersId) {
+    public List<OrderBooksResponse> findOrderBooksInOrders(Long ordersId) {
         return orderBooksRepository.findByOrdersId(ordersId).stream()
                 .map(ob -> new OrderBooksResponse(ob.getBook()))
                 .collect(Collectors.toList());

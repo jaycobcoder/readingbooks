@@ -47,8 +47,8 @@ public class OrderViewController {
 
     @GetMapping("/{ordersId}")
     public String home(@PathVariable Long ordersId, Model model){
-        OrderFindResponse response = orderService.getOrderDetail(ordersId);
-        List<OrderBooksResponse> books = orderService.getOrderBooks(ordersId);
+        OrderFindResponse response = orderService.findOrderDetails(ordersId);
+        List<OrderBooksResponse> books = orderService.findOrderBooksInOrders(ordersId);
 
         model.addAttribute("response", response);
         model.addAttribute("books", books);
