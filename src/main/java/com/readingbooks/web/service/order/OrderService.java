@@ -201,6 +201,7 @@ public class OrderService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Orders findOrders(Long orderId) {
         return ordersRepository.findById(orderId)
                 .orElseThrow(() -> new OrdersNotFoundException("주문 아이디를 찾을 수 없습니다."));
@@ -212,18 +213,21 @@ public class OrderService {
         return responses.map(r -> new OrderHistoryResponse(r));
     }
 
+    @Transactional(readOnly = true)
     public OrderFindResponse getOrderDetail(Long orderId) {
         Orders orders = findOrders(orderId);
         OrderFindResponse response = new OrderFindResponse(orders);
         return response;
     }
 
+    @Transactional(readOnly = true)
     public List<OrderBooksResponse> getOrderBooks(Long ordersId) {
         return orderBooksRepository.findByOrdersId(ordersId).stream()
                 .map(ob -> new OrderBooksResponse(ob.getBook()))
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public SaleResponse findSalesOfTodayAndWeekAndMonth() {
         LocalDateTime today = LocalDateTime.now();
 

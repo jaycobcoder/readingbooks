@@ -89,11 +89,13 @@ public class WishlistService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Wishlist findWishlist(Long wishlistId){
         return wishlistRepository.findById(wishlistId)
                 .orElseThrow(() -> new WishlistNotFoundException("위시리스트 아이디를 다시 확인해주세요."));
     }
 
+    @Transactional(readOnly = true)
     public List<WishlistResponse> findBookResponses(Long memberId) {
         return wishlistRepository.findByMemberId(memberId).stream()
                 .map(w -> new WishlistResponse(w))
