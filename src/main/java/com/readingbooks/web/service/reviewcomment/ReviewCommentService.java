@@ -53,7 +53,7 @@ public class ReviewCommentService {
      * @return isDeleted
      */
     public boolean delete(Member member, Long reviewCommentId){
-        ReviewComment reviewComment = findReview(reviewCommentId);
+        ReviewComment reviewComment = findReviewComment(reviewCommentId);
 
         /* --- 본인이 작성한 댓글인지 확인 --- */
         validateCommentIdentification(reviewComment, member.getId());
@@ -67,7 +67,7 @@ public class ReviewCommentService {
     }
 
     @Transactional(readOnly = true)
-    public ReviewComment findReview(Long commentId){
+    public ReviewComment findReviewComment(Long commentId){
         return reviewCommentRepository.findReviewComment(commentId)
                 .orElseThrow(() -> new ReviewCommentNotFoundException("댓글을 찾을 수 없습니다. 댓글 아이디를 다시 확인해주세요."));
     }
