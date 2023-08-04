@@ -9,27 +9,32 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class MemberDetails implements UserDetails {
-    private Member member;
+    private final String username;
+    private final String password;
+    private final String role;
 
     public MemberDetails(Member member) {
-        this.member = member;
+        username = member.getEmail();
+        password = member.getPassword();
+        role = member.getRole().toString();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        /* --- 회원의 역할(role)은 하나만 받을 수 있음 --- */
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(member.getRole().toString()));
+        authorities.add(new SimpleGrantedAuthority(role));
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return member.getPassword();
+        return username;
     }
 
     @Override
     public String getUsername() {
-        return member.getEmail();
+        return password;
     }
 
     @Override
