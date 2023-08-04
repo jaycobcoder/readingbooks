@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class ImageUploadUtilImpl implements ImageUploadUtil{
+    private final String UPLOAD_PATH = "D:/file/";
 
     /**
      * 이미지 업로드 메소드
