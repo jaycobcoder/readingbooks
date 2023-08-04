@@ -47,6 +47,11 @@ public class MemberService {
     private final ReviewService reviewService;
     private final BookRepository bookRepository;
 
+    /**
+     * 회원가입 메소드
+     * @param request
+     * @return memberId
+     */
     @Transactional
     public Long register(RegisterRequest request){
         String email = request.getEmail();
@@ -131,13 +136,11 @@ public class MemberService {
         }
     }
 
-    @Transactional(readOnly = true)
     public Member findMember(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException("해당 이메일로 회원을 찾을 수 없습니다. 이메일을 다시 확인해주세요."));
     }
 
-    @Transactional(readOnly = true)
     public Member findMember(Principal principal) {
         if(principal == null){
             throw new NotLoginException("로그인 하셔야 이용할 수 있습니다.");
@@ -147,7 +150,6 @@ public class MemberService {
         return findMember(email);
     }
 
-    @Transactional(readOnly = true)
     public Member findMember(Long memberId){
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("해당 아이디로 회원을 찾을 수 없습니다. 회원 아이디를 다시 확인해주세요."));
@@ -267,7 +269,7 @@ public class MemberService {
         return uuid.toString().substring(0, 8);
     }
 
-    private Member findMember(String email, String phoneNo) {
+    public Member findMember(String email, String phoneNo) {
         return memberRepository.findByEmailAndPhoneNo(email, phoneNo)
                 .orElseThrow(() -> new MemberNotFoundException("해당 이메일과 핸드폰 번호로 회원 정보를 찾을 수 없습니다."));
     }
