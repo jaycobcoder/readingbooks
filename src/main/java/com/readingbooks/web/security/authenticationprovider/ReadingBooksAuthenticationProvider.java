@@ -19,14 +19,20 @@ public class ReadingBooksAuthenticationProvider implements AuthenticationProvide
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        /* --- 아이디 관련 검증(UserDetailsService) --- */
         String email = authentication.getName();
         UserDetails memberDetails = memberDetailsService.loadUserByUsername(email);
 
+        /* --- 비밀번호 관련 검증(PasswordEncoder) --- */
+        String credential = matchPassword(authentication, memberDetails);
+        return new UsernamePasswordAuthenticationToken(email, credential, memberDetails.getAuthorities());
+    }
+
+    private String matchPassword(Authentication authentication, UserDetails memberDetails) {
         String rawPassword = authentication.getCredentials().toString();
         String hashPassword = memberDetails.getPassword();
         checkPassword(rawPassword, hashPassword);
-
-        return new UsernamePasswordAuthenticationToken(email, rawPassword, memberDetails.getAuthorities());
+        return rawPassword;
     }
 
     private void checkPassword(String rawPassword, String hashPassword) {
