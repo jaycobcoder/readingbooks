@@ -2,10 +2,6 @@ package com.readingbooks.web.domain.entity.member;
 
 import com.readingbooks.web.domain.entity.BaseEntity;
 import com.readingbooks.web.domain.entity.library.Library;
-import com.readingbooks.web.domain.entity.orders.Orders;
-import com.readingbooks.web.domain.entity.review.Review;
-import com.readingbooks.web.domain.entity.review.ReviewComment;
-import com.readingbooks.web.domain.entity.review.ReviewLikeLog;
 import com.readingbooks.web.domain.entity.wishlist.Wishlist;
 import com.readingbooks.web.domain.enums.Gender;
 import com.readingbooks.web.domain.enums.MemberRole;

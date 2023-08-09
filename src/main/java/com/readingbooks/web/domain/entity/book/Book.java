@@ -2,10 +2,14 @@ package com.readingbooks.web.domain.entity.book;
 
 import com.readingbooks.web.domain.entity.BaseEntity;
 import com.readingbooks.web.domain.entity.category.Category;
+import com.readingbooks.web.domain.entity.review.Review;
 import com.readingbooks.web.service.manage.book.BookRegisterRequest;
 import com.readingbooks.web.service.manage.book.BookUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -36,6 +40,12 @@ public class Book extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_group_id")
     private BookGroup bookGroup;
+
+    @OneToMany(mappedBy = "book")
+    private List<BookAuthorList> bookAuthorLists = new ArrayList<>();
+
+    @OneToMany(mappedBy = "book")
+    private List<Review> reviews = new ArrayList<>();
 
     public static Book createBook(BookRegisterRequest request, Category category, BookGroup bookGroup, String savedImageName){
         Book book = new Book();
